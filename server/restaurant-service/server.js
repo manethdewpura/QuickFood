@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { dbName: 'restaurant' })
   .then(() => console.log("Restaurant Service Connected to MongoDB"))
   .catch(err => console.log(err));
 
