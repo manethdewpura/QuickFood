@@ -1,0 +1,50 @@
+version: "3"
+services:
+
+  api-gateway:
+    volumes:
+      - ./api-gateway:/app
+    environment:
+      - NODE_ENV=development
+
+  auth-service:
+    volumes:
+      - ./auth-service:/app
+    environment:
+      - NODE_ENV=development
+  
+  delivery-service:
+    volumes:
+      - ./delivery-service:/app
+    environment:
+      - NODE_ENV=development
+
+  menu-service:
+    volumes:
+      - ./menu-service:/app
+    environment:
+      - NODE_ENV=development
+
+  notification-service:
+    volumes:
+      - ./notification-service:/app
+    environment:
+      - NODE_ENV=development
+
+  order-service:
+    volumes:
+      - ./order-service:/app
+    environment:
+      - NODE_ENV=development
+
+  payment-service:
+    volumes:
+      - ./payment-service:/app
+    environment:
+      - NODE_ENV=development
+
+  restaurant-service:
+    volumes:
+      - ./restaurant-service:/app
+    environment:
+      - NODE_ENV=development

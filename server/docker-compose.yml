@@ -1,0 +1,26 @@
+version: "3"
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "5000:5000"
+  
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "5001:5001"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/auth-service
+      - JWT_SECRET=mysecretkey
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "5003:5003"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/order-service
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
