@@ -9,18 +9,47 @@ services:
     build: ./auth-service
     ports:
       - "5001:5001"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/auth-service
-      - JWT_SECRET=mysecretkey
+    env_file:
+      - .env
 
+  delivery-service:
+    build: ./delivery-service
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env
+
+  menu-service:
+    build: ./menu-service
+    ports:
+      - "5003:5003"
+    env_file:
+      - .env
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "5004:5004"
+    env_file:
+      - .env
+  
   order-service:
     build: ./order-service
     ports:
-      - "5003:5003"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/order-service
-
-  mongo:
-    image: mongo
+      - "5005:5005"
+    env_file:
+      - .env
+  
+  payment-service:
+    build: ./payment-service
     ports:
-      - "27017:27017"
+      - "5006:5006"
+    env_file:
+      - .env
+
+  restaurant-service:
+    build: ./restaurant-service
+    ports:
+      - "5007:5007"
+    env_file:
+      - .env
