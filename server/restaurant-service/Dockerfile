@@ -4,4 +4,4 @@ COPY package.json .
 RUN npm install
 COPY . .
 CMD ["node", "server.js"]
-EXPOSE 5006
+EXPOSE 5006:5006
