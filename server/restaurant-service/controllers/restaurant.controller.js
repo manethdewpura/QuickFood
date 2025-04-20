@@ -1,0 +1,100 @@
+import * as restaurantService from '../services/restaurant.service.js';
+
+//Create a new restaurant
+export const createRestaurant = async (req, res) => {
+    try {
+        const restaurant = await restaurantService.createRestaurant(req.body);
+        res.status(201).json( {
+            success: true,
+            message: "Restaurant created successfully.",
+            data: restaurant,
+        });
+    }
+    catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+//Get all restaurants
+export const getAllRestaurants = async (req, res) => {
+    try {
+        const restaurants = await restaurantService.getAllRestaurants();
+        res.status(200).json({
+            success: true,
+            message: "Restaurants data fetched successfully.",
+            data: restaurants,
+        })
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+//Get a restaurant by ID
+export const  getRestaurantById = async (req,res) => {
+    try {
+        const restaurant = await restaurantService.getRestaurantById(req.params.id);
+        res.status(200).json({
+            success: true,
+            message: "Restaurant data fetched successfully.",
+            data: restaurant,
+        });
+    }
+    catch (error) {
+        res.status(404).json({ success: false, message: error.message });
+    }
+};
+
+//Update a restaurant details by ID
+export const updateRestaurant = async (req, res) => {
+    try {
+        const updatedRestaurant = await restaurantService.updateRestaurant(req.params.id, req.body);
+        res.status(200).json({
+            success: true,
+            message: "Restaurant updated successfully.",
+            data: updatedRestaurant,
+        });
+    }
+    catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+//Delete a restaurant by ID
+export const deleteRestaurant = async (req, res) => {
+    try {
+        const deletedRestaurant = await restaurantService.deleteRestaurant(req.params.id);
+        res.status(200).json({
+            success: true,
+            message: "Restaurant deleted successfully.",
+            data: deletedRestaurant,
+        });
+    }
+    catch (error) {
+        res.status(404).json({ success: false, message: error.message})
+    }
+};
+
+//Update restaurant availability by ID
+export const updateAvailability = async (req,res) => {
+    try {
+        const { isAvailable } = req.body;
+
+        if (typeof isAvailable !== 'boolean') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid input. "isAvailable" must be a boolean.',
+            });
+        }
+
+        const updatedAvailability = await restaurantService.updateAvailability(req.params.id, isAvailable);
+        res.status(200).json({
+            success: true,
+            message: "Restaurant availability updated successfully.",
+            data: updatedAvailability,
+        });
+    }
+    catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
