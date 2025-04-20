@@ -1,0 +1,52 @@
+export const services = [
+  { route: "/auth", target: "http://localhost:5001" },
+  { route: "/delivery", target: "http://localhost:5002" },
+  { route: "/menu", target: "http://localhost:5003" },
+  { route: "/notification", target: "http://localhost:5004" },
+  { route: "/order", target: "http://localhost:5005" },
+  { route: "/payment", target: "http://localhost:5006/payment" },
+  { route: "/restaurant", target: "http://localhost:5007" },
+];
+
+export const limiterConfigs = {
+  "/auth": {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 30, // 30 requests per windowMs
+    message: 'Too many authentication attempts, please try again later'
+  },
+  "/payment": {
+    windowMs: 60 * 1000, // 1 minute
+    max: 10,
+    message: 'Too many payment requests, please try again later'
+  },
+  "/order": {
+    windowMs: 60 * 1000, // 1 minute
+    max: 20,
+    message: 'Too many order requests, please try again later'
+  },
+  "/menu": {
+    windowMs: 60 * 1000,
+    max: 100
+  },
+  "/restaurant": {
+    windowMs: 60 * 1000,
+    max: 50
+  },
+  default: {
+    windowMs: 60 * 1000, // 1 minute
+    max: 50, // 50 requests per minute
+    message: 'Too many requests, please try again later'
+  }
+};
+
+export const securityConfig = {
+  cors: {
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 600, // 10 minutes
+  },
+  rateLimit: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+  }
+};
