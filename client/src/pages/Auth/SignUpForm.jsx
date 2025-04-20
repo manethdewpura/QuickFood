@@ -110,6 +110,7 @@ const SignUpForm = () => {
                         <option value="Customer">Customer</option>
                         <option value="RestaurantAdmin">Restaurant Admin</option>
                         <option value="DeliveryPersonnel">Delivery Personnel</option>
+                        <option value="SystemAdmin">System Admin</option>
                     </select>
 
                     {(formData.role === "Customer" || formData.role === "DeliveryPersonnel") && (
