@@ -3,8 +3,8 @@ import crypto from "crypto";
 export const generateHash = (order_id, amount, currency) => {
     try {
         console.log("Payment Service - Generating hash...");
-        const merchantSecret = process.env.APP_SECRET_PAYHERE;
-        const merchantId = process.env.APP_ID_PAYHERE;
+        const merchantSecret = process.env.MERCHANT_SECRET_PAYHERE;
+        const merchantId = process.env.MERCHANT_ID_PAYHERE;
 
         if (!merchantSecret) {
             throw new Error("Environment variable APP_SECRET_PAYHERE is not defined.");
@@ -40,7 +40,7 @@ export const generateHash = (order_id, amount, currency) => {
 
 export const handleNotification = () => {
     try {
-        const merchantSecret = process.env.APP_SECRET_PAYHERE;
+        const merchantSecret = process.env.MERCHANT_SECRET_PAYHERE;
         const localMd5sig = crypto
             .createHash("md5")
             .update(
