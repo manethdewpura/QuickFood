@@ -33,6 +33,8 @@ const LoginForm = () => {
                 navigate("/RestaurantHome");
             } else if (user.role === "DeliveryPersonnel") {
                 navigate("#");
+            } else if (user.role === "SystemAdmin") {
+                navigate("#");
             } else {
                 navigate("#");
             }
