@@ -6,7 +6,6 @@ const HomePage = () => {
     <div className="flex flex-col h-screen">
       <Header
         isLoggedIn={true}
-        location="Set Location"
         onLogin={() => {}}
         onSignUp={() => {}}
         onCartClick={() => {}}
