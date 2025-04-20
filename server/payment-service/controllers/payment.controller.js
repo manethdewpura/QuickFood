@@ -3,12 +3,13 @@ import { generateHash, handleNotification } from "../services/payment.service.js
 export const generateHashController = async (req, res) => {
   try {
     console.log("Payment Contoller - Generating hash...");
+    const items = "Sample Item";
     const order_id = "Order123";
     const amount = "1000.00";
     const currency = "LKR";
     const merchant_id = process.env.APP_ID_PAYHERE;
 
-    const hash = await generateHash(order_id, amount, currency);
+    const hash = await generateHash(order_id, amount, currency,items);
 
     res.json({ merchant_id, order_id, hash });
     console.log("Contoller - Hash returned successfully");
