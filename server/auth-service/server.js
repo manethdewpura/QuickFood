@@ -9,6 +9,7 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import { services, limiterConfigs } from "./config/services.js";
 import { CircuitBreaker } from "./utils/circuitBreaker.js";
 import { createProxyConfig } from "./utils/proxyConfig.js";
+import authRoutes from "./routes/auth.routes.js";
 
 dotenv.config();
 
@@ -50,6 +51,8 @@ app.use((err, req, res, next) => {
 mongoose.connect(process.env.MONGO_URI, { dbName: 'auth' })
   .then(() => console.log("Auth Service Connected to MongoDB"))
   .catch(err => console.log(err));
+  
+app.use('/auth', authRoutes);
 
 app.listen(5000, () => {
   console.log("Auth Service running on port 5000");
