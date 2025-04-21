@@ -3,7 +3,7 @@ import * as restaurantService from '../services/restaurant.service.js';
 //Create a new restaurant
 export const createRestaurant = async (req, res) => {
     try {
-        const restaurant = await restaurantService.createRestaurant(req.body);
+        const restaurant = await restaurantService.createRestaurant(req.body, req.user.id);
         res.status(201).json( {
             success: true,
             message: "Restaurant created successfully.",
@@ -48,7 +48,7 @@ export const  getRestaurantById = async (req,res) => {
 //Update a restaurant details by ID
 export const updateRestaurant = async (req, res) => {
     try {
-        const updatedRestaurant = await restaurantService.updateRestaurant(req.params.id, req.body);
+        const updatedRestaurant = await restaurantService.updateRestaurant(req.params.id, req.body, req.user.id);
         res.status(200).json({
             success: true,
             message: "Restaurant updated successfully.",
@@ -63,7 +63,7 @@ export const updateRestaurant = async (req, res) => {
 //Delete a restaurant by ID
 export const deleteRestaurant = async (req, res) => {
     try {
-        const deletedRestaurant = await restaurantService.deleteRestaurant(req.params.id);
+        const deletedRestaurant = await restaurantService.deleteRestaurant(req.params.id,req.user.id);
         res.status(200).json({
             success: true,
             message: "Restaurant deleted successfully.",
@@ -87,7 +87,7 @@ export const updateAvailability = async (req,res) => {
             });
         }
 
-        const updatedAvailability = await restaurantService.updateAvailability(req.params.id, isAvailable);
+        const updatedAvailability = await restaurantService.updateAvailability(req.params.id, isAvailable, req.user.id);
         res.status(200).json({
             success: true,
             message: "Restaurant availability updated successfully.",

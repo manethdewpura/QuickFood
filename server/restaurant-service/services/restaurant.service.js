@@ -2,9 +2,9 @@ import Restaurant from '../models/restaurant.model.js';
 import mongoose from 'mongoose';
 
 //Create a new restaurant
-export const createRestaurant = async (restaurantData) => {
+export const createRestaurant = async (restaurantData, userId) => {
     try {
-        const newRestaurant = new Restaurant(restaurantData);
+        const newRestaurant = new Restaurant({...restaurantData, restaurantAdminId: userId });
         await newRestaurant.validate();
         return await newRestaurant.save();
     }
@@ -44,10 +44,13 @@ export const getRestaurantById = async (id) => {
 };
 
 //Update a restaurant details by ID
-export const updateRestaurant = async (id, restaurantData) => {
+export const updateRestaurant = async (id, restaurantData, userId) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error("Invalid restaurant ID format.");
+        }
+        if (Restaurant.restaurantAdminId.toString() !== userId) {
+            throw new Error("Unauthorized to update this restaurrant.");
         }
         const updatedRestaurant = await Restaurant.findByIdAndUpdate(id, restaurantData, {
             new: true,
@@ -71,6 +74,9 @@ export const deleteRestaurant = async (id) => {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error("Invalid restaurant ID format.");
         }
+        if (Restaurant.restaurantAdminId.toString() !== userId) {
+            throw new Error("Unauthorized to delete this restaurrant.");
+        }
         const deletedRestaurant = await Restaurant.findByIdAndDelete(id);
         if (!deletedRestaurant) {
             throw new Error("Restaurant not found.");
@@ -88,6 +94,9 @@ export const updateAvailability = async (id, isAvailable) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error("Invalid restaurant ID format.");
+        }
+        if (Restaurant.restaurantAdminId.toString() !== userId) {
+            throw new Error("Unauthorized to update this restaurrant.");
         }
         const updatedAvailability = await Restaurant.findByIdAndUpdate(
             id,
