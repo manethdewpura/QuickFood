@@ -1,10 +1,34 @@
 export const services = [
-  { route: "/delivery", target: "http://localhost:5002" },
-  { route: "/menu", target: "http://localhost:5003" },
-  { route: "/notification", target: "http://localhost:5004" },
-  { route: "/order", target: "http://localhost:5005" },
-  { route: "/payment", target: "http://localhost:5006/payment" },
-  { route: "/restaurant", target: "http://localhost:5007" },
+  { 
+    route: "/delivery", 
+    target: "http://localhost:5002", 
+    middleware: ['authenticate', { authorizeRole: ['admin', 'delivery'] }]
+  },
+  { 
+    route: "/menu", 
+    target: "http://localhost:5003", 
+    middleware: ['authenticate', { authorizeRole: ['admin', 'restaurant'] }]
+  },
+  { 
+    route: "/notification", 
+    target: "http://localhost:5004", 
+    middleware: ['authenticate']
+  },
+  { 
+    route: "/order", 
+    target: "http://localhost:5005", 
+    middleware: ['authenticate']
+  },
+  { 
+    route: "/payment", 
+    target: "http://localhost:5006/payment", 
+    middleware: ['authenticate']
+  },
+  { 
+    route: "/restaurant", 
+    target: "http://localhost:5007", 
+    middleware: ['authenticate', { authorizeRole: ['admin', 'restaurant'] }]
+  },
 ];
 
 export const limiterConfigs = {

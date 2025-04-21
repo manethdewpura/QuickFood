@@ -10,6 +10,7 @@ import { services, limiterConfigs } from "./config/services.js";
 import { CircuitBreaker } from "./utils/circuitBreaker.js";
 import { createProxyConfig } from "./utils/proxyConfig.js";
 import authRoutes from "./routes/auth.routes.js";
+import { authenticate, authorizeRole } from "./middleware/auth.middleware.js";
 
 dotenv.config();
 
@@ -30,9 +31,18 @@ app.use(defaultLimiter);
 
 const circuitBreaker = new CircuitBreaker(services);
 
-services.forEach(({ route, target }) => {
+services.forEach(({ route, target, middleware = [] }) => {
   const limiterConfig = limiterConfigs[route] || limiterConfigs.default;
   app.use(route, rateLimit(limiterConfig));
+
+  if (middleware.includes('authenticate')) {
+    app.use(route, authenticate);
+  }
+
+  const roleMiddleware = middleware.find(m => typeof m === 'object' && m.authorizeRole);
+  if (roleMiddleware) {
+    app.use(route, authorizeRole(...roleMiddleware.authorizeRole));
+  }
 
   app.use(
     route,
