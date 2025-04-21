@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 
 const WelcomePage = () => {
-  const [currentTime, setCurrentTime] = useState<string>("");
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
+  const [currentTime, setCurrentTime] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
