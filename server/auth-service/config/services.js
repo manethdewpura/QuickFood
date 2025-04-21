@@ -1,5 +1,4 @@
 export const services = [
-  { route: "/auth", target: "http://localhost:5001" },
   { route: "/delivery", target: "http://localhost:5002" },
   { route: "/menu", target: "http://localhost:5003" },
   { route: "/notification", target: "http://localhost:5004" },
