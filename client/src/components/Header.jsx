@@ -1,17 +1,29 @@
 import React from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import HamburgerMenu from "./HamburgerMenu";
+import { useLocation } from "../context/LocationContext.jsx";
 
-const Header = ({ isLoggedIn, location, onLogin, onSignUp, onCartClick }) => {
+const Header = ({ isLoggedIn, onLogin, onSignUp, onCartClick }) => {
+  const { location, loading, error } = useLocation();
+
+  const locationText = loading
+    ? "Getting location..."
+    : error
+    ? "Please enable location services"
+    : location?.cityName || "Select location";
+
   return (
     <header className="flex items-center justify-between p-4 bg-white shadow-md">
       {/* Left Section */}
       <div className="flex items-center space-x-4">
         <HamburgerMenu isLoggedIn={isLoggedIn} />
-        <h1 className="text-xl font-bold text-gray-800">QuickFood</h1>
-        {isLoggedIn && (
-          <span className="text-gray-600">{location || "Set Location"}</span>
-        )}
+        <h1
+          className="text-xl font-bold text-gray-800 cursor-pointer"
+          onClick={() => (window.location.href = "http://localhost:3005/")}
+        >
+          QuickFood
+        </h1>
+        {isLoggedIn && <span className="text-gray-600">{locationText}</span>}
       </div>
       {/* Middle Section */}
       {isLoggedIn && (
