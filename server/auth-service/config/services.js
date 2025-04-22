@@ -1,33 +1,41 @@
 export const services = [
-  { 
-    route: "/delivery", 
-    target: "http://localhost:5002", 
-    middleware: ['authenticate', { authorizeRole: ['admin', 'delivery'] }]
+  {
+    route: "/delivery",
+    target: "http://localhost:5002",
+    middleware: ["authenticate", { authorizeRole: ["admin", "delivery"] }],
   },
-  { 
-    route: "/menu", 
-    target: "http://localhost:5003", 
-    middleware: ['authenticate', { authorizeRole: ['admin', 'restaurant'] }]
+  {
+    route: "/menuRes",
+    target: "http://localhost:5003",
+    middleware: [
+      "authenticate",
+      { authorizeRole: ["SystemAdmin", "RestaurantAdmin"] },
+    ],
   },
-  { 
-    route: "/notification", 
-    target: "http://localhost:5004", 
-    middleware: ['authenticate']
+  {
+    route: "/menu",
+    target: "http://localhost:5003",
+    middleware: ["authenticate"],
   },
-  { 
-    route: "/order", 
-    target: "http://localhost:5005", 
-    middleware: ['authenticate']
+  {
+    route: "/notification",
+    target: "http://localhost:5004",
+    middleware: ["authenticate"],
   },
-  { 
-    route: "/payment", 
-    target: "http://localhost:5006/payment", 
-    middleware: ['authenticate']
+  {
+    route: "/order",
+    target: "http://localhost:5005",
+    middleware: ["authenticate"],
   },
-  { 
-    route: "/restaurant", 
-    target: "http://localhost:5007", 
-    middleware: ['authenticate', { authorizeRole: ['admin', 'restaurant'] }]
+  {
+    route: "/payment",
+    target: "http://localhost:5006/payment",
+    middleware: ["authenticate"],
+  },
+  {
+    route: "/restaurant",
+    target: "http://localhost:5007",
+    middleware: ["authenticate", { authorizeRole: ["admin", "restaurant"] }],
   },
 ];
 
@@ -35,41 +43,41 @@ export const limiterConfigs = {
   "/auth": {
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 30, // 30 requests per windowMs
-    message: 'Too many authentication attempts, please try again later'
+    message: "Too many authentication attempts, please try again later",
   },
   "/payment": {
     windowMs: 60 * 1000, // 1 minute
     max: 10,
-    message: 'Too many payment requests, please try again later'
+    message: "Too many payment requests, please try again later",
   },
   "/order": {
     windowMs: 60 * 1000, // 1 minute
     max: 20,
-    message: 'Too many order requests, please try again later'
+    message: "Too many order requests, please try again later",
   },
   "/menu": {
     windowMs: 60 * 1000,
-    max: 100
+    max: 100,
   },
   "/restaurant": {
     windowMs: 60 * 1000,
-    max: 50
+    max: 50,
   },
   default: {
     windowMs: 60 * 1000, // 1 minute
     max: 50, // 50 requests per minute
-    message: 'Too many requests, please try again later'
-  }
+    message: "Too many requests, please try again later",
+  },
 };
 
 export const securityConfig = {
   cors: {
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Content-Range", "X-Content-Range"],
     maxAge: 600, // 10 minutes
   },
   rateLimit: {
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
-  }
+    max: 100, // limit each IP to 100 requests per windowMs
+  },
 };
