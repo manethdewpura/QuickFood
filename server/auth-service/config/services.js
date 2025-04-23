@@ -6,7 +6,7 @@ export const services = [
   },
   {
     route: "/menuRes",
-    target: "http://localhost:5003",
+    target: "http://localhost:5003/menuRes",
     middleware: [
       "authenticate",
       { authorizeRole: ["SystemAdmin", "RestaurantAdmin"] },
@@ -14,7 +14,7 @@ export const services = [
   },
   {
     route: "/menu",
-    target: "http://localhost:5003",
+    target: "http://localhost:5003/menu",
     middleware: ["authenticate"],
   },
   {
@@ -66,6 +66,10 @@ export const limiterConfigs = {
     message: "Too many cart requests, please try again later",
   },
   "/menu": {
+    windowMs: 60 * 1000,
+    max: 100,
+  },
+  "/menuRes": {
     windowMs: 60 * 1000,
     max: 100,
   },
