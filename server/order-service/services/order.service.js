@@ -209,3 +209,68 @@ export const getCustomerOrders = async (customerId) => {
     throw new Error("Failed to fetch customer orders: " + error.message);
   }
 };
+
+// Get all orders for a restaurant
+export const getRestaurantOrders = async (restaurantId) => {
+  try {
+    const orders = await Order.find({ restaurantId }).sort({ createdAt: -1 });
+
+    // Fetch customer details for each order
+    const ordersWithDetails = await Promise.all(
+      orders.map(async (order) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/customer/${order.customerId}`
+          );
+          const customerData = response.data.data;
+
+          return {
+            ...order.toObject(),
+            customer: {
+              name: customerData.name,
+              location: customerData.location,
+            },
+          };
+        } catch (error) {
+          console.error(
+            `Error fetching customer ${order.customerId}:`,
+            error
+          );
+          return order;
+        }
+      })
+    );
+
+    return ordersWithDetails;
+  } catch (error) {
+    console.error("Error fetching restaurant orders:", error);
+    throw new Error("Failed to fetch restaurant orders: " + error.message);
+  }
+};
+
+// Get a specific order by ID
+export const getOrderById = async (orderId) => {
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) {
+      throw new Error("Order not found");
+    }
+
+    // Fetch restaurant details
+    const response = await axios.get(
+      `http://localhost:5007/restaurant/${order.restaurantId}`
+    );
+    const restaurantData = response.data.data;
+
+    return {
+      ...order.toObject(),
+      restaurant: {
+        name: restaurantData.restaurantName,
+        location: restaurantData.location,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching order by ID:", error);
+    throw new Error("Failed to fetch order: " + error.message);
+  }
+};

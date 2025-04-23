@@ -114,3 +114,57 @@ export const getCustomerOrders = async (req, res) => {
     });
   }
 };
+
+export const getRestaurantOrders = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+
+    if (!restaurantId) {
+      return res.status(400).json({
+        success: false,
+        message: "Restaurant ID is required",
+      });
+    }
+
+    const orders = await orderService.getRestaurantOrders(restaurantId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Restaurant orders fetched successfully",
+      data: orders,
+    });
+  } catch (error) {
+    console.error("Error in getRestaurantOrders:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Error fetching restaurant orders",
+    });
+  }
+};
+
+export const getOrderById = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    if (!orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "Order ID is required",
+      });
+    }
+
+    const order = await orderService.getOrderById(orderId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Order fetched successfully",
+      data: order,
+    });
+  } catch (error) {
+    console.error("Error in getOrderById:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Error fetching order",
+    });
+  }
+};
