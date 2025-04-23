@@ -23,8 +23,13 @@ export const services = [
     middleware: ["authenticate"],
   },
   {
+    route: "/cart",
+    target: "http://localhost:5005/cart",
+    middleware: ["authenticate"],
+  },
+  {
     route: "/order",
-    target: "http://localhost:5005",
+    target: "http://localhost:5005/order",
     middleware: ["authenticate"],
   },
   {
@@ -54,6 +59,11 @@ export const limiterConfigs = {
     windowMs: 60 * 1000, // 1 minute
     max: 20,
     message: "Too many order requests, please try again later",
+  },
+  "/cart": {
+    windowMs: 60 * 1000, // 1 minute
+    max: 20,
+    message: "Too many cart requests, please try again later",
   },
   "/menu": {
     windowMs: 60 * 1000,
