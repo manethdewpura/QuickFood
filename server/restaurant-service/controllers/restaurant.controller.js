@@ -3,7 +3,7 @@ import * as restaurantService from '../services/restaurant.service.js';
 //Create a new restaurant
 export const createRestaurant = async (req, res) => {
     try {
-        const restaurant = await restaurantService.createRestaurant(req.body, req.user.id);
+        const restaurant = await restaurantService.createRestaurant(req.body);
         res.status(201).json( {
             success: true,
             message: "Restaurant created successfully.",
@@ -48,7 +48,7 @@ export const  getRestaurantById = async (req,res) => {
 //Update a restaurant details by ID
 export const updateRestaurant = async (req, res) => {
     try {
-        const updatedRestaurant = await restaurantService.updateRestaurant(req.params.id, req.body, req.user.id);
+        const updatedRestaurant = await restaurantService.updateRestaurant(req.params.id, req.body);
         res.status(200).json({
             success: true,
             message: "Restaurant updated successfully.",
@@ -63,7 +63,7 @@ export const updateRestaurant = async (req, res) => {
 //Delete a restaurant by ID
 export const deleteRestaurant = async (req, res) => {
     try {
-        const deletedRestaurant = await restaurantService.deleteRestaurant(req.params.id,req.user.id);
+        const deletedRestaurant = await restaurantService.deleteRestaurant(req.params.id);
         res.status(200).json({
             success: true,
             message: "Restaurant deleted successfully.",
@@ -87,7 +87,7 @@ export const updateAvailability = async (req,res) => {
             });
         }
 
-        const updatedAvailability = await restaurantService.updateAvailability(req.params.id, isAvailable, req.user.id);
+        const updatedAvailability = await restaurantService.updateAvailability(req.params.id, isAvailable);
         res.status(200).json({
             success: true,
             message: "Restaurant availability updated successfully.",
@@ -96,5 +96,46 @@ export const updateAvailability = async (req,res) => {
     }
     catch (error) {
         res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+//get the nearest restaurants by location
+export const getNearestRestaurants = async (req, res) => {
+    try {
+        const { latitude, longitude } = req.query;
+
+        if (!latitude || !longitude) {
+            return res.status(400).json({
+                success: false,
+                message: 'Latitude and longitude are required.',
+            });
+        }
+
+        const nearest = await getNearestRestaurants(parseFloat(latitude), parseFloat(longitude));
+        res.status(200).json({
+            success: true,
+            message: "Nearest restaurants fetched successfully.",
+            data: nearest,
+        });
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+//get the restaurant by user ID
+export const getRestaurantsByUserId = async (req, res) => {
+    try {
+        const userId = req.headers['x-user-id'];
+        console.log("User ID from headers:", userId); // Debugging line
+        const restaurant = await restaurantService.getRestaurantsByUserId(userId);
+        res.status(200).json({
+            success: true,
+            message: "Restaurant data fetched successfully.",
+            data: restaurant,
+        });
+    }
+    catch (error) {
+        res.status(404).json({ success: false, message: error.message });
     }
 };
