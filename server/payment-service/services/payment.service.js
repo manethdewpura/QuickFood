@@ -1,17 +1,29 @@
 import crypto from "crypto";
+import axios from "axios";
 
-export const generateHash = (order_id, amount, currency) => {
+const createOrder = async (orderData) => {
     try {
-        console.log("Payment Service - Generating hash...");
+        const response = await axios.get('http://localhost:5005/orders/', orderData);
+        return response.data.data;
+    } catch (error) {
+        console.error("Error creating order:", error.message);
+        throw new Error("Failed to create order");
+    }
+};
+
+export const generateHash = async (orderData, currency) => {
+    try {
+        console.log("Payment Service - Creating order and generating hash...");
         const merchantSecret = process.env.MERCHANT_SECRET_PAYHERE;
         const merchantId = process.env.MERCHANT_ID_PAYHERE;
 
-        if (!merchantSecret) {
-            throw new Error("Environment variable APP_SECRET_PAYHERE is not defined.");
+        if (!merchantSecret || !merchantId) {
+            throw new Error("Missing merchant configuration");
         }
-        if (!merchantId) {
-            throw new Error("Environment variable APP_ID_PAYHERE is not defined.");
-        }
+
+        // Create order first
+        const order = await createOrder(orderData);
+        const { _id: orderId, totalAmount } = order;
 
         const hashedSecret = crypto
             .createHash("md5")
@@ -19,21 +31,17 @@ export const generateHash = (order_id, amount, currency) => {
             .digest("hex")
             .toUpperCase();
 
-        if (isNaN(amount) || amount === undefined || amount === null) {
-            throw new Error("Invalid amount provided");
-        }
-
-        const amountFormatted = parseFloat(amount).toFixed(2);
+        const amountFormatted = parseFloat(totalAmount).toFixed(2);
 
         const hash = crypto
             .createHash("md5")
-            .update(merchantId + order_id + amountFormatted + currency + hashedSecret)
+            .update(merchantId + orderId + amountFormatted + currency + hashedSecret)
             .digest("hex")
             .toUpperCase();
 
-        return hash;
+        return { hash, orderId, totalAmount };
     } catch (error) {
-        console.error("Error generating hash:", error.message);
+        console.error("Error in payment service:", error.message);
         throw error;
     }
 };

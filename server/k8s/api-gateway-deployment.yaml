@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: your-docker-hub-username/api-gateway:latest
+          image: maneth2000/api-gateway:latest
           ports:
             - containerPort: 5000
 ---

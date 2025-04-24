@@ -1,7 +1,13 @@
-FROM node:18
+FROM node:23-slim
+
 WORKDIR /app
-COPY package.json .
+
+COPY package*.json ./
+
 RUN npm install
+
 COPY . .
-CMD ["node", "server.js"]
-EXPOSE 5001
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
