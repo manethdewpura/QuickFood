@@ -14,9 +14,15 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: your-docker-hub-username/auth-service:latest
+          image: maneth2000/auth-service:latest
           ports:
-            - containerPort: 5001
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
           env:
             - name: MONGO_URI
               valueFrom:
@@ -24,7 +30,10 @@ spec:
                   name: mongo-config
                   key: MONGO_URI
             - name: JWT_SECRET
-              value: "mysecretkey"
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: JWT_SECRET
 ---
 apiVersion: v1
 kind: Service
@@ -35,5 +44,5 @@ spec:
     app: auth-service
   ports:
     - protocol: TCP
-      port: 5001
-      targetPort: 5001
+      port: 5000
+      targetPort: 5000

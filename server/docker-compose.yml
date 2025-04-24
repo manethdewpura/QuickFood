@@ -1,16 +1,21 @@
-version: "3"
 services:
-  api-gateway:
-    build: ./api-gateway
+  mongodb:
+    image: mongo:latest
     ports:
-      - "5000:5000"
-  
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
   auth-service:
     build: ./auth-service
     ports:
-      - "5001:5001"
+      - "5000:5000"
     env_file:
       - .env
+    depends_on:
+      - mongodb
+    networks:
+      - quickfood-network
 
   delivery-service:
     build: ./delivery-service
@@ -18,6 +23,10 @@ services:
       - "5002:5002"
     env_file:
       - .env
+    depends_on:
+      - mongodb
+    networks:
+      - quickfood-network
 
   menu-service:
     build: ./menu-service
@@ -25,6 +34,10 @@ services:
       - "5003:5003"
     env_file:
       - .env
+    depends_on:
+      - mongodb
+    networks:
+      - quickfood-network
 
   notification-service:
     build: ./notification-service
@@ -32,20 +45,32 @@ services:
       - "5004:5004"
     env_file:
       - .env
-  
+    depends_on:
+      - mongodb
+    networks:
+      - quickfood-network
+
   order-service:
     build: ./order-service
     ports:
       - "5005:5005"
     env_file:
       - .env
-  
+    depends_on:
+      - mongodb
+    networks:
+      - quickfood-network
+
   payment-service:
     build: ./payment-service
     ports:
       - "5006:5006"
     env_file:
       - .env
+    depends_on:
+      - mongodb
+    networks:
+      - quickfood-network
 
   restaurant-service:
     build: ./restaurant-service
@@ -53,3 +78,14 @@ services:
       - "5007:5007"
     env_file:
       - .env
+    depends_on:
+      - mongodb
+    networks:
+      - quickfood-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  quickfood-network:
+    driver: bridge
