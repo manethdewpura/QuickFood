@@ -98,3 +98,44 @@ export const updateAvailability = async (req,res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 };
+
+//get the nearest restaurants by location
+export const getNearestRestaurants = async (req, res) => {
+    try {
+        const { latitude, longitude } = req.query;
+
+        if (!latitude || !longitude) {
+            return res.status(400).json({
+                success: false,
+                message: 'Latitude and longitude are required.',
+            });
+        }
+
+        const nearest = await getNearestRestaurants(parseFloat(latitude), parseFloat(longitude));
+        res.status(200).json({
+            success: true,
+            message: "Nearest restaurants fetched successfully.",
+            data: nearest,
+        });
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+//get the restaurant by user ID
+export const getRestaurantsByUserId = async (req, res) => {
+    try {
+        const userId = req.headers['x-user-id'];
+        console.log("User ID from headers:", userId); // Debugging line
+        const restaurant = await restaurantService.getRestaurantsByUserId(userId);
+        res.status(200).json({
+            success: true,
+            message: "Restaurant data fetched successfully.",
+            data: restaurant,
+        });
+    }
+    catch (error) {
+        res.status(404).json({ success: false, message: error.message });
+    }
+};
