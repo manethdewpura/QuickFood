@@ -1,13 +1,21 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
-import { FaFacebook, FaTwitter, FaInstagram, FaReceipt, FaSignOutAlt  } from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaInstagram, FaReceipt, FaSignOutAlt } from "react-icons/fa";
 import { BsPersonCircle } from "react-icons/bs";
 
 const HamburgerMenu = ({ isLoggedIn }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+    window.location.reload();
   };
 
   return (
@@ -45,7 +53,7 @@ const HamburgerMenu = ({ isLoggedIn }) => {
               <li className="flex flex-row hover:text-blue-500 cursor-pointer">
                 <BsPersonCircle className="text-2xl mr-5 text-gray-600" />
                 Profile</li>
-              <li className="flex flex-row hover:text-blue-500 cursor-pointer">
+              <li className="flex flex-row hover:text-blue-500 cursor-pointer" onClick={handleLogout}>
                 <FaSignOutAlt className="text-2xl mr-5 text-gray-600" />
                 Logout</li>
             </>

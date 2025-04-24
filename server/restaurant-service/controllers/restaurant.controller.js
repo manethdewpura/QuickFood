@@ -111,7 +111,7 @@ export const getNearestRestaurants = async (req, res) => {
             });
         }
 
-        const nearest = await getNearestRestaurants(parseFloat(latitude), parseFloat(longitude));
+        const nearest = await restaurantService.getNearestRestaurants(parseFloat(latitude), parseFloat(longitude));
         res.status(200).json({
             success: true,
             message: "Nearest restaurants fetched successfully.",

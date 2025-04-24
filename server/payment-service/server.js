@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import paymentRoutes from './routes/payment.routes.js';
+import recieptRoutes from './routes/reciept.routes.js';
 
 dotenv.config();
 
@@ -10,7 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: true, // Allow all origins in development
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
   allowedHeaders: [
@@ -33,6 +34,7 @@ mongoose.connect(process.env.MONGO_URI, { dbName: 'payment' })
   .catch(err => console.log(err));
 
 app.use('/payment', paymentRoutes);
+app.use('/receipt', recieptRoutes);
 
 app.use((err, req, res, next) => {
   console.error('Global error:', err);
