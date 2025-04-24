@@ -18,7 +18,8 @@ export const addToCart = async (req, res) => {
 // Get cart items by customer ID and restaurant ID
 export const getCartItems = async (req, res) => {
   try {
-    const { customerId, restaurantId } = req.params;
+    const customerId = req.headers["x-user-id"];
+    const { restaurantId } = req.params;
     const cartItems = await cartService.getCartItems(customerId, restaurantId);
     res.status(200).json({
       success: true,
@@ -33,7 +34,7 @@ export const getCartItems = async (req, res) => {
 // Get cart by customer ID
 export const getCartByCustomerId = async (req, res) => {
   try {
-    const { customerId } = req.params;
+    const customerId = req.headers["x-user-id"];
     const cartItems = await cartService.getCartByCustomerId(customerId);
     res.status(200).json({
       success: true,
@@ -48,7 +49,8 @@ export const getCartByCustomerId = async (req, res) => {
 // Increase the quantity of an item in the cart
 export const increaseCartItemQuantity = async (req, res) => {
   try {
-    const { customerId, restaurantId, menuItemId } = req.params;
+    const customerId = req.headers["x-user-id"];
+    const { restaurantId, menuItemId } = req.params;
     const cart = await cartService.increaseCartItemQuantity(
       customerId,
       restaurantId,
@@ -67,7 +69,8 @@ export const increaseCartItemQuantity = async (req, res) => {
 // Decrease the quantity of an item in the cart
 export const decreaseCartItemQuantity = async (req, res) => {
   try {
-    const { customerId, restaurantId, menuItemId } = req.params;
+    const customerId = req.headers["x-user-id"];
+    const { restaurantId, menuItemId } = req.params;
     const cart = await cartService.decreaseCartItemQuantity(
       customerId,
       restaurantId,
@@ -86,7 +89,8 @@ export const decreaseCartItemQuantity = async (req, res) => {
 // Remove an item from the cart
 export const removeFromCart = async (req, res) => {
   try {
-    const { customerId, restaurantId, menuItemId } = req.params;
+    const customerId = req.headers["x-user-id"];
+    const { restaurantId, menuItemId } = req.params;
     const cart = await cartService.removeFromCart(
       customerId,
       restaurantId,
@@ -105,7 +109,8 @@ export const removeFromCart = async (req, res) => {
 // Clear the cart
 export const clearCart = async (req, res) => {
   try {
-    const { customerId, restaurantId } = req.params;
+    const customerId = req.headers["x-user-id"];
+    const { restaurantId } = req.params;
     const cart = await cartService.clearCart(customerId, restaurantId);
     res.status(200).json({
       success: true,
