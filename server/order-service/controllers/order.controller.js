@@ -16,7 +16,7 @@ export const createNewOrder = async (req, res) => {
         message: "Missing required fields",
       });
     }
-    const order = await orderService.createOrder({
+    const order = await orderService.createNewOrder({
       customerId,
       restaurantId,
       customerLatitude,
