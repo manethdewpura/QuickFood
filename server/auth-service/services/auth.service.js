@@ -47,3 +47,27 @@ export const loginUser = async ({ email,password }) => {
 
     return { user, token };
 };
+
+export const getUserById = async (userId) => {
+    const user = await User.findById(userId);
+    if (!user) {
+        throw new Error("User not found");
+    }
+    return user;
+};
+
+export const updateUserById = async (userId, updateData) => {
+    const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
+    if (!user) {
+        throw new Error("User not found");
+    }       
+    return user;
+};
+
+export const deleteUserById = async (userId) => {
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+        throw new Error("User not found");
+    }       
+    return user;
+};

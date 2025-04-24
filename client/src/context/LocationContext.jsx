@@ -17,7 +17,6 @@ export const LocationProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchLocation = async () => {
-      // Skip if location is already in session storage
       if (sessionStorage.getItem('userLocation')) {
         return;
       }
