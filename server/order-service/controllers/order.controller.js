@@ -4,7 +4,6 @@ export const createNewOrder = async (req, res) => {
   try {
     const { customerId, restaurantId, customerLatitude, customerLongitude } =
       req.body;
-
     // Validate required fields
     if (
       !customerId ||
@@ -17,14 +16,12 @@ export const createNewOrder = async (req, res) => {
         message: "Missing required fields",
       });
     }
-
     const order = await orderService.createOrder({
       customerId,
       restaurantId,
       customerLatitude,
       customerLongitude,
     });
-
     return res.status(201).json({
       success: true,
       message: "Order created successfully",
@@ -43,19 +40,16 @@ export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { orderStatus } = req.body;
-
     if (!orderId || !orderStatus) {
       return res.status(400).json({
         success: false,
         message: "Order ID and status are required",
       });
     }
-
     const updatedOrder = await orderService.updateOrderStatus(
       orderId,
       orderStatus
     );
-
     return res.status(200).json({
       success: true,
       message: "Order status updated successfully",
@@ -73,7 +67,6 @@ export const updateOrderStatus = async (req, res) => {
 export const getReadyOrders = async (req, res) => {
   try {
     const orders = await orderService.getReadyOrders();
-
     return res.status(200).json({
       success: true,
       message: "Ready orders fetched successfully",
@@ -90,17 +83,14 @@ export const getReadyOrders = async (req, res) => {
 
 export const getCustomerOrders = async (req, res) => {
   try {
-    const { customerId } = req.params;
-
+    const customerId = req.headers["x-user-id"];
     if (!customerId) {
       return res.status(400).json({
         success: false,
         message: "Customer ID is required",
       });
     }
-
     const orders = await orderService.getCustomerOrders(customerId);
-
     return res.status(200).json({
       success: true,
       message: "Customer orders fetched successfully",
@@ -118,16 +108,13 @@ export const getCustomerOrders = async (req, res) => {
 export const getRestaurantOrders = async (req, res) => {
   try {
     const { restaurantId } = req.params;
-
     if (!restaurantId) {
       return res.status(400).json({
         success: false,
         message: "Restaurant ID is required",
       });
     }
-
     const orders = await orderService.getRestaurantOrders(restaurantId);
-
     return res.status(200).json({
       success: true,
       message: "Restaurant orders fetched successfully",
@@ -145,16 +132,13 @@ export const getRestaurantOrders = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const { orderId } = req.params;
-
     if (!orderId) {
       return res.status(400).json({
         success: false,
         message: "Order ID is required",
       });
     }
-
     const order = await orderService.getOrderById(orderId);
-
     return res.status(200).json({
       success: true,
       message: "Order fetched successfully",
