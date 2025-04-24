@@ -4,21 +4,18 @@ export const createProxyConfig = (route, target, circuitBreaker) => ({
   pathRewrite: {
     [`^${route}`]: '',
   },
+  secure: process.env.NODE_ENV === 'production',
   onProxyReq: (proxyReq, req) => {
-    // Forward the user ID header
+    // Forward auth headers
     if (req.headers['x-user-id']) {
       proxyReq.setHeader('x-user-id', req.headers['x-user-id']);
     }
-    // Forward the user role header
     if (req.headers['x-user-role']) {
-      proxyReq.setHeader('x-user-role', req.headers['x-user-role']);
+      proxyReq.setHeader('x-user-role');
     }
   },
   onError: (err, req, res) => {
-    circuitBreaker.handleFailure(target);
+    circuitBreaker.recordFailure(target);
     res.status(503).json({ message: 'Service temporarily unavailable' });
-  },
-  onProxyRes: () => {
-    circuitBreaker.handleSuccess(target);
-  },
+  }
 });
