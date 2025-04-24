@@ -15,7 +15,15 @@ import { authenticate, authorizeRole } from "./middleware/auth.middleware.js";
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+
+// Global middleware - only apply to non-proxied routes
+app.use((req, res, next) => {
+  if (!req.url.startsWith('/auth')) {
+    next();
+    return;
+  }
+  express.json()(req, res, next);
+});
 
 app.use(helmet());
 app.use(
@@ -31,6 +39,9 @@ app.use(defaultLimiter);
 
 const circuitBreaker = new CircuitBreaker(services);
 
+// Add global proxy timeout
+const proxyTimeout = 30000; // 30 seconds
+
 services.forEach(({ route, target, middleware = [] }) => {
   const limiterConfig = limiterConfigs[route] || limiterConfigs.default;
   app.use(route, rateLimit(limiterConfig));
@@ -44,10 +55,24 @@ services.forEach(({ route, target, middleware = [] }) => {
     app.use(route, authorizeRole(...roleMiddleware.authorizeRole));
   }
 
-  app.use(
-    route,
-    createProxyMiddleware(createProxyConfig(route, target, circuitBreaker))
-  );
+  // Create proxy middleware with raw request handling
+  app.use(route, createProxyMiddleware({
+    target,
+    changeOrigin: true,
+    pathRewrite: { [`^${route}`]: '' },
+    onProxyReq: (proxyReq, req, res) => {
+      if (req.body && (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH')) {
+        const bodyData = JSON.stringify(req.body);
+        proxyReq.setHeader('Content-Type', 'application/json');
+        proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+        proxyReq.write(bodyData);
+      }
+    },
+    onError: (err, req, res) => {
+      console.error(`Proxy error for ${route}:`, err);
+      res.status(503).send('Service Unavailable');
+    }
+  }));
 });
 
 app.use((err, req, res, next) => {
