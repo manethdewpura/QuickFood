@@ -1,11 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import notificationRoutes from './src/routes/notification.routes.js';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+app.use('/notifications', notificationRoutes);
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI, { dbName: 'notification' })

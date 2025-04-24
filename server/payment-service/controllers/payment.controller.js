@@ -4,25 +4,29 @@ export const generateHashController = async (req, res) => {
   try {
     console.log("Payment Controller - Generating hash...");
     
-    // Validate merchant ID
     const merchant_id = process.env.MERCHANT_ID_PAYHERE;
     if (!merchant_id) {
       throw new Error("Unauthorized payment request - Invalid merchant configuration");
     }
 
-    const items = req.body.items || "Sample Item";
-    const order_id = req.body.order_id || "Order123";
-    const amount = req.body.amount || "1000.00";
-    const currency = req.body.currency || "LKR";
+    const { customerId, restaurantId, customerLatitude, customerLongitude, currency } = req.body;
 
-    // Validate required fields
-    if (!amount || !order_id) {
-      throw new Error("Missing required payment information");
+    if (!currency) {
+      throw new Error("Currency is required");
     }
 
-    const hash = await generateHash(order_id, amount, currency, items);
+    const { hash, orderId, totalAmount } = await generateHash(
+      { customerId, restaurantId, customerLatitude, customerLongitude },
+      currency
+    );
     
-    res.json({ merchant_id, order_id, hash });
+    res.json({ 
+      merchant_id, 
+      order_id: orderId, 
+      amount: totalAmount,
+      currency,
+      hash 
+    });
     console.log("Controller - Hash returned successfully");
   } catch (error) {
     console.error("Error generating hash:", error);
@@ -69,6 +73,8 @@ export const handleNotificationController = async (req, res) => {
 };
 
 export const testController = (req, res) => {
+  console.log('User ID from request:', req.headers['x-user-id']);
+  console.log('User Role from request:', req.headers['x-user-role']);
   console.log("Payment Controller - Test endpoint hit");
   res.json({ message: "Test endpoint hit" });
-}
+};
