@@ -1,11 +1,7 @@
-version: "3"
 services:
-
-  api-gateway:
-    volumes:
-      - ./api-gateway:/app
+  mongodb:
     environment:
-      - NODE_ENV=development
+      - MONGO_INITDB_DATABASE=quickfood
 
   auth-service:
     volumes:
