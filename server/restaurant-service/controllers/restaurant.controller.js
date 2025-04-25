@@ -3,7 +3,12 @@ import * as restaurantService from '../services/restaurant.service.js';
 //Create a new restaurant
 export const createRestaurant = async (req, res) => {
     try {
-        const restaurant = await restaurantService.createRestaurant(req.body);
+        const restaurantAdminId = req.headers['x-user-id'];
+        const restaurantData = {
+             ...req.body, 
+             restaurantAdminId 
+        };
+        const restaurant = await restaurantService.createRestaurant(restaurantData);
         res.status(201).json( {
             success: true,
             message: "Restaurant created successfully.",
@@ -127,7 +132,6 @@ export const getNearestRestaurants = async (req, res) => {
 export const getRestaurantsByUserId = async (req, res) => {
     try {
         const userId = req.headers['x-user-id'];
-        console.log("User ID from headers:", userId); // Debugging line
         const restaurant = await restaurantService.getRestaurantsByUserId(userId);
         res.status(200).json({
             success: true,
