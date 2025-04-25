@@ -32,7 +32,7 @@ const LoginForm = () => {
             } else if (user.role === "RestaurantAdmin") {
                 navigate("/RestaurantHome");
             } else if (user.role === "DeliveryPersonnel") {
-                navigate("#");
+                navigate("/driver/dashboard");
             } else if (user.role === "SystemAdmin") {
                 navigate("#");
             } else {

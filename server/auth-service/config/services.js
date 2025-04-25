@@ -1,8 +1,13 @@
 export const services = [
   {
     route: "/delivery",
-    target: "http://localhost:5002",
-    middleware: ["authenticate", { authorizeRole: ["admin", "delivery"] }],
+    target: "http://localhost:5002/delivery",
+    middleware: ["authenticate", { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] }],
+  },
+   {
+    route: "/driver",
+    target: "http://localhost:5002/driver",
+    middleware: ["authenticate", { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] }],
   },
   {
     route: "/menuRes",
@@ -81,6 +86,16 @@ export const limiterConfigs = {
   "/restaurantAll": {
     windowMs: 60 * 1000,
     max: 50,
+  },
+  "/delivery": {
+    windowMs: 60 * 1000, // 1 minute
+    max: 50, // 50 requests per minute
+    message: "Too many requests, please try again later",
+  },
+  "/driver": {
+    windowMs: 60 * 1000, // 1 minute
+    max: 50, // 50 requests per minute
+    message: "Too many requests, please try again later",
   },
   default: {
     windowMs: 60 * 1000, // 1 minute
