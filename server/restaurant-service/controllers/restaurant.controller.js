@@ -132,7 +132,6 @@ export const getNearestRestaurants = async (req, res) => {
 export const getRestaurantsByUserId = async (req, res) => {
     try {
         const userId = req.headers['x-user-id'];
-        console.log("User ID from headers:", userId); // Debugging line
         const restaurant = await restaurantService.getRestaurantsByUserId(userId);
         res.status(200).json({
             success: true,
