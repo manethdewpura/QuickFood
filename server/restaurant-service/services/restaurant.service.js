@@ -139,7 +139,7 @@ export const getRestaurantsByUserId = async (userId) => {
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             throw new Error("Invalid user ID format.");
         }
-        const restaurant = await Restaurant.find({ userId });
+        const restaurant = await Restaurant.find({ restaurantAdminId: userId });
         if (!restaurant) {
             throw new Error("Restaurant not found for this user.");
         }
