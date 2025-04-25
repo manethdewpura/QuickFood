@@ -3,8 +3,8 @@ import { getAllRestaurants, getNearestRestaurants, getRestaurantById } from '../
 
 const router = express.Router();
 
+router.get('/nearest', getNearestRestaurants); // Get nearest restaurants
 router.get('/', getAllRestaurants); // Get all restaurants
 router.get('/:id', getRestaurantById); // Get a restaurant by ID 
-router.get('/nearest', getNearestRestaurants); // Get nearest restaurants
 
 export default router;
