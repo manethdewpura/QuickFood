@@ -1,152 +1,217 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { getCurrentLocation } from '../../utils/location.util';
 
-const RestaurantForm = ({ restaurantId }) => {
-    const [formData, setFormData] = useState({
+const RestaurantManagement = () => {
+  const [restaurants, setRestaurants] = useState([]);
+  const [form, setForm] = useState({
+    restaurantName: '',
+    Address: '',
+    Hotline: '',
+    OpeningHours: '',
+    isAvailable: true,
+    location: {
+      latitude: '',
+      longitude: ''
+    }
+  });
+  const [editingId, setEditingId] = useState(null);
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const fetchRestaurants = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get(`http://localhost:5000/restaurant/user`,
+        { headers: { Authorization: `Bearer ${token}` } 
+      });
+      setRestaurants(res.data.data);
+    } catch (err) {
+      console.error("Failed to load restaurants", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleCheckboxChange = (e) => {
+    setForm({ ...form, isAvailable: e.target.checked });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    console.log("Form data", form);
+    console.log(token);
+
+    try {
+      if (editingId) {
+        await axios.put(`http://localhost:5000/restaurant/${editingId}`, form, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } else {
+        await axios.post(`http://localhost:5000/restaurant`, form, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+      setForm({
         restaurantName: '',
-        address: '',
-        hotline: '',
-        openingHours: '',
-        isAvailable: '',
-        // latitude: '',
-        // longitude: '',
+        Address: '',
+        Hotline: '',
+        OpeningHours: '',
+        isAvailable: true,
+        location: {
+          latitude: '',
+          longitude: ''
+        }
+      });
+      setEditingId(null);
+      fetchRestaurants();
+    } catch (err) {
+      console.error("Submission error", err.response?.data || err);
+    }
+  };
+
+  const handleEdit = (restaurant) => {
+    setForm({
+      restaurantName: restaurant.restaurantName || '',
+      Address: restaurant.Address || '',
+      Hotline: restaurant.Hotline || '',
+      OpeningHours: restaurant.OpeningHours || '',
+      isAvailable: restaurant.isAvailable ?? true,
+      location: restaurant.location || {
+        latitude: restaurant.location?.latitude || '',
+        longitude: restaurant.location?.longitude || ''
+      }
     });
+    setEditingId(restaurant._id);
+  };
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this restaurant?");
+    if (!confirmDelete) return;
 
-    // Fetch existing restaurant data for edit
-    useEffect(() => {
-        if (restaurantId) {
-            axios
-                .get(`http://localhost:5007/restaurants/${restaurantId}`)
-                .then((response) => {
-                    setFormData(response.data);
-                })
-                .catch((error) => {
-                    console.error('Error fetching restaurant data:', error);
-                    setError('Restaurant not found.')
-                });
-        }
-    }, [restaurantId]);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/restaurant/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchRestaurants();
+    } catch (err) {
+      console.error("Delete failed", err);
+    }
+  };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">{editingId ? 'Update' : 'Add'} Restaurant</h2>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow">
+        <input
+          type="text"
+          name="restaurantName"
+          placeholder="Restaurant Name"
+          value={form.restaurantName}
+          onChange={handleChange}
+          className="border px-3 py-2 rounded"
+          required
+        />
+        <input
+          type="text"
+          name="Address"
+          placeholder="Address"
+          value={form.Address}
+          onChange={handleChange}
+          className="border px-3 py-2 rounded"
+          required
+        />
+        <input
+          type="text"
+          name="Hotline"
+          placeholder="Hotline"
+          value={form.Hotline}
+          onChange={handleChange}
+          className="border px-3 py-2 rounded"
+          required
+        />
+        <input
+          type="text"
+          name="OpeningHours"
+          placeholder="Opening Hours"
+          value={form.OpeningHours}
+          onChange={handleChange}
+          className="border px-3 py-2 rounded"
+          required
+        />
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError(null);
-        setLoading(true);
+        <div className="col-span-2 flex items-center justify-between">
+          <div className="flex items-center col-span-2 space-x-2">
+            <input
+              type="checkbox"
+              id="isAvailable"
+              name="isAvailable"
+              checked={form.isAvailable}
+              onChange={handleCheckboxChange}
+              className="h-4 w-4"
+            />
+            <label htmlFor="isAvailable" className="text-sm">Available</label>
+          </div>
 
-        const apiUrl = restaurantId
-            ? `http://localhost:5007/restaurants/${restaurantId}`
-            : 'http://localhost:5007/restaurant'; // For adding restaurant
-
-        const method = restaurantId ? 'PUT' : 'POST'; // POST for new, PUT for updating
-
-        try {
-            await axios({
-                method,
-                url: apiUrl,
-                data: formData,
-            });
-            navigate('/restaurantHome'); // Redirect after success
-        } catch (error) {
-            console.error('Error:', error);
-            setError('Something went wrong. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="max-w-md p-6 bg-white shadow-md rounded-md w-full md:w-1/2">
-                {error && (
-                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                        {error}
-                    </div>
-                )}
-                {loading && <p>Loading...</p>}
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <input
-                        type="text"
-                        name="restaurantName"
-                        value={formData.restaurantName}
-                        placeholder="Restaurant Name"
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                        required
-                    />
-                    <input
-                        type="text"
-                        name="address"
-                        value={formData.address}
-                        placeholder="Address"
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                        required
-                    />
-                    <input
-                        type="text"
-                        name="hotline"
-                        value={formData.hotline}
-                        placeholder="Hotline"
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                        required
-                    />
-                    <input
-                        type="text"
-                        name="openingHours"
-                        value={formData.openingHours}
-                        placeholder="Opening Hours"
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md"
-                        required
-                    />
-            {/* <input
-            type="number"
-            name="latitude"
-            value={formData.latitude}
-            placeholder="Latitude"
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            required
-          />
-          <input
-            type="number"
-            name="longitude"
-            value={formData.longitude}
-            placeholder="Longitude"
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            required
-          /> */}
-                    <div className="flex items-center">
-                        <label className="mr-2">Available:</label>
-                        <input
-                            type="checkbox"
-                            name="isAvailable"
-                            checked={formData.isAvailable}
-                            onChange={(e) => setFormData({ ...formData, isAvailable: e.target.checked })}
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                    >
-                        {restaurantId ? 'Update Restaurant' : 'Add Restaurant'}
-                    </button>
-                </form>
-            </div>
+          <div className="col-span-2 flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={async () => {
+                const location = await getCurrentLocation();
+                setForm((prev) => ({
+                  ...prev,
+                  location: {
+                    latitude: location.latitude,
+                    longitude: location.longitude
+                  }
+                }));
+              }}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Get Current Location
+            </button>
+          </div>
         </div>
-    );
+
+        <button className="col-span-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          {editingId ? 'Update' : 'Add'} Restaurant
+        </button>
+      </form>
+
+      <h2 className="text-xl font-semibold mt-10 mb-4">Restaurants List</h2>
+      <div className="space-y-4">
+        {restaurants.map((r) => (
+          <div key={r._id} className="border p-4 rounded shadow bg-gray-50 w-full">
+            <h3 className="font-bold text-lg">{r.restaurantName}</h3>
+            <p><strong>Address:</strong> {r.Address}</p>
+            <p><strong>Hotline:</strong> {r.Hotline}</p>
+            <p><strong>Opening Hours:</strong> {r.OpeningHours}</p>
+            <p><strong>Available:</strong> <span className={r.isAvailable ? 'text-green-600' : 'text-red-600'}>{r.isAvailable ? 'Yes' : 'No'}</span></p>
+            {user?.role === "RestaurantAdmin" && user._id === r.restaurantAdminId &&
+            (
+              <div className="mt-2 space-x-2 flex justify-end">
+                <button onClick={() => handleEdit(r)} className="px-3 py-1 bg-yellow-500 text-white rounded">
+                  Edit
+                </button>
+                <button onClick={() => handleDelete(r._id)} className="px-3 py-1 bg-red-600 text-white rounded">
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
-export default RestaurantForm;
+export default RestaurantManagement;
+
