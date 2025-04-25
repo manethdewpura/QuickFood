@@ -135,8 +135,8 @@ export const getReadyOrders = async () => {
             restaurant: {
               name: restaurantData.restaurantName,
               Address: restaurantData.Address,
-              longitude: restaurantData.longitude,
-              latitude: restaurantData.latitude,
+              longitude: restaurantData.location.longitude,
+              latitude: restaurantData.location.latitude,
             },
           };
         } catch (error) {
