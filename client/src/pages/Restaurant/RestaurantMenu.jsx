@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const RestaurantMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
-  const restaurantId = "680933938c38597c031b94ac";
+  const restaurantId = "680b0608f204745ccb83e63c";
   const [form, setForm] = useState({
     menuItemName: '',
     price: '',
@@ -11,7 +11,6 @@ const RestaurantMenu = () => {
     cuisineType: '',
     isAvailable: true,
     restaurantId: restaurantId,
-    imageUrl: ''
   });
   const [editingId, setEditingId] = useState(null);
   // const user = JSON.parse(localStorage.getItem('user'));
@@ -19,7 +18,7 @@ const RestaurantMenu = () => {
   const fetchMenuItems = async () => {
     try {
       //todo: update to get only restaurants menu items
-      const restaurantId = '6807ccd42a5fa47095ff7d31'; // Replace with actual restaurant ID
+      const restaurantId = '680b0608f204745ccb83e63c'; // Replace with actual restaurant ID
       const res = await axios.get(`http://localhost:5000/menu/restaurant/${restaurantId}`);
       setMenuItems(res.data.data);
     } catch (err) {
