@@ -134,7 +134,7 @@ export const getReadyOrders = async () => {
             ...order.toObject(),
             restaurant: {
               name: restaurantData.restaurantName,
-              location: restaurantData.location,
+              Address: restaurantData.Address,
               longitude: restaurantData.longitude,
               latitude: restaurantData.latitude,
             },
