@@ -11,13 +11,17 @@ export const createNewOrder = async (orderData) => {
     const { customerId, restaurantId, customerLatitude, customerLongitude } =
       orderData;
     // Get cart items
-    const cartItems = await getCartItems(customerId, restaurantId);
-    if (!cartItems || cartItems.length === 0) {
-      throw new Error("Cart is empty");
+    const cartData = await getCartItems(customerId, restaurantId);
+    console.log("Cart data fetched:", cartData); // Debugging log
+
+    const cartItems = cartData?.items; // Access the items array
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+      console.error("Invalid cart items:", cartItems); // Log invalid cart items
+      throw new Error("Cart is empty or invalid");
     }
+
     const cartItemsWithDetails = await Promise.all(
       cartItems.map(async (item) => {
-        // Use cartItems here
         try {
           const response = await axios.get(
             `http://localhost:5003/menu/${item.menuItemId}`
@@ -233,7 +237,7 @@ export const getRestaurantOrders = async (restaurantId) => {
                 const menuData = menuResponse.data;
                 return {
                   menuItem: menuData,
-                  quantity: item.quantity
+                  quantity: item.quantity,
                 };
               } catch (error) {
                 console.error(
@@ -251,7 +255,7 @@ export const getRestaurantOrders = async (restaurantId) => {
               customerData,
             },
             restaurant: {
-              restaurantData
+              restaurantData,
             },
             items: itemsWithMenuDetails,
           };
