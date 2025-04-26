@@ -233,6 +233,7 @@ export const getRestaurantOrders = async (restaurantId) => {
                 const menuData = menuResponse.data;
                 return {
                   menuItem: menuData,
+                  quantity: item.quantity
                 };
               } catch (error) {
                 console.error(
