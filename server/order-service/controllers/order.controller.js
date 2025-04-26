@@ -152,3 +152,20 @@ export const getOrderById = async (req, res) => {
     });
   }
 };
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await orderService.getAllOrders();
+    return res.status(200).json({
+      success: true,
+      message: "All orders fetched successfully",
+      data: orders,
+    });
+  } catch (error) {
+    console.error("Error in getAllOrders:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Error fetching all orders",
+    });
+  }
+};
