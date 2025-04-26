@@ -102,16 +102,6 @@ const CustomerRestaurantMenu = () => {
     });
   };
 
-  // const handleAddToCart = (menuItem) => {
-  //   setCart((prevCart) => {
-  //     const newCart = { ...prevCart };
-  //     if (!newCart[menuItem._id]) {
-  //       newCart[menuItem._id] = { ...menuItem };
-  //     }
-  //     console.log("cart:", newCart[menuItem._id]);
-  //     return newCart;
-  //   });
-  // };
   const handleAddToCart = (menuItem) => {
     const restaurantId = restaurant._id; // Use the restaurant ID from the current state
   
