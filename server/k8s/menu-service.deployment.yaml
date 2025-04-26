@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: menu-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: menu-service
+  template:
+    metadata:
+      labels:
+        app: menu-service
+    spec:
+      containers:
+      - name: menu-service
+        image: menu-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5003
+        env:
+        - name: MONGODB_URI
+          value: "mongodb://mongodb:27017/menu"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: menu-service
+spec:
+  type: NodePort
+  selector:
+    app: menu-service
+  ports:
+  - port: 80
+    targetPort: 5003
+    nodePort: 30003
