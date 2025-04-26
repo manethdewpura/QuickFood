@@ -34,9 +34,9 @@ const LoginForm = () => {
             } else if (user.role === "DeliveryPersonnel") {
                 navigate("/driver/dashboard");
             } else if (user.role === "SystemAdmin") {
-                navigate("#");
+                navigate("/Admin");
             } else {
-                navigate("#");
+                navigate("/");
             }
 
         } catch (err) {
