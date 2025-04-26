@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaBars } from "react-icons/fa";
-import { FaFacebook, FaTwitter, FaInstagram, FaReceipt, FaSignOutAlt } from "react-icons/fa";
-import { BsPersonCircle } from "react-icons/bs";
+import { FaFacebook, FaTwitter, FaInstagram, FaBars } from "react-icons/fa";
+import { FiFileText } from "react-icons/fi";
+import { TbLogout } from "react-icons/tb";
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 const HamburgerMenu = ({ isLoggedIn }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,8 +14,8 @@ const HamburgerMenu = ({ isLoggedIn }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+    localStorage.removeItem("token");
+    navigate("/");
     window.location.reload();
   };
 
@@ -47,15 +48,20 @@ const HamburgerMenu = ({ isLoggedIn }) => {
           {isLoggedIn ? (
             <>
               <li className="flex flex-row hover:text-blue-500 cursor-pointer">
-                <FaReceipt className="text-2xl mr-5 text-gray-600" />
+                <FiFileText className="text-2xl mr-5 text-gray-600" />
                 Orders
               </li>
               <li className="flex flex-row hover:text-blue-500 cursor-pointer">
-                <BsPersonCircle className="text-2xl mr-5 text-gray-600" />
-                Profile</li>
-              <li className="flex flex-row hover:text-blue-500 cursor-pointer" onClick={handleLogout}>
-                <FaSignOutAlt className="text-2xl mr-5 text-gray-600" />
-                Logout</li>
+                <IoPersonCircleOutline className="text-2xl mr-5 text-gray-700" />
+                Profile
+              </li>
+              <li
+                className="flex flex-row hover:text-blue-500 cursor-pointer"
+                onClick={handleLogout}
+              >
+                <TbLogout className="text-2xl mr-5 text-gray-600" />
+                Logout
+              </li>
             </>
           ) : (
             <>
