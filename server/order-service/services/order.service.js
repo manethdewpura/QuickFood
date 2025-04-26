@@ -291,6 +291,7 @@ export const getOrderById = async (orderId) => {
       ...order.toObject(),
       restaurant: {
         name: restaurantData.restaurantName,
+        address: restaurantData.Address,
         location: restaurantData.location,
       },
     };
