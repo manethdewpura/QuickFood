@@ -14,7 +14,7 @@ export const initializeSocket = (app) => {
   });
 
   io.on('connection', (socket) => {
-    console.log('New client connected:', socket.id);
+    // console.log('New client connected:', socket.id);
     
     // Join a delivery tracking room
     socket.on('joinDeliveryRoom', (deliveryId) => {
