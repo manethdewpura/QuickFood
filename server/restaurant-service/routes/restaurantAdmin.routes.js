@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllRestaurants, updateVerification } from '../services/restaurant.service.js';
+import { getAllRestaurants, updateVerification } from '../controllers/restaurant.controller.js';
 
 const router = express.Router();
 
