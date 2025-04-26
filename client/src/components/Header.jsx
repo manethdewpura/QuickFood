@@ -2,9 +2,12 @@ import React from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import HamburgerMenu from "./HamburgerMenu";
 import { useLocation } from "../context/LocationContext.jsx";
+import Notifications from "./Notifications";
+import { useNavigate } from "react-router-dom";
 
-const Header = ({ isLoggedIn, onLogin, onSignUp, onCartClick }) => {
+const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
   const { location, loading, error } = useLocation();
+  const navigate = useNavigate();
 
   const locationText = loading
     ? "Getting location..."
@@ -41,12 +44,15 @@ const Header = ({ isLoggedIn, onLogin, onSignUp, onCartClick }) => {
       {/* Right Section */}
       <div className="flex items-center space-x-4">
         {isLoggedIn ? (
-          <button
-            onClick={onCartClick}
-            className="p-2 text-gray-600 hover:text-gray-800"
-          >
-            <FaShoppingCart className="text-2xl" />
-          </button>
+          <>
+            <Notifications />
+            <button
+              onClick={() => navigate("/cart")}
+              className="p-2 text-gray-600 hover:text-gray-800"
+            >
+              <FaShoppingCart className="text-2xl" />
+            </button>
+          </>
         ) : (
           <>
             <button
