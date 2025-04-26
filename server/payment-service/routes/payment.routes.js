@@ -1,8 +1,8 @@
 import express from 'express';
-import { generateHashController, handleNotificationController, testController } from '../controllers/payment.controller.js';
+import { createStripeSessionController, handlePaymentSuccessController } from '../controllers/payment.controller.js';
 
 const router = express.Router();
-router.post('/', testController);
-router.post('/notify', handleNotificationController);
+router.post('/create-payment-intent', createStripeSessionController);
+router.post('/success-payment', handlePaymentSuccessController);
 
 export default router;

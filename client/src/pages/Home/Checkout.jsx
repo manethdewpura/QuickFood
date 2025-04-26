@@ -1,18 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { useLocation as useLocationContext } from "../../context/LocationContext.jsx";
+import {
+  Elements,
+  CardElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
 
-const Checkout = () => {
+const stripePromise = loadStripe(
+  "pk_test_51RD89zPuIXCAe5na6392eGLANkFWsolQLENDttXwT6YczwaesCUl3y0QRp07aNPrpgh2jxrwtydKhNJpcRBWg1qP00EZmjzc1L"
+);
+
+// Separate CheckoutForm component that uses Stripe hooks
+const CheckoutForm = () => {
   const location = useLocation();
-//   const navigate = useNavigate();
+  const elements = useElements();
+  const stripe = useStripe();
   const { restaurantId } = location.state || {};
+  const { location: locationContext } = useLocationContext();
   const [restaurantName, setRestaurantName] = useState("");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const shippingFee = 50; // Example shipping fee
-  const token = localStorage.getItem("token"); // Retrieve the token from localStorage
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    amount: "",
+    items: "",
+  });
+  const shippingFee = 500;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!restaurantId) return;
@@ -23,7 +49,6 @@ const Checkout = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        console.log("Checkout response:", response.data.data);
         const { restaurant, items } = response.data.data || {};
         if (
           restaurant?.data?.restaurantName &&
@@ -38,6 +63,11 @@ const Checkout = () => {
             imageUrl: item.menuItem.data.imageUrl,
           }));
           setItems(formattedItems);
+          setFormData((prev) => ({
+            ...prev,
+            items: formattedItems.map((item) => item.menuItemName).join(", "),
+            amount: calculateSubtotal() + shippingFee,
+          }));
         } else {
           console.error("Invalid or incomplete response data:", response.data);
         }
@@ -49,14 +79,88 @@ const Checkout = () => {
       });
   }, [restaurantId, token]);
 
+  useEffect(() => {
+    if (locationContext?.cityName) {
+      setFormData((prev) => ({
+        ...prev,
+        city: locationContext.cityName,
+      }));
+    }
+  }, [locationContext]);
+
   const calculateSubtotal = () =>
     items.reduce((total, item) => total + item.price * item.quantity, 0);
 
-//   const handlePayment = () => {
-//     navigate("/payment", {
-//       state: { restaurantId, items, total: calculateSubtotal() + shippingFee },
-//     });
-//   };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/payment/create-payment-intent",
+        {
+          amount: Math.round((calculateSubtotal() + shippingFee) * 100),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const { clientSecret } = response.data;
+
+      const { paymentIntent, error } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: {
+              name: `${formData.first_name} ${formData.last_name}`,
+              email: formData.email,
+            },
+          },
+        }, 
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      // Create order and receipt after successful payment
+      await axios.post("http://localhost:5000/payment/success-payment", {
+        amount: calculateSubtotal() + shippingFee,
+        currency: "lkr",
+        paymentIntentId: paymentIntent.id,
+        orderData: {
+          restaurantId,
+          customerLatitude: locationContext.latitude,
+          customerLongitude: locationContext.longitude
+        }
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+      alert("Payment successful! Order has been created.");
+      // Redirect or perform any other action after successful payment
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (loading) {
     return <p>Loading checkout details...</p>;
@@ -65,77 +169,156 @@ const Checkout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header isLoggedIn={token !== null} onCartClick={() => {}} />
-      <div>
-        <h1 className="text-2xl font-bold my-4 mx-6">Checkout</h1>
-        <h2 className="text-xl font-semibold mb-4 mx-6">
-          Restaurant: {restaurantName}
-        </h2>
-        <div className="m-6 space-y-4 w-2/5">
-          {items.map((item, index) => (
-            <div
-              key={index}
-              className="p-4 border border-gray-300 rounded-md shadow-md flex justify-between items-center"
-            >
-              <div className="flex items-center space-x-4">
-                {item.imageUrl && (
-                  <img
-                    src={item.imageUrl}
-                    alt={item.menuItemName}
-                    className="w-20 h-20 object-cover rounded-md"
-                  />
-                )}
-                <div className="space-y-2">
+      <div className="flex flex-row justify-between p-6 gap-6">
+        {/* Left side - Cart items */}
+        <div className="w-1/2">
+          <h1 className="text-2xl font-bold mb-4">Checkout</h1>
+          <h2 className="text-xl font-semibold mb-4">
+            Restaurant: {restaurantName}
+          </h2>
+          <div className="space-y-4 mb-6">
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className="p-4 border border-gray-300 rounded-md shadow-md flex justify-between items-center"
+              >
+                <div className="flex items-center space-x-4">
+                  {item.imageUrl && (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.menuItemName}
+                      className="w-20 h-20 object-cover rounded-md"
+                    />
+                  )}
+                  <div className="space-y-2">
+                    <p className="text-gray-700">
+                      <span className="font-semibold">Item Name:</span>{" "}
+                      {item.menuItemName}
+                    </p>
+                    <p className="text-gray-700">
+                      <span className="font-semibold">Quantity:</span>{" "}
+                      {item.quantity}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right space-y-2">
                   <p className="text-gray-700">
-                    <span className="font-semibold">Item Name:</span>{" "}
-                    {item.menuItemName}
+                    <span className="font-semibold">Subtotal:</span> Rs.
+                    {item.price * item.quantity}.00
                   </p>
-                  <p className="text-gray-700">
-                    <span className="font-semibold">Quantity:</span>{" "}
-                    {item.quantity}
+                  <p className="text-gray-400">
+                    <span>Rs.{item.price}.00</span> Each
                   </p>
                 </div>
               </div>
-              <div className="text-right space-y-2">
-                <p className="text-gray-700">
-                  <span className="font-semibold">Subtotal:</span> Rs.
-                  {item.price * item.quantity}.00
-                </p>
-                <p className="text-gray-400">
-                  <span>Rs.{item.price}.00</span> Each
-                </p>
-              </div>
+            ))}
+          </div>
+          <div className="space-y-4 border-t border-gray-200 pt-4">
+            <div className="flex justify-between">
+              <p className="text-gray-700 font-semibold">Subtotal:</p>
+              <p className="text-gray-700">Rs.{calculateSubtotal()}.00</p>
             </div>
-          ))}
+            <div className="flex justify-between">
+              <p className="text-gray-500 font-semibold">Delivery Fee:</p>
+              <p className="text-gray-500">Rs.{shippingFee}.00</p>
+            </div>
+            <hr className="border-gray-300" />
+            <div className="flex justify-between font-bold text-xl">
+              <p className="text-gray-700">Total:</p>
+              <p className="text-gray-700">
+                Rs.{calculateSubtotal() + shippingFee}.00
+              </p>
+            </div>
+          </div>
         </div>
-        {/* Total price section */}
-        <div className="mb-6 pl-28 pr-3 mx-6 w-2/5 space-y-4">
-          <div className="flex justify-between">
-            <p className="text-gray-700 font-semibold">Subtotal:</p>
-            <p className="text-gray-700">Rs.{calculateSubtotal()}.00</p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-gray-500 font-semibold">Delivery Fee:</p>
-            <p className="text-gray-500">Rs.{shippingFee}.00</p>
-          </div>
-          <hr className="border-gray-500" />
-          <div className="flex justify-between font-bold text-xl">
-            <p className="text-gray-700">Total:</p>
-            <p className="text-gray-700">
-              Rs.{calculateSubtotal() + shippingFee}.00
-            </p>
-          </div>
-          {/* <div className="flex justify-end mt-4">
+
+        {/* Right side - Payment Form */}
+        <div className="w-1/2">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800">
+            Payment Details
+          </h2>
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-6 bg-white p-8 rounded-lg shadow-md"
+          >
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="first_name"
+                placeholder="First Name"
+                value={formData.first_name}
+                onChange={handleInputChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="text"
+                name="last_name"
+                placeholder="Last Name"
+                value={formData.last_name}
+                onChange={handleInputChange}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              name="address"
+              placeholder="Address"
+              value={formData.address}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              name="city"
+              placeholder="City"
+              value={formData.city}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <CardElement className="p-3 border border-gray-300 rounded-md" />
             <button
-              onClick={handlePayment}
-              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
             >
-              Pay
+              {isLoading ? "Processing..." : "Pay with Stripe"}
             </button>
-          </div> */}
+          </form>
         </div>
       </div>
       <Footer />
     </div>
+  );
+};
+
+// Main Checkout component that provides the Stripe Elements context
+const Checkout = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 };
 
