@@ -25,6 +25,29 @@ export const getVerfiedRestaurants = async () => {
     }
 };
 
+// Update restaurant verification status by ID
+export const updateVerification = async (id, isVerified) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new Error("Invalid restaurant ID format.");
+        }
+        const updatedVerification = await Restaurant.findByIdAndUpdate(
+            id,
+            { isVerified },
+            { new: true }
+        );
+
+        if (!updatedVerification) {
+            throw new Error("Restaurant not found.");
+        }
+        return updatedVerification;
+    }
+    catch (error) {
+        console.error("Error updating restaurant verification:", error.message);
+        throw new Error("Failed to update restaurant verification.");
+    }
+};
+
 export const getAllRestaurants = async () => {
     try {
         return await Restaurant.find().sort({ createdAt: -1 });
