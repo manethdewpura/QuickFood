@@ -2,8 +2,9 @@ import * as deliveryService from '../services/delivery.service.js';
 
 export const createDelivery = async (req, res) => {
   try {
+    const userId = req.headers['x-user-id'];
     const orderData = req.body;
-    const delivery = await deliveryService.createDelivery(orderData);
+    const delivery = await deliveryService.createDelivery(orderData, userId);
     res.status(201).json(delivery);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -46,10 +47,10 @@ export const updateDriverLocation = async (req, res) => {
 
 export const verifyDeliveryCode = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { code } = req.body;
-    const isValid = await deliveryService.verifyDeliveryCode(id, code);
-    res.status(200).json({ valid: isValid });
+    const { orderId, verificationCode } = req.params;
+    const verifiedDelivery = await deliveryService.verifyDeliveryCode(orderId, verificationCode);
+
+    res.status(200).json(verifiedDelivery);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

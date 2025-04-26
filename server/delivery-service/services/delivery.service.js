@@ -2,91 +2,49 @@ import Delivery from '../models/delivery.model.js';
 import Driver from '../models/driver.model.js';
 import { generateVerificationCode, calculateDistance } from '../utils/helpers.js';
 import { emitLocationUpdate, emitStatusUpdate } from '../socket.js';
+import axios from 'axios'; // Import axios for making HTTP requests
 
-
-// export const createDelivery = async (orderData) => {
-//     try {
-//         // Find the nearest available driver
-//         const driver = await findNearestDriver(orderData.pickupLocation);
-
-//         if (!driver) {
-//             throw new Error('No available drivers found');
-//         }
-
-//         // Generate a verification code for delivery confirmation
-//         const verificationCode = generateVerificationCode();
-
-//         // Create a new delivery
-//         const delivery = new Delivery({
-//             orderId: orderData.orderId,
-//             driverId: driver._id,
-//             restaurantId: orderData.restaurantId,
-//             customerId: orderData.customerId,
-//             pickupLocation: orderData.pickupLocation,
-//             deliveryLocation: orderData.deliveryLocation,
-//             currentLocation: driver.currentLocation,
-//             estimatedDeliveryTime: calculateEstimatedDeliveryTime(
-//                 driver.currentLocation,
-//                 orderData.pickupLocation,
-//                 orderData.deliveryLocation
-//             ),
-//             verificationCode
-//         });
-
-//         // Update driver status to busy
-//         await Driver.findByIdAndUpdate(driver._id, { status: 'busy' });
-
-//         // Save the delivery
-//         const savedDelivery = await delivery.save();
-//         return savedDelivery;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
-export const createDelivery = async (orderData) => {
+export const createDelivery = async (orderData, userId) => {
     try {
         // Find the nearest available driver
-        const driver = await findNearestDriver(orderData.pickupLocation);
+        // const driver = await findNearestDriver({
+        //     lat: orderData.restaurant.latitude,
+        //     lng: orderData.restaurant.longitude
+        // });
 
-        if (!driver) {
-            throw new Error('No available drivers found');
-        }
+        // if (!driver) {
+        //     throw new Error('No available drivers found');
+        // }
+
+        const driver = await Driver.findOne({ userId: userId }); 
+        console.log(driver)
 
         // Generate a verification code for delivery confirmation
         const verificationCode = generateVerificationCode();
 
-        // --- FIX: Always extract coordinates from latitude/longitude or coordinates.lat/lng ---
-        const extractCoordinates = (loc) => {
-            if (!loc) return { lat: 0, lng: 0 };
-            if (loc.coordinates) {
-                return {
-                    lat: loc.coordinates.lat || loc.coordinates.latitude || 0,
-                    lng: loc.coordinates.lng || loc.coordinates.longitude || 0
-                };
-            }
-            return {
-                lat: loc.lat || loc.latitude || 0,
-                lng: loc.lng || loc.longitude || 0
-            };
+        // Extract pickup and delivery coordinates
+        const pickupCoords = {
+            lat: orderData.restaurant.latitude,
+            lng: orderData.restaurant.longitude
         };
-
-        const pickupCoords = extractCoordinates(orderData.pickupLocation);
-        const deliveryCoords = extractCoordinates(orderData.deliveryLocation);
+        const deliveryCoords = {
+            lat: orderData.customerLatitude,
+            lng: orderData.customerLongitude
+        };
 
         // Create a new delivery with the correct structure
         const delivery = new Delivery({
-            orderId: orderData.orderId,
+            orderId: orderData._id,
             driverId: driver.userId,
             restaurantId: orderData.restaurantId,
             customerId: orderData.customerId,
             status: 'assigned',
             pickupLocation: {
-                address: orderData.pickupLocation.address,
+                address: orderData.restaurant.Address,
                 coordinates: pickupCoords
             },
             deliveryLocation: {
-                address: orderData.deliveryLocation.address,
+                address: 'Customer Address', // Replace with actual customer address if available
                 coordinates: deliveryCoords
             },
             currentLocation: {
@@ -115,9 +73,6 @@ export const createDelivery = async (orderData) => {
     }
 };
 
-
-
-
 export const getDeliveryById = async (deliveryId) => {
     try {
         const delivery = await Delivery.findById(deliveryId)
@@ -135,46 +90,6 @@ export const getDeliveryById = async (deliveryId) => {
     }
 };
 
-// export const updateDeliveryStatus = async (deliveryId, status, currentLocation) => {
-//     try {
-//         const delivery = await Delivery.findById(deliveryId);
-
-//         if (!delivery) {
-//             throw new Error('Delivery not found');
-//         }
-
-//         delivery.status = status;
-
-//         if (currentLocation) {
-//             delivery.currentLocation = {
-//                 ...currentLocation,
-//                 updatedAt: new Date()
-//             };
-
-//             // Emit location update via Socket.IO
-//             emitLocationUpdate(deliveryId, {
-//                 deliveryId,
-//                 status,
-//                 currentLocation: delivery.currentLocation
-//             });
-//         }
-
-//         if (status === 'delivered') {
-//             delivery.actualDeliveryTime = new Date();
-//             // Make driver available again
-//             await Driver.findByIdAndUpdate(delivery.driverId, {
-//                 isAvailable: true,
-//                 $inc: { deliveryCount: 1 }
-//             });
-//         }
-
-//         const updatedDelivery = await delivery.save();
-//         return updatedDelivery;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
 export const updateDeliveryStatus = async (deliveryId, status, currentLocation) => {
     try {
         const delivery = await Delivery.findById(deliveryId);
@@ -185,8 +100,16 @@ export const updateDeliveryStatus = async (deliveryId, status, currentLocation) 
 
         if (status === 'picked_up') {
             delivery.pickedUpAt = new Date();
+
         } else if (status === 'delivered') {
             delivery.deliveredAt = new Date();
+
+            // Update the order status to "Delivered"
+            await axios.put(
+                `http://localhost:5005/order/status/${delivery.orderId}`,
+                { orderStatus: "Delivered" }
+            );
+
             await Driver.findByIdAndUpdate(delivery.driverId, {
                 status: 'available',
                 $inc: { totalDeliveries: 1 }
@@ -195,7 +118,6 @@ export const updateDeliveryStatus = async (deliveryId, status, currentLocation) 
 
         // Snap driver location to pickup or delivery point on status change
         if (status === 'picked_up') {
-            // Always snap to restaurant location
             delivery.currentLocation = {
                 coordinates: {
                     lat: delivery.pickupLocation.coordinates.lat,
@@ -230,7 +152,6 @@ export const updateDeliveryStatus = async (deliveryId, status, currentLocation) 
                 status
             });
         } else if (currentLocation) {
-            // Use provided currentLocation for other statuses
             let lat, lng;
             if (currentLocation.coordinates) {
                 lat = currentLocation.coordinates.lat || currentLocation.coordinates.latitude;
@@ -284,11 +205,6 @@ export const updateDeliveryStatus = async (deliveryId, status, currentLocation) 
     }
 };
 
-
-
-
-
-// Add a new function for direct location updates
 export const updateDriverLocation = async (deliveryId, currentLocation) => {
     try {
         const delivery = await Delivery.findById(deliveryId);
@@ -314,8 +230,6 @@ export const updateDriverLocation = async (deliveryId, currentLocation) => {
             updatedAt: new Date()
         };
 
-
-
         // Emit location update via Socket.IO
         emitLocationUpdate(deliveryId, {
             deliveryId,
@@ -330,28 +244,33 @@ export const updateDriverLocation = async (deliveryId, currentLocation) => {
     }
 };
 
-export const verifyDeliveryCode = async (deliveryId, code) => {
+export const getDeliveryByOrderId = async (orderId) => {
     try {
-        const delivery = await Delivery.findById(deliveryId);
-
-        if (!delivery) {
-            throw new Error('Delivery not found');
-        }
-
-        if (delivery.verificationCode !== code) {
-            throw new Error('Invalid verification code');
-        }
-
-        return true;
+        const delivery = await Delivery.findOne({ orderId });
+        return delivery;
     } catch (error) {
         throw error;
+    }
+};
+
+export const verifyDeliveryCode = async (orderId, verificationCode) => {
+    try {
+        const delivery = await Delivery.findOne({ orderId, verificationCode });
+
+        if (!delivery) {
+            return false;
+        }
+        return true;
+
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 };
 
 export const getDeliveriesByDriver = async (driverId) => {
     try {
         const deliveries = await Delivery.find({
-            driverId,
+            driverId:driverId,
             status: { $ne: 'delivered' }
         })
             .populate('orderId', 'items totalAmount')
@@ -369,10 +288,33 @@ export const getDeliveriesByCustomer = async (customerId) => {
         const deliveries = await Delivery.find({ customerId })
             .populate('driverId', 'name phoneNumber vehicleType vehicleNumber rating')
             .populate('orderId', 'items totalAmount')
-            .populate('restaurantId', 'name address phoneNumber')
             .sort({ createdAt: -1 });
 
-        return deliveries;
+        // Fetch restaurant details for each delivery
+        const deliveriesWithRestaurantDetails = await Promise.all(
+            deliveries.map(async (delivery) => {
+                if (delivery.restaurantId) {
+                    try {
+                        const response = await axios.get(
+                            `http://localhost:5007/restaurantAll/${delivery.restaurantId}`
+                        );
+                        if (response.data && response.data.data) {
+                            delivery = delivery.toObject(); // Convert Mongoose document to plain object
+                            delivery.restaurantDetails = response.data.data; // Attach restaurant details
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Failed to fetch restaurant details for ID: ${delivery.restaurantId}`,
+                            error.message
+                        );
+                        delivery.restaurantDetails = null; // Handle failure gracefully
+                    }
+                }
+                return delivery;
+            })
+        );
+
+        return deliveriesWithRestaurantDetails;
     } catch (error) {
         throw error;
     }
@@ -392,32 +334,27 @@ export const getDeliveriesByRestaurant = async (restaurantId) => {
     }
 };
 
-// Helper functions
 const findNearestDriver = async (pickupLocation) => {
     try {
-        // Find all available drivers
         const availableDrivers = await Driver.find({ status: 'available' });
 
         if (availableDrivers.length === 0) {
             return null;
         }
 
-        // Calculate distance for each driver
         const driversWithDistance = availableDrivers.map(driver => {
             const distance = calculateDistance(
                 driver.currentLocation.lat,
                 driver.currentLocation.lng,
-                pickupLocation.coordinates ? pickupLocation.coordinates.lat : pickupLocation.lat,
-                pickupLocation.coordinates ? pickupLocation.coordinates.lng : pickupLocation.lng
+                pickupLocation.lat,
+                pickupLocation.lng
             );
 
             return { driver, distance };
         });
 
-        // Sort by distance
         driversWithDistance.sort((a, b) => a.distance - b.distance);
 
-        // Return the nearest driver
         return driversWithDistance[0].driver;
     } catch (error) {
         throw error;
@@ -426,14 +363,11 @@ const findNearestDriver = async (pickupLocation) => {
 
 const calculateEstimatedDeliveryTime = (driverLocation, pickupLocation, deliveryLocation) => {
     try {
-        // Check if all required location data is present
         if (!driverLocation || !pickupLocation || !deliveryLocation) {
             console.error('Missing location data:', { driverLocation, pickupLocation, deliveryLocation });
-            // Return a default time (e.g., 30 minutes from now) if data is missing
             return new Date(Date.now() + 30 * 60 * 1000);
         }
 
-        // Extract coordinates, handling both lat/lng and latitude/longitude naming conventions
         const driverLat = driverLocation.lat || driverLocation.latitude || 0;
         const driverLng = driverLocation.lng || driverLocation.longitude || 0;
         const pickupLat = pickupLocation.lat || pickupLocation.latitude || 0;
@@ -441,7 +375,6 @@ const calculateEstimatedDeliveryTime = (driverLocation, pickupLocation, delivery
         const deliveryLat = deliveryLocation.lat || deliveryLocation.latitude || 0;
         const deliveryLng = deliveryLocation.lng || deliveryLocation.longitude || 0;
 
-        // Calculate distance from driver to restaurant
         const distanceToRestaurant = calculateDistance(
             driverLat,
             driverLng,
@@ -449,7 +382,6 @@ const calculateEstimatedDeliveryTime = (driverLocation, pickupLocation, delivery
             pickupLng
         );
 
-        // Calculate distance from restaurant to customer
         const distanceToCustomer = calculateDistance(
             pickupLat,
             pickupLng,
@@ -457,24 +389,18 @@ const calculateEstimatedDeliveryTime = (driverLocation, pickupLocation, delivery
             deliveryLng
         );
 
-        // Assume average speed of 30 km/h
-        const averageSpeed = 30; // km/h
+        const averageSpeed = 30;
 
-        // Calculate time in hours
         const timeToRestaurant = distanceToRestaurant / averageSpeed;
         const timeToCustomer = distanceToCustomer / averageSpeed;
 
-        // Add 10 minutes for pickup
-        const pickupTime = 10 / 60; // 10 minutes in hours
+        const pickupTime = 10 / 60;
 
-        // Calculate total time in milliseconds
         const totalTimeInHours = timeToRestaurant + pickupTime + timeToCustomer;
         const totalTimeInMs = totalTimeInHours * 60 * 60 * 1000;
 
-        // Ensure we're returning a valid date
         const estimatedTime = new Date(Date.now() + totalTimeInMs);
 
-        // Validate the date before returning
         if (isNaN(estimatedTime.getTime())) {
             console.error('Invalid date calculation:', {
                 distanceToRestaurant,
@@ -482,50 +408,12 @@ const calculateEstimatedDeliveryTime = (driverLocation, pickupLocation, delivery
                 totalTimeInHours,
                 totalTimeInMs
             });
-            // Return a default time if calculation failed
             return new Date(Date.now() + 30 * 60 * 1000);
         }
 
         return estimatedTime;
     } catch (error) {
         console.error('Error calculating estimated delivery time:', error);
-        // Return a default time if an error occurred
         return new Date(Date.now() + 30 * 60 * 1000);
     }
 };
-
-
-// const calculateEstimatedDeliveryTime = (driverLocation, pickupLocation, deliveryLocation) => {
-//     // Calculate distance from driver to restaurant
-//     const distanceToRestaurant = calculateDistance(
-//         driverLocation.latitude,
-//         driverLocation.longitude,
-//         pickupLocation.latitude,
-//         pickupLocation.longitude
-//     );
-
-//     // Calculate distance from restaurant to customer
-//     const distanceToCustomer = calculateDistance(
-//         pickupLocation.latitude,
-//         pickupLocation.longitude,
-//         deliveryLocation.latitude,
-//         deliveryLocation.longitude
-//     );
-
-//     // Assume average speed of 30 km/h
-//     const averageSpeed = 30; // km/h
-
-//     // Calculate time in hours
-//     const timeToRestaurant = distanceToRestaurant / averageSpeed;
-//     const timeToCustomer = distanceToCustomer / averageSpeed;
-
-//     // Add 10 minutes for pickup
-//     const pickupTime = 10 / 60; // 10 minutes in hours
-
-//     // Calculate total time in milliseconds
-//     const totalTimeInHours = timeToRestaurant + pickupTime + timeToCustomer;
-//     const totalTimeInMs = totalTimeInHours * 60 * 60 * 1000;
-
-//     // Return estimated delivery time
-//     return new Date(Date.now() + totalTimeInMs);
-// };
