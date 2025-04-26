@@ -11,7 +11,7 @@ export const services = [
   },
   {
     route: "/menuRes",
-    target: "http://localhost:5003",
+    target: "http://localhost:5003/menuRes",
     middleware: [
       "authenticate",
       { authorizeRole: ["SystemAdmin", "RestaurantAdmin"] },
@@ -19,7 +19,7 @@ export const services = [
   },
   {
     route: "/menu",
-    target: "http://localhost:5003",
+    target: "http://localhost:5003/menu",
     middleware: ["authenticate"],
   },
   {
@@ -52,6 +52,11 @@ export const services = [
     target: "http://localhost:5007/restaurantAll",
     middleware: ["authenticate"],
   },
+  {
+    route: "/restaurantAdmin",
+    target: "http://localhost:5007/restaurantAdmin",
+    middleware: ["authenticate", { authorizeRole: ["SystemAdmin"] }],
+  },
 ];
 
 export const limiterConfigs = {
@@ -79,11 +84,19 @@ export const limiterConfigs = {
     windowMs: 60 * 1000,
     max: 100,
   },
+  "/menuRes": {
+    windowMs: 60 * 1000,
+    max: 100,
+  },
  "/restaurant": {
     windowMs: 60 * 1000,
     max: 50,
   },
   "/restaurantAll": {
+    windowMs: 60 * 1000,
+    max: 50,
+  },
+  "/restaurantAdmin": {
     windowMs: 60 * 1000,
     max: 50,
   },

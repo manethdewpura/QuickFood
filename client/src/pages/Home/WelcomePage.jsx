@@ -36,7 +36,6 @@ const WelcomePage = () => {
         location="Set Location"
         onLogin={() => console.log("Login clicked")}
         onSignUp={() => console.log("Sign Up clicked")}
-        onCartClick={() => console.log("Cart clicked")}
       />
 
       {/* Main Content */}

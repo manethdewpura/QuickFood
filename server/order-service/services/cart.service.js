@@ -40,6 +40,11 @@ export const getCartItems = async (customerId, restaurantId) => {
   try {
     const cart = await Cart.findOne({ customerId, restaurantId });
     if (!cart) return [];
+    // Fetch restaurant details
+    const restaurantResponse = await axios.get(
+      `http://localhost:5007/restaurantAll/${restaurantId}`
+    );
+    const restaurantDetails = restaurantResponse.data;
     // Fetch menu item details for each cart item
     const cartItemsWithDetails = await Promise.all(
       cart.items.map(async (item) => {
@@ -59,7 +64,10 @@ export const getCartItems = async (customerId, restaurantId) => {
         }
       })
     );
-    return cartItemsWithDetails;
+    return {
+      restaurant: restaurantDetails,
+      items: cartItemsWithDetails,
+    };
   } catch (error) {
     console.error("Error fetching cart items:", error);
     throw new Error("Failed to fetch cart items.");
@@ -74,6 +82,11 @@ export const getCartByCustomerId = async (customerId) => {
     // Process each cart and its items
     const cartsWithDetails = await Promise.all(
       carts.map(async (cart) => {
+        // Fetch restaurant details
+        const restaurantResponse = await axios.get(
+          `http://localhost:5007/restaurantAll/${cart.restaurantId}`
+        );
+        const restaurantDetails = restaurantResponse.data;
         // Fetch menu item details for each item in the cart
         const itemsWithDetails = await Promise.all(
           cart.items.map(async (item) => {
@@ -98,6 +111,7 @@ export const getCartByCustomerId = async (customerId) => {
         );
         return {
           restaurantId: cart.restaurantId,
+          restaurant: restaurantDetails,
           items: itemsWithDetails,
         };
       })

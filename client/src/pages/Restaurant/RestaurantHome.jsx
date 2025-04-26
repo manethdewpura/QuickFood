@@ -5,13 +5,13 @@ const RestaurantHome = () => {
   const navigate = useNavigate();
 
   const cards = [
-    {
-      title: "Menu",
-      description: "Manage your restaurant menu items.",
-      image:
-        "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=800&q=80", 
-      action: () => navigate("/restaurant/menu"),
-    },
+    // {
+    //   title: "Menu",
+    //   description: "Manage your restaurant menu items.",
+    //   image:
+    //     "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=800&q=80", 
+    //   action: () => navigate("/restaurant/menu"),
+    // },
     {
       title: "Management",
       description: "Update restaurant details and settings.",
@@ -24,6 +24,7 @@ const RestaurantHome = () => {
       description: "View and handle incoming customer orders.",
       image:
         "https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=800&q=80",
+      action: () => navigate("/restaurant/incomingOrders"),
     },
   ];
 
