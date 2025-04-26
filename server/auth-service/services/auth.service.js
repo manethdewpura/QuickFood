@@ -71,3 +71,8 @@ export const deleteUserById = async (userId) => {
     }       
     return user;
 };
+
+export const getAllUsersService = async () => {
+    const users = await User.find();
+    return users;
+}
