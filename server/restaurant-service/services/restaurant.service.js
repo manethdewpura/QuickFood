@@ -14,7 +14,17 @@ export const createRestaurant = async (restaurantData) => {
     }
 };
 
-//Get all restaurants
+//Get all verified restaurants
+export const getVerfiedRestaurants = async () => {
+    try {
+        return await Restaurant.find({ isVerified: true }).sort({ createdAt: -1 });
+    }
+    catch (error) {
+        console.error("Error fetching verified restaurants:", error.message);
+        throw new Error("Failed to fetch verified restaurants.");
+    }
+};
+
 export const getAllRestaurants = async () => {
     try {
         return await Restaurant.find().sort({ createdAt: -1 });
