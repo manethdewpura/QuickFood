@@ -13,7 +13,8 @@ const RestaurantManagement = () => {
     location: {
       latitude: '',
       longitude: ''
-    }
+    },
+    isVerified: false,
   });
   const [editingId, setEditingId] = useState(null);
   const user = JSON.parse(localStorage.getItem('user'));
@@ -195,9 +196,16 @@ const RestaurantManagement = () => {
             <p><strong>Hotline:</strong> {r.Hotline}</p>
             <p><strong>Opening Hours:</strong> {r.OpeningHours}</p>
             <p><strong>Available:</strong> <span className={r.isAvailable ? 'text-green-600' : 'text-red-600'}>{r.isAvailable ? 'Yes' : 'No'}</span></p>
+            <p><strong>Verification:</strong> <span className={r.isVerified ? 'text-green-600' : 'text-red-600'}>{r.isVerified ? 'Yes' : 'No'}</span></p>
             {user?.role === "RestaurantAdmin" && user._id === r.restaurantAdminId &&
             (
               <div className="mt-2 space-x-2 flex justify-end">
+                <button onClick={() => window.location.href = `/restaurant/order/${r._id}`} className="px-3 py-1 bg-green-500 text-white rounded">
+                  View Orders
+                </button>
+                <button onClick={() => window.location.href = `/restaurant/menu/${r._id}`} className="px-3 py-1 bg-blue-500 text-white rounded">
+                  Add Menu Items
+                </button>
                 <button onClick={() => handleEdit(r)} className="px-3 py-1 bg-yellow-500 text-white rounded">
                   Edit
                 </button>

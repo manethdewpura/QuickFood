@@ -1,3 +1,4 @@
+import e from 'express';
 import mongoose from 'mongoose';
 
 const restaurantSchema = new mongoose.Schema({
@@ -31,8 +32,9 @@ const restaurantSchema = new mongoose.Schema({
         longitude: { type: Number, required: true }
     },
     isVerified: {
-        type: Boolean,
-        default: false,
+        type: String,
+        default: "Pending",
+        enum: ["Pending", "Approved", "Rejected"]
     },
 }, {
     timestamps: true,
