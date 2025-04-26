@@ -15,28 +15,37 @@ import DriverDashboard from './pages/Delivery/DriverDashboard.jsx';
 import RestaurantDeliveries from './pages/Delivery/RestaurantDeliveries.jsx';
 import TrackDelivery from './pages/Delivery/TrackDelivery.jsx';
 import CreateDriverForm from './pages/Delivery/CreateDriver.jsx';
+import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
+import UserList from './pages/Admin/Users/UserList.jsx';
+import RestaurantList from './pages/Admin/Restaurants/RestaurantList.jsx';
+import OrderList from './pages/Admin/Orders/OrderList.jsx';
+import Notifications from './components/Notifications';
 
 const App = () => {
   return (
-    <LocationProvider>
-      <Routes>
-        <Route path="/" element={<WelcomePage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/payment" element={<PaymentForm />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route path="/signup" element={<SignUpForm />} />
-        <Route path="/restaurantHome" element={<RestaurantHome />} />
-        <Route path="/restaurant/management" element={<RestaurantDetails />} />
-        <Route path="/restaurant/menu" element={<RestaurantMenu />} />
-        <Route path="/driver/delivery/:id" element={<DeliveryPage />} />
-        <Route path="/driver/create" element={<CreateDriverForm />} />
-        <Route path="/restaurant/track-delivery/:id" element={<RestaurantTrackDelivery />} />
-        <Route path="/driver/dashboard" element={<DriverDashboard />} />
-        <Route path="/restaurant/deliveries" element={<RestaurantDeliveries />} />
-        <Route path="/track-delivery/:id" element={<TrackDelivery />} />
-
-      </Routes>
-    </LocationProvider>
+      <LocationProvider>
+        <Routes>
+          <Route path="/" element={<WelcomePage />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/payment" element={<PaymentForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignUpForm />} />
+          <Route path="/restaurantHome" element={<RestaurantHome />} />
+          <Route path="/restaurant/management" element={<RestaurantDetails />} />
+          <Route path="/restaurant/menu" element={<RestaurantMenu />} />
+          <Route path="/driver/delivery/:id" element={<DeliveryPage />} />
+          <Route path="/driver/create" element={<CreateDriverForm />} />
+          <Route path="/restaurant/track-delivery/:id" element={<RestaurantTrackDelivery />} />
+          <Route path="/driver/dashboard" element={<DriverDashboard />} />
+          <Route path="/restaurant/deliveries" element={<RestaurantDeliveries />} />
+          <Route path="/track-delivery/:id" element={<TrackDelivery />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<UserList />} />
+          <Route path="/admin/restaurants" element={<RestaurantList />} />
+          <Route path="/admin/orders" element={<OrderList />} />
+        </Routes>
+        <Notifications />
+      </LocationProvider>
   );
 }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import axios from "axios";
+import { calculateDistance } from "../../utils/helpers";
 
 const HomePage = () => {
   const [token] = React.useState(localStorage.getItem("token"));
@@ -25,7 +26,16 @@ const HomePage = () => {
             }
           )
           .then((response) => {
-            setRestaurants(response.data.data);
+            const restaurantsWithDistance = response.data.data.map(restaurant => ({
+              ...restaurant,
+              distance: calculateDistance(
+                latitude,
+                longitude,
+                restaurant.location.latitude,
+                restaurant.location.longitude
+              )
+            }));
+            setRestaurants(restaurantsWithDistance);
           })
           .catch((error) => {
             console.error("Error fetching restaurants:", error);
@@ -56,10 +66,6 @@ const HomePage = () => {
                   ? `${restaurant.Address}`
                   : restaurant.location}
               </p>
-              <div className="flex items-center mb-2">
-                <span className="text-yellow-500">★</span>
-                <span className="ml-1">{restaurant.Rate || "N/A"}</span>
-              </div>
               <p className="text-gray-600 mb-2">
                 <span className="font-semibold">Hours:</span>{" "}
                 {restaurant.OpeningHours}
