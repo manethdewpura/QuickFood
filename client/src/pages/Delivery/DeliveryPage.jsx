@@ -104,7 +104,7 @@ const DeliveryPage = () => {
           };
 
           const response = await axios.patch(
-            `http://localhost:5002/delivery/${id}/status`,
+            `http://localhost:5000/delivery/${id}/status`,
             { status, currentLocation },
             { headers: { Authorization: `Bearer ${token}` } }
           );

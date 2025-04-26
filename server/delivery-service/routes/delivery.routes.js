@@ -25,8 +25,7 @@ router.patch('/:id/status', deliveryController.updateDeliveryStatus);
 router.patch('/:id/location', deliveryController.updateDriverLocation);
 
 // Verify delivery code
-router.post('/:id/verify', deliveryController.verifyDeliveryCode);
-
+router.get('/verification/:orderId/:verificationCode', deliveryController.verifyDeliveryCode);
 
 
 export default router;

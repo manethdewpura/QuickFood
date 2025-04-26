@@ -3,7 +3,6 @@ import * as driverService from '../services/driver.service.js';
 export const createDriver = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
-    console.log('User ID from headers:', userId); // Log the user ID for debugging
     const driverData = req.body;
     const driver = await driverService.createDriver(driverData, userId);
     res.status(201).json(driver);
@@ -32,6 +31,16 @@ export const getDriverByIdParam = async (req, res) => {
     res.status(200).json(driver);
   } catch (error) {
     res.status(404).json({ message: error.message });
+  }
+};
+
+export const getNearestReadyOrders = async (req, res) => {
+  try {
+    const userId = req.headers['x-user-id'];
+    const nearestOrders = await driverService.getNearestReadyOrders(userId);
+    res.status(200).json(nearestOrders);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
