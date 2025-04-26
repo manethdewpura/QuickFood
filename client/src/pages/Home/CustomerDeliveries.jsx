@@ -31,7 +31,8 @@ const CustomerDeliveries = () => {
 
         setDeliveries(deliveriesWithDriverNames);
         setLoading(false);
-      } catch (err) {
+      } catch (error) {
+        console.error('Error fetching deliveries:', error);
         setError('Failed to load your deliveries');
         setLoading(false);
       }

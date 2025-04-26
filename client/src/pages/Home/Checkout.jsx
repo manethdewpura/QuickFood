@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const Checkout = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
   const { restaurantId } = location.state || {};
   const [restaurantName, setRestaurantName] = useState("");
   const [items, setItems] = useState([]);
@@ -21,12 +23,23 @@ const Checkout = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        const { restaurant, items } = response.data || {};
-        if (restaurant && items) {
-          setRestaurantName(restaurant.restaurantName);
-          setItems(items);
+        console.log("Checkout response:", response.data.data);
+        const { restaurant, items } = response.data.data || {};
+        if (
+          restaurant?.data?.restaurantName &&
+          Array.isArray(items) &&
+          items.length > 0
+        ) {
+          setRestaurantName(restaurant.data.restaurantName);
+          const formattedItems = items.map((item) => ({
+            menuItemName: item.menuItem.data.menuItemName,
+            price: item.menuItem.data.price,
+            quantity: item.quantity,
+            imageUrl: item.menuItem.data.imageUrl,
+          }));
+          setItems(formattedItems);
         } else {
-          console.error("Invalid response data:", response.data);
+          console.error("Invalid or incomplete response data:", response.data);
         }
         setLoading(false);
       })
@@ -39,72 +52,89 @@ const Checkout = () => {
   const calculateSubtotal = () =>
     items.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const handlePayment = () => {
-    navigate("/payment", {
-      state: { restaurantId, items, total: calculateSubtotal() + shippingFee },
-    });
-  };
+//   const handlePayment = () => {
+//     navigate("/payment", {
+//       state: { restaurantId, items, total: calculateSubtotal() + shippingFee },
+//     });
+//   };
 
   if (loading) {
     return <p>Loading checkout details...</p>;
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Checkout</h1>
-      <h2 className="text-xl font-semibold mb-4">
-        Restaurant: {restaurantName}
-      </h2>
-      <div className="mb-6">
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 px-4 py-2">Item Name</th>
-              <th className="border border-gray-300 px-4 py-2">Price</th>
-              <th className="border border-gray-300 px-4 py-2">Quantity</th>
-              <th className="border border-gray-300 px-4 py-2">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.menuItemId}>
-                <td className="border border-gray-300 px-4 py-2">
-                  {item.menuItemName}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Rs.{item.price}.00
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {item.quantity}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  Rs.{item.price * item.quantity}.00
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="flex flex-col min-h-screen">
+      <Header isLoggedIn={token !== null} onCartClick={() => {}} />
+      <div>
+        <h1 className="text-2xl font-bold my-4 mx-6">Checkout</h1>
+        <h2 className="text-xl font-semibold mb-4 mx-6">
+          Restaurant: {restaurantName}
+        </h2>
+        <div className="m-6 space-y-4 w-2/5">
+          {items.map((item, index) => (
+            <div
+              key={index}
+              className="p-4 border border-gray-300 rounded-md shadow-md flex justify-between items-center"
+            >
+              <div className="flex items-center space-x-4">
+                {item.imageUrl && (
+                  <img
+                    src={item.imageUrl}
+                    alt={item.menuItemName}
+                    className="w-20 h-20 object-cover rounded-md"
+                  />
+                )}
+                <div className="space-y-2">
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Item Name:</span>{" "}
+                    {item.menuItemName}
+                  </p>
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Quantity:</span>{" "}
+                    {item.quantity}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right space-y-2">
+                <p className="text-gray-700">
+                  <span className="font-semibold">Subtotal:</span> Rs.
+                  {item.price * item.quantity}.00
+                </p>
+                <p className="text-gray-400">
+                  <span>Rs.{item.price}.00</span> Each
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Total price section */}
+        <div className="mb-6 pl-28 pr-3 mx-6 w-2/5 space-y-4">
+          <div className="flex justify-between">
+            <p className="text-gray-700 font-semibold">Subtotal:</p>
+            <p className="text-gray-700">Rs.{calculateSubtotal()}.00</p>
+          </div>
+          <div className="flex justify-between">
+            <p className="text-gray-500 font-semibold">Delivery Fee:</p>
+            <p className="text-gray-500">Rs.{shippingFee}.00</p>
+          </div>
+          <hr className="border-gray-500" />
+          <div className="flex justify-between font-bold text-xl">
+            <p className="text-gray-700">Total:</p>
+            <p className="text-gray-700">
+              Rs.{calculateSubtotal() + shippingFee}.00
+            </p>
+          </div>
+          {/* <div className="flex justify-end mt-4">
+            <button
+              onClick={handlePayment}
+              className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Pay
+            </button>
+          </div> */}
+        </div>
       </div>
-      <div className="mb-6">
-        <p className="text-gray-700">
-          <span className="font-semibold">Subtotal:</span> Rs.
-          {calculateSubtotal()}.00
-        </p>
-        <p className="text-gray-700">
-          <span className="font-semibold">Shipping Fee:</span> Rs.{shippingFee}
-          .00
-        </p>
-        <p className="text-gray-700 font-bold">
-          <span className="font-semibold">Total:</span> Rs.
-          {calculateSubtotal() + shippingFee}.00
-        </p>
-      </div>
-      <button
-        onClick={handlePayment}
-        className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Pay
-      </button>
+      <Footer />
     </div>
   );
 };

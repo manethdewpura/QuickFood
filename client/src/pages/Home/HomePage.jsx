@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import axios from "axios";
 import { calculateDistance } from "../../utils/helpers";
+import Footer from "../../components/Footer";
 
 const HomePage = () => {
   const [token] = React.useState(localStorage.getItem("token"));
@@ -53,11 +54,6 @@ const HomePage = () => {
     navigate("/customer-restaurant/menu", {
       state: {
         restaurant
-        // restaurantId: restaurant._id,
-        // restaurantName: restaurant.restaurantName,
-        // location: restaurant.location,
-        // latitude: restaurant.latitude,
-        // longitude: restaurant.longitude,
       },
     });
   }
@@ -105,6 +101,7 @@ const HomePage = () => {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
