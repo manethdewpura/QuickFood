@@ -20,6 +20,7 @@ import UserList from './pages/Admin/Users/UserList.jsx';
 import RestaurantList from './pages/Admin/Restaurants/RestaurantList.jsx';
 import OrderList from './pages/Admin/Orders/OrderList.jsx';
 import Notifications from './components/Notifications';
+import CustomerRestaurantMenu from './pages/Home/CustomerRestaurantMenu.jsx';
 
 const App = () => {
   return (
@@ -42,7 +43,9 @@ const App = () => {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserList />} />
           <Route path="/admin/restaurants" element={<RestaurantList />} />
-          <Route path="/admin/orders" element={<OrderList />} />
+          <Route path="/admin/orders" element={<OrderList />} />       
+          <Route path="/customer-restaurant/menu" element={<CustomerRestaurantMenu />} />
+
         </Routes>
         <Notifications />
       </LocationProvider>

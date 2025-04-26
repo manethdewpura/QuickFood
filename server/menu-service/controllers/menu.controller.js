@@ -138,3 +138,41 @@ export const deleteMenuItem = async (req, res) => {
     res.status(404).json({ success: false, message: error.message });
   }
 };
+
+// Get available menu items by restaurant ID
+export const getAvailableMenuItemsByRestaurantId = async (req, res) => {
+  // const { restaurantId } = req.params;
+  try {
+    const menuItems = await menuService.getAvailableMenuItemsByRestaurantId(
+      req.params.restaurantId
+    );
+    res.status(200).json({
+      success: true,
+      message: "Menu items by restaurant id fetched successfully.",
+      data: menuItems,
+    });
+  } catch (error) {
+    console.error(
+      "Error fetching available menu items by restaurant ID:",
+      error
+    );
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get menu items by cuisine type for a specific restaurant
+export const getMenuItemsByCuisineTypeForRestaurant = async (req, res) => {
+  const { restaurantId, cuisineType } = req.params;
+
+  try {
+    const menuItems = await menuService.getMenuItemsByCuisineTypeForRestaurant(restaurantId, cuisineType);
+    res.status(200).json({
+      success: true,
+      message: "Menu items by cuisine type for the restaurant fetched successfully.",
+      data: menuItems,
+    });
+  } catch (error) {
+    console.error("Error fetching menu items by cuisine type for restaurant:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
