@@ -2,11 +2,11 @@ import * as orderService from "../services/order.service.js";
 
 export const createNewOrder = async (req, res) => {
   try {
-    const { customerId, restaurantId, customerLatitude, customerLongitude } =
+    const { restaurantId, customerLatitude, customerLongitude } =
       req.body;
+    const customerId = req.headers["x-user-id"];
     // Validate required fields
     if (
-      !customerId ||
       !restaurantId ||
       !customerLatitude ||
       !customerLongitude
