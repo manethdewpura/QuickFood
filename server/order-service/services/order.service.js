@@ -148,7 +148,10 @@ export const getReadyOrders = async () => {
         }
       })
     );
-    console.log("Orders after fetching restaurant details:", ordersWithRestaurantDetails);
+    console.log(
+      "Orders after fetching restaurant details:",
+      ordersWithRestaurantDetails
+    );
     return ordersWithRestaurantDetails;
   } catch (error) {
     console.error("Error fetching ready orders:", error);
@@ -196,25 +199,66 @@ export const getCustomerOrders = async (customerId) => {
 export const getRestaurantOrders = async (restaurantId) => {
   try {
     const orders = await Order.find({ restaurantId }).sort({ createdAt: -1 });
-    // Fetch customer details for each order
+    // Fetch customer, restaurant, and menu details for each order
     const ordersWithDetails = await Promise.all(
       orders.map(async (order) => {
         try {
-          const response = await axios.get(`http://localhost:5000/customer`, {
-            headers: {
-              "x-user-id": order.customerId,
-            },
-          });
-          const customerData = response.data.data;
+          // Fetch customer details
+          const customerResponse = await axios.get(
+            `http://localhost:5000/auth/user`,
+            {
+              headers: {
+                "x-user-id": order.customerId.toString(), // Pass as string
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDUwMzk1Y2RmMmI2ZjkwYWVjYTA3ZSIsInJvbGUiOiJTeXN0ZW1BZG1pbiIsImlhdCI6MTc0NTY0NjkzMywiZXhwIjoxNzQ2MjUxNzMzfQ.by4Jus4Zb4N7Ux-8vXWR_K96f-KxSzy7C37e6f1nPLE`,
+              },
+            }
+          );
+          const customerData = customerResponse.data;
+          console.log(customerData, "customerData");
+
+          // Fetch restaurant details
+          const restaurantResponse = await axios.get(
+            `http://localhost:5007/restaurantAll/${order.restaurantId}`
+          );
+          const restaurantData = restaurantResponse.data;
+          console.log(restaurantData, "restaurantData");
+
+          // Fetch menu details for each item in the order
+          const itemsWithMenuDetails = await Promise.all(
+            order.items.map(async (item) => {
+              try {
+                const menuResponse = await axios.get(
+                  `http://localhost:5003/menu/${item.menuItemId}`
+                );
+                const menuData = menuResponse.data;
+                return {
+                  menuItem: menuData,
+                };
+              } catch (error) {
+                console.error(
+                  `Error fetching menu item ${item.menuItemId}:`,
+                  error
+                );
+                return item; // Return the item without menu details
+              }
+            })
+          );
+
           return {
             ...order.toObject(),
             customer: {
-              name: customerData.name,
-              location: customerData.location,
+              customerData,
             },
+            restaurant: {
+              restaurantData
+            },
+            items: itemsWithMenuDetails,
           };
         } catch (error) {
-          console.error(`Error fetching customer ${order.customerId}:`, error);
+          console.error(
+            `Error fetching details for order ${order._id}:`,
+            error
+          );
           return order;
         }
       })
@@ -248,5 +292,56 @@ export const getOrderById = async (orderId) => {
   } catch (error) {
     console.error("Error fetching order by ID:", error);
     throw new Error("Failed to fetch order: " + error.message);
+  }
+};
+
+// Get all orders
+export const getAllOrders = async () => {
+  try {
+    const orders = await Order.find({}).sort({ createdAt: -1 });
+    // Fetch restaurant and customer details for each order
+    const ordersWithDetails = await Promise.all(
+      orders.map(async (order) => {
+        try {
+          const restaurantResponse = await axios.get(
+            `http://localhost:5007/restaurantAll/${order.restaurantId}`
+          );
+          const restaurantData = restaurantResponse.data.data;
+
+          const customerResponse = await axios.get(
+            `http://localhost:5000/auth/user`,
+            {
+              headers: {
+                "x-user-id": order.customerId,
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDUwMzk1Y2RmMmI2ZjkwYWVjYTA3ZSIsInJvbGUiOiJTeXN0ZW1BZG1pbiIsImlhdCI6MTc0NTY0NjkzMywiZXhwIjoxNzQ2MjUxNzMzfQ.by4Jus4Zb4N7Ux-8vXWR_K96f-KxSzy7C37e6f1nPLE`,
+              },
+            }
+          );
+          const customerData = customerResponse.data.user;
+
+          return {
+            ...order.toObject(),
+            restaurant: {
+              name: restaurantData.restaurantName,
+              location: restaurantData.location,
+            },
+            customer: {
+              name: customerData.name,
+              location: customerData.location,
+            },
+          };
+        } catch (error) {
+          console.error(
+            `Error fetching restaurant or customer details for order ${order._id}:`,
+            error
+          );
+          return order;
+        }
+      })
+    );
+    return ordersWithDetails;
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    throw new Error("Failed to fetch all orders: " + error.message);
   }
 };
