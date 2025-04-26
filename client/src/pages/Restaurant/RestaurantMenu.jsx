@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-const RestaurantMenu = () => {
+const RestaurantMenu = ({ restaurantId }) => {
   const [menuItems, setMenuItems] = useState([]);
-  const restaurantId = "680b0608f204745ccb83e63c";
+  const { id: restaurantIdFromParams } = useParams();
+  restaurantId = restaurantId || restaurantIdFromParams;
   const [form, setForm] = useState({
     menuItemName: '',
     price: '',
     description: '',
     cuisineType: '',
     isAvailable: true,
-    restaurantId: restaurantId,
+    imageUrl: '',
   });
   const [editingId, setEditingId] = useState(null);
   // const user = JSON.parse(localStorage.getItem('user'));
@@ -18,8 +20,10 @@ const RestaurantMenu = () => {
   const fetchMenuItems = async () => {
     try {
       //todo: update to get only restaurants menu items
-      const restaurantId = '680b0608f204745ccb83e63c'; // Replace with actual restaurant ID
-      const res = await axios.get(`http://localhost:5000/menu/restaurant/${restaurantId}`);
+      // const restaurantId = '680b0608f204745ccb83e63c'; // Replace with actual restaurant ID
+      const res = await axios.get(`http://localhost:5000/menu/restaurant/${restaurantIdFromParams}`,{
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
       setMenuItems(res.data.data);
     } catch (err) {
       console.error("Failed to load menu items", err);
@@ -27,31 +31,39 @@ const RestaurantMenu = () => {
   };
 
   useEffect(() => {
-    fetchMenuItems();
-  }, []);
+    if (restaurantId) fetchMenuItems();
+  }, [restaurantId]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleCheckboxChange = (e) => {
-    setForm({ ...form, isAvailable: e.target.checked });
+    const { name, value, type, checked, files } = e.target;
+    if (type === "file") {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm((prev) => ({ ...prev, imageUrl: reader.result }));
+      };
+      reader.readAsDataURL(files[0]);
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    console.log("Form data", form);
+    const formData = { ...form, restaurantId }
+    console.log("Form data", formData);
     console.log(token);
 
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/menuRes/${editingId}`, form, {
+        await axios.put(`http://localhost:5000/menuRes/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await axios.post(`http://localhost:5000/menuRes`, form, {
+        await axios.post(`http://localhost:5000/menuRes/`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -77,7 +89,7 @@ const RestaurantMenu = () => {
       description: menu.description || '',
       cuisineType: menu.cuisineType || '',
       isAvailable: menu.isAvailable ?? true,
-      imageUrl: menu.imageUrl || ''
+      imageUrl: menu.imageUrl || '',
     });
     setEditingId(menu._id);
   };
@@ -103,7 +115,7 @@ const RestaurantMenu = () => {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow">
         <input
           type="text"
-          name="MenuItemName"
+          name="menuItemName"
           placeholder="Menu Item Name"
           value={form.menuItemName}
           onChange={handleChange}
@@ -145,7 +157,7 @@ const RestaurantMenu = () => {
               id="isAvailable"
               name="isAvailable"
               checked={form.isAvailable}
-              onChange={handleCheckboxChange}
+              onChange={handleChange}
               className="h-4 w-4"
             />
             <label htmlFor="isAvailable" className="text-sm">Available</label>
@@ -168,6 +180,16 @@ const RestaurantMenu = () => {
             >
               Get Current Location
             </button> */}
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              className="border p-2 rounded"
+            />
+            {form.imageUrl && (
+              <img src={form.imageUrl} alt="Preview" className="h-32 object-cover mt-2 rounded" />
+            )}
           </div>
         </div>
 
@@ -204,4 +226,5 @@ const RestaurantMenu = () => {
 };
 
 export default RestaurantMenu;
+
 
