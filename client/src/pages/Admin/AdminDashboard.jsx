@@ -30,7 +30,7 @@ const AdminDashboard = () => {
       <div className="fixed inset-y-0 left-0 z-50">
         <SideNav />
       </div>
-      <div className="ml-16 lg:ml-64 transition-all duration-300">
+      <div className="ml-64">
         <AdminHeader />
         <div className="max-w-7xl mx-auto p-4 mt-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-8">

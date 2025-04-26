@@ -19,7 +19,6 @@ import AdminDashboard from './pages/Admin/AdminDashboard.jsx';
 import UserList from './pages/Admin/Users/UserList.jsx';
 import RestaurantList from './pages/Admin/Restaurants/RestaurantList.jsx';
 import OrderList from './pages/Admin/Orders/OrderList.jsx';
-import Notifications from './components/Notifications';
 import CustomerRestaurantMenu from './pages/Home/CustomerRestaurantMenu.jsx';
 import RestaurantOrders from './pages/Restaurant/RestaurantOrders.jsx';
 
@@ -48,7 +47,6 @@ const App = () => {
           <Route path="/customer-restaurant/menu" element={<CustomerRestaurantMenu />} />
           <Route path="/restaurant/order/:id" element={<RestaurantOrders />} />
         </Routes>
-        <Notifications />
       </LocationProvider>
   );
 }
