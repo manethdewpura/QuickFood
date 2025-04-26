@@ -1,5 +1,6 @@
 import Driver from '../models/driver.model.js';
 import axios from 'axios';
+import { calculateDistance } from '../utils/helpers.js'; // Assuming you have a utility function for distance calculation
 
 export const createDriver = async (driverData, userId) => {
   try {
@@ -59,7 +60,43 @@ export const getDriverByParamId = async (driverId) => {
   }
 };
 
+export const getNearestReadyOrders = async (userId) => {
+  // 1. Find the driver by userId
+  const driver = await Driver.findOne({ userId });
+  if (!driver) throw new Error('Driver not found');
+  if (
+    !driver.currentLocation ||
+    typeof driver.currentLocation.lat !== 'number' ||
+    typeof driver.currentLocation.lng !== 'number'
+  ) {
+    throw new Error('Driver location not set');
+  }
 
+  // 2. Fetch all ready orders from the order service
+  const { data } = await axios.get('http://localhost:5005/order/ready');
+  const readyOrders = data.data || []; // Adjust for your API's structure
+
+  // 3. Sort orders by distance from the driver's current location
+  const ordersWithDistance = readyOrders.map(order => {
+    // Extract restaurant location
+    // const restLoc = order.restaurant?.location;
+    // if (!restLoc || typeof restLoc.latitude !== 'number' || typeof restLoc.longitude !== 'number') {
+    //   return { ...order, distance: Infinity }; // Skip if location is missing
+    // }
+    const distance = calculateDistance(
+      driver.currentLocation.lat,
+      driver.currentLocation.lng,
+      order.restaurant.latitude,
+      order.restaurant.longitude
+    );
+    return { ...order, distance };
+  });
+
+  // 4. Sort and return (optionally, limit to top N)
+  ordersWithDistance.sort((a, b) => a.distance - b.distance);
+
+  return ordersWithDistance; // Or .slice(0, 10) for top 10 nearest
+};
 
 export const updateDriverLocation = async (driverId, location) => {
   try {

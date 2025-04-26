@@ -15,6 +15,7 @@ import DriverDashboard from './pages/Delivery/DriverDashboard.jsx';
 import RestaurantDeliveries from './pages/Delivery/RestaurantDeliveries.jsx';
 import TrackDelivery from './pages/Delivery/TrackDelivery.jsx';
 import CreateDriverForm from './pages/Delivery/CreateDriver.jsx';
+import CustomerDeliveries from './pages/Delivery/CustomerDeliveries.jsx';
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
         <Route path="/driver/dashboard" element={<DriverDashboard />} />
         <Route path="/restaurant/deliveries" element={<RestaurantDeliveries />} />
         <Route path="/track-delivery/:id" element={<TrackDelivery />} />
+        <Route path="/customer/deliveries" element={<CustomerDeliveries />} />
 
       </Routes>
     </LocationProvider>

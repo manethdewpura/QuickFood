@@ -16,7 +16,7 @@ router.post('/', driverController.createDriver);
 // Get driver by ID
 router.get('/', driverController.getDriverById);
 
-
+router.get('/nearest-ready-orders', driverController.getNearestReadyOrders);
 
 // Update driver availability
 router.patch('/availability', driverController.updateDriverAvailability);
