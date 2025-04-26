@@ -1,4 +1,4 @@
-import { registerUser, loginUser, getUserById, updateUserById, deleteUserById } from '../services/auth.service.js';
+import { registerUser, loginUser, getUserById, updateUserById, deleteUserById, getAllUsersService } from '../services/auth.service.js';
 
 export const register = async (req, res) => {
     try {
@@ -55,4 +55,14 @@ export const deleteUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await getAllUsersService();
+        res.status(200).json({ users });
+    }
+    catch ( error ) {
+        res.status(500).json({ message: error.message });
+    }
+}
 
