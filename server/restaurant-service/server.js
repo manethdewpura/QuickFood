@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import restaurantRoutes from './routes/restaurant.routes.js';
 import restaurantAllRoutes from './routes/restaurantAll.routes.js';
+import restaurantAdminRoutes from './routes/restaurantAdmin.routes.js';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ mongoose.connect(process.env.MONGO_URI, { dbName: 'restaurant' })
   
 app.use('/restaurant', restaurantRoutes);
 app.use('/restaurantAll', restaurantAllRoutes);
+app.use('/restaurantAdmin', restaurantAdminRoutes);
 app.use((err, req, res, next) => {
   console.error('Global error:', err);
   res.status(500).json({
