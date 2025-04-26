@@ -21,6 +21,36 @@ export const createRestaurant = async (req, res) => {
 };
 
 //Get all restaurants
+export const getAllVerifiedRestaurants = async (req, res) => {
+    try {
+        const restaurants = await restaurantService.getVerfiedRestaurants();
+        res.status(200).json({
+            success: true,
+            message: "Restaurants data fetched successfully.",
+            data: restaurants,
+        })
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+//Update restaurant verification status by ID
+export const updateVerification = async (req, res) => {
+    try {
+        const { isVerified } = req.body;
+        const updatedVerification = await restaurantService.updateVerification(req.params.id, isVerified);      
+        res.status(200).json({
+            success: true,
+            message: "Restaurant verification status updated successfully.",
+            data: updatedVerification,
+        }); 
+    }
+    catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
 export const getAllRestaurants = async (req, res) => {
     try {
         const restaurants = await restaurantService.getAllRestaurants();

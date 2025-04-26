@@ -52,6 +52,11 @@ export const services = [
     target: "http://localhost:5007/restaurantAll",
     middleware: ["authenticate"],
   },
+  {
+    route: "/restaurantAdmin",
+    target: "http://localhost:5007/restaurantAdmin",
+    middleware: ["authenticate", { authorizeRole: ["SystemAdmin"] }],
+  },
 ];
 
 export const limiterConfigs = {
@@ -88,6 +93,10 @@ export const limiterConfigs = {
     max: 50,
   },
   "/restaurantAll": {
+    windowMs: 60 * 1000,
+    max: 50,
+  },
+  "/restaurantAdmin": {
     windowMs: 60 * 1000,
     max: 50,
   },
