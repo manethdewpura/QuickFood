@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUsers, FaUtensils, FaClipboardList, FaChevronLeft } from 'react-icons/fa';
+import { FaUsers, FaUtensils, FaClipboardList } from 'react-icons/fa';
 
 const SideNav = () => {
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const location = useLocation();
 
   const navItems = [
@@ -13,20 +12,10 @@ const SideNav = () => {
   ];
 
   return (
-    <div 
-      className={`h-screen bg-white shadow-lg fixed left-0 top-0 transition-all duration-300 ease-in-out
-        ${isCollapsed ? 'w-16' : 'w-64'}`}
-    >
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-9 bg-white rounded-full p-1.5 shadow-md"
-      >
-        <FaChevronLeft className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
-      </button>
-
+    <div className="h-screen bg-white shadow-lg fixed left-0 top-0 w-64">
       <div className="p-4 mb-8">
-        <Link to="/admin" className={`text-blue-600 font-bold ${isCollapsed ? 'text-xl' : 'text-2xl'}`}>
-          {isCollapsed ? 'QF' : 'QuickFood'}
+        <Link to="/admin" className="text-blue-600 font-bold text-2xl">
+          QuickFood Admin
         </Link>
       </div>
 
@@ -41,9 +30,7 @@ const SideNav = () => {
                 : 'text-gray-600 hover:bg-gray-100'}`}
           >
             <div className="text-xl">{item.icon}</div>
-            <span className={`transition-opacity duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-100'}`}>
-              {item.title}
-            </span>
+            <span>{item.title}</span>
           </Link>
         ))}
       </nav>

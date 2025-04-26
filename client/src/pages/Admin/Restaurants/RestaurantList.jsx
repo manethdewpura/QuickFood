@@ -1,35 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheck, FaTimes, FaSearch } from "react-icons/fa";
 import AdminHeader from "../../../components/Admin/AdminHeader";
 import SideNav from "../../../components/Admin/SideNav";
+import axios from "axios";
 
 const RestaurantList = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [restaurants] = useState([
-    {
-      id: 1,
-      name: "Pizza Place",
-      owner: "John Doe",
-      status: "Pending",
-      email: "pizza@example.com",
-    },
-    {
-      id: 2,
-      name: "Burger Hub",
-      owner: "Jane Smith",
-      status: "Verified",
-      email: "burger@example.com",
-    },
-  ]);
+  const [restaurants, setRestaurants] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+    axios
+      .get("http://localhost:5000/restaurantAdmin/all", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setRestaurants(response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching restaurants:", error);
+      });
+  }, []);
 
   const filteredRestaurants = restaurants.filter((restaurant) =>
-    restaurant.name.toLowerCase().includes(searchQuery.toLowerCase())
+    restaurant.restaurantName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleVerify = async (id) => {
     try {
-      // Add API call to verify restaurant
-      console.log("Verifying restaurant:", id);
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5000/restaurantAdmin/verify/${id}`,
+        { isVerified: "Approved" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      window.location.reload();
     } catch (error) {
       console.error("Error verifying restaurant:", error);
     }
@@ -37,8 +48,15 @@ const RestaurantList = () => {
 
   const handleReject = async (id) => {
     try {
-      // Add API call to reject restaurant
-      console.log("Rejecting restaurant:", id);
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5000/restaurantAdmin/verify/${id}`,
+        { isVerified: "Rejected" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      window.location.reload();
     } catch (error) {
       console.error("Error rejecting restaurant:", error);
     }
@@ -49,7 +67,7 @@ const RestaurantList = () => {
       <div className="fixed inset-y-0 left-0 z-50">
         <SideNav />
       </div>
-      <div className="ml-16 lg:ml-64 transition-all duration-300">
+      <div className="ml-64 transition-all duration-300">
         <AdminHeader />
         <div className="max-w-7xl mx-auto p-4 mt-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">
@@ -80,7 +98,7 @@ const RestaurantList = () => {
                     Owner
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Email
+                    Telephone
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Status
@@ -92,38 +110,40 @@ const RestaurantList = () => {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredRestaurants.map((restaurant) => (
-                  <tr key={restaurant.id}>
+                  <tr key={restaurant._id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {restaurant.name}
+                      {restaurant.restaurantName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {restaurant.owner}
+                      {restaurant.restaurantAdminId}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {restaurant.email}
+                      {restaurant.Hotline}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 text-xs rounded-full ${
-                          restaurant.status === "Verified"
+                          restaurant.isVerified === "Approved"
                             ? "bg-green-100 text-green-800"
+                            : restaurant.isVerified === "Rejected"
+                            ? "bg-red-100 text-red-800"
                             : "bg-yellow-100 text-yellow-800"
                         }`}
                       >
-                        {restaurant.status}
+                        {restaurant.isVerified}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {restaurant.status === "Pending" && (
+                      {restaurant.isVerified === "Pending" && (
                         <div className="flex gap-3">
                           <button
-                            onClick={() => handleVerify(restaurant.id)}
+                            onClick={() => handleVerify(restaurant._id)}
                             className="text-green-600 hover:text-green-900"
                           >
                             <FaCheck />
                           </button>
                           <button
-                            onClick={() => handleReject(restaurant.id)}
+                            onClick={() => handleReject(restaurant._id)}
                             className="text-red-600 hover:text-red-900"
                           >
                             <FaTimes />
