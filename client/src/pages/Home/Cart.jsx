@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const Cart = () => {
   const [cartItemsByRestaurant, setCartItemsByRestaurant] = useState({});
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token"); // Retrieve the token from localStorage
-  const navigate = useNavigate(); // Initialize useNavigate
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!token) {
@@ -21,19 +22,19 @@ const Cart = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        const cartData = response.data.data; // Access the `data` array
+        const cartData = response.data.data;
         if (cartData.length > 0) {
           // Group items by restaurantName
           const groupedItems = cartData.reduce((acc, cart) => {
             const restaurantId = cart.restaurantId;
-            const restaurantName = cart.restaurant.data.restaurantName; // Extract restaurant name
+            const restaurantName = cart.restaurant.data.restaurantName;
             if (!acc[restaurantName]) {
               acc[restaurantName] = { restaurantId, items: [] };
             }
             cart.items.forEach((item) => {
               acc[restaurantName].items.push({
-                ...item.menuItem.data, // Extract the `data` object from `menuItem`
-                quantity: item.quantity, // Add the quantity
+                ...item.menuItem.data,
+                quantity: item.quantity,
               });
             });
             return acc;
@@ -50,7 +51,7 @@ const Cart = () => {
 
   const handleCheckout = (restaurantId) => {
     console.log(`Checkout for restaurant: ${restaurantId}`);
-    navigate("/checkout", { state: { restaurantId } }); // Navigate to checkout page with state
+    navigate("/checkout", { state: { restaurantId } });
   };
 
   if (loading) {
@@ -112,6 +113,7 @@ const Cart = () => {
           </div>
         )
       )}
+      <Footer />
     </div>
   );
 };

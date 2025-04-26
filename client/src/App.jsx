@@ -13,7 +13,7 @@ import DeliveryPage from "./pages/Delivery/DeliveryPage.jsx";
 import RestaurantTrackDelivery from "./pages/Delivery/RestaurantTrackDelivery.jsx";
 import DriverDashboard from "./pages/Delivery/DriverDashboard.jsx";
 import RestaurantDeliveries from "./pages/Delivery/RestaurantDeliveries.jsx";
-import TrackDelivery from "./pages/Delivery/TrackDelivery.jsx";
+import TrackDelivery from "./pages/Home/TrackDelivery.jsx";
 import CreateDriverForm from "./pages/Delivery/CreateDriver.jsx";
 import AdminDashboard from "./pages/Admin/AdminDashboard.jsx";
 import UserList from "./pages/Admin/Users/UserList.jsx";
@@ -23,7 +23,7 @@ import CustomerRestaurantMenu from "./pages/Home/CustomerRestaurantMenu.jsx";
 import RestaurantOrders from "./pages/Restaurant/RestaurantOrders.jsx";
 import Cart from "./pages/Home/Cart.jsx";
 import Checkout from "./pages/Home/Checkout.jsx";
-import CustomerDeliveries from './pages/Delivery/CustomerDeliveries.jsx';
+import CustomerDeliveries from './pages/Home/CustomerDeliveries.jsx';
 
 const App = () => {
   return (
@@ -59,7 +59,8 @@ const App = () => {
         />
         <Route path="/restaurant/order/:id" element={<RestaurantOrders />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />        <Route path="/customer/deliveries" element={<CustomerDeliveries />} />
+        <Route path="/checkout" element={<Checkout />} />        
+        <Route path="/customer/deliveries" element={<CustomerDeliveries />} />
 
       </Routes>
     </LocationProvider>

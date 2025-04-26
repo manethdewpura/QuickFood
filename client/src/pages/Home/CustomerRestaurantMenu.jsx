@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const CustomerRestaurantMenu = () => {
   const location = useLocation();
@@ -9,19 +10,17 @@ const CustomerRestaurantMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [groupedMenus, setGroupedMenus] = useState({});
   const [loading, setLoading] = useState(true);
-  const [activePanel, setActivePanel] = useState("available"); // Default panel
-  const [cart, setCart] = useState({}); // To store cart items with quantities
+  const [activePanel, setActivePanel] = useState("available");
+  const [cart, setCart] = useState({});
   const token = localStorage.getItem("token");
 
   const fetchMenuItems = (endpoint, groupByCuisine = false) => {
-    // const token = localStorage.getItem("token");
     setLoading(true);
     axios
       .get(endpoint, { headers: { Authorization: `Bearer ${token}` } })
       .then((response) => {
         const menus = response.data.data;
 
-        // Initialize cart with default quantity of 1 for all menu items
         const initialCart = menus.reduce((acc, menu) => {
           acc[menu._id] = { ...menu, quantity: 1 };
           return acc;
@@ -53,7 +52,6 @@ const CustomerRestaurantMenu = () => {
 
   useEffect(() => {
     if (restaurant?._id) {
-      // Fetch available menu items by default
       fetchMenuItems(
         `http://localhost:5000/menu/restaurant/${restaurant._id}/available`
       );
@@ -86,7 +84,6 @@ const CustomerRestaurantMenu = () => {
       if (newCart[menuItemId]) {
         newCart[menuItemId].quantity += 1;
       }
-      // console.log(newCart[menuItemId]);
       return newCart;
     });
   };
@@ -97,30 +94,29 @@ const CustomerRestaurantMenu = () => {
       if (newCart[menuItemId] && newCart[menuItemId].quantity > 1) {
         newCart[menuItemId].quantity -= 1;
       }
-      // console.log(newCart[menuItemId]);
       return newCart;
     });
   };
 
   const handleAddToCart = (menuItem) => {
-    const restaurantId = restaurant._id; // Use the restaurant ID from the current state
-  
+    const restaurantId = restaurant._id;
     const payload = {
       restaurantId,
       items: [
         {
           menuItemId: menuItem._id,
-          quantity: cart[menuItem._id]?.quantity || 1, // Use the current quantity or default to 1
+          quantity: cart[menuItem._id]?.quantity || 1,
         },
       ],
     };
-  
+
     axios
       .post("http://localhost:5000/cart/add", payload, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         console.log("Cart item added successfully:", response.data);
+        alert(`${menuItem.menuItemName} added to cart successfully!`);
       })
       .catch((error) => {
         console.error("Error adding item to cart:", error);
@@ -233,7 +229,7 @@ const CustomerRestaurantMenu = () => {
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                   onClick={() => handleAddToCart(menuItem)}
-                  disabled={!menuItem.isAvailable} // Disable if not available
+                  disabled={!menuItem.isAvailable}
                 >
                   Add to Cart
                 </button>
@@ -294,7 +290,7 @@ const CustomerRestaurantMenu = () => {
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                   onClick={() => handleAddToCart(menuItem)}
-                  disabled={!menuItem.isAvailable} // Disable if not available
+                  disabled={!menuItem.isAvailable}
                 >
                   Add to Cart
                 </button>
@@ -360,7 +356,7 @@ const CustomerRestaurantMenu = () => {
                           : "bg-gray-300 text-gray-500 cursor-not-allowed"
                       }`}
                       onClick={() => handleAddToCart(menuItem)}
-                      disabled={!menuItem.isAvailable} // Disable if not available
+                      disabled={!menuItem.isAvailable}
                     >
                       Add to Cart
                     </button>
@@ -370,6 +366,7 @@ const CustomerRestaurantMenu = () => {
             </div>
           </div>
         ))}
+      <Footer />
     </div>
   );
 };
