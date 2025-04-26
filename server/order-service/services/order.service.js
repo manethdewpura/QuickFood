@@ -284,7 +284,7 @@ export const getOrderById = async (orderId) => {
     }
     // Fetch restaurant details
     const response = await axios.get(
-      `http://localhost:5007/restaurant/${order.restaurantId}`
+      `http://localhost:5007/restaurantAll/${order.restaurantId}`
     );
     const restaurantData = response.data.data;
     return {
