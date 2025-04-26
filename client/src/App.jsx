@@ -21,6 +21,7 @@ import RestaurantList from './pages/Admin/Restaurants/RestaurantList.jsx';
 import OrderList from './pages/Admin/Orders/OrderList.jsx';
 import Notifications from './components/Notifications';
 import CustomerRestaurantMenu from './pages/Home/CustomerRestaurantMenu.jsx';
+import RestaurantOrders from './pages/Restaurant/RestaurantOrders.jsx';
 
 const App = () => {
   return (
@@ -33,7 +34,7 @@ const App = () => {
           <Route path="/signup" element={<SignUpForm />} />
           <Route path="/restaurantHome" element={<RestaurantHome />} />
           <Route path="/restaurant/management" element={<RestaurantDetails />} />
-          <Route path="/restaurant/menu" element={<RestaurantMenu />} />
+          <Route path="/restaurant/menu/:id" element={<RestaurantMenu />} />
           <Route path="/driver/delivery/:id" element={<DeliveryPage />} />
           <Route path="/driver/create" element={<CreateDriverForm />} />
           <Route path="/restaurant/track-delivery/:id" element={<RestaurantTrackDelivery />} />
@@ -45,7 +46,7 @@ const App = () => {
           <Route path="/admin/restaurants" element={<RestaurantList />} />
           <Route path="/admin/orders" element={<OrderList />} />       
           <Route path="/customer-restaurant/menu" element={<CustomerRestaurantMenu />} />
-
+          <Route path="/restaurant/order/:id" element={<RestaurantOrders />} />
         </Routes>
         <Notifications />
       </LocationProvider>
