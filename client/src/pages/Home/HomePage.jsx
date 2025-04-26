@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import axios from "axios";
 import { calculateDistance } from "../../utils/helpers";
@@ -6,6 +7,7 @@ import { calculateDistance } from "../../utils/helpers";
 const HomePage = () => {
   const [token] = React.useState(localStorage.getItem("token"));
   const [restaurants, setRestaurants] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!token) {
@@ -47,6 +49,19 @@ const HomePage = () => {
     );
   }, [token]);
 
+  const handleViewMenu = (restaurant) => {
+    navigate("/customer-restaurant/menu", {
+      state: {
+        restaurant
+        // restaurantId: restaurant._id,
+        // restaurantName: restaurant.restaurantName,
+        // location: restaurant.location,
+        // latitude: restaurant.latitude,
+        // longitude: restaurant.longitude,
+      },
+    });
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header isLoggedIn={token !== null} onCartClick={() => {}} />
@@ -81,7 +96,8 @@ const HomePage = () => {
                 </p>
               )}
               <div className="mt-4">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                onClick={() => handleViewMenu(restaurant)}>
                   View Menu
                 </button>
               </div>
