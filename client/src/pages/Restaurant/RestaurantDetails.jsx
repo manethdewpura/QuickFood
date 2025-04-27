@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getCurrentLocation } from '../../utils/location.util';
+import RestaurantAdminHeader from './RestaurantHeader.jsx';
+import Footer from '../../components/Footer.jsx';
 
 const RestaurantManagement = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -14,7 +16,6 @@ const RestaurantManagement = () => {
       latitude: '',
       longitude: ''
     },
-    isVerified: false,
   });
   const [editingId, setEditingId] = useState(null);
   const user = JSON.parse(localStorage.getItem('user'));
@@ -109,6 +110,8 @@ const RestaurantManagement = () => {
   };
 
   return (
+    <>
+    <RestaurantAdminHeader/>
     <div className="max-w-4xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">{editingId ? 'Update' : 'Add'} Restaurant</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow">
@@ -196,7 +199,15 @@ const RestaurantManagement = () => {
             <p><strong>Hotline:</strong> {r.Hotline}</p>
             <p><strong>Opening Hours:</strong> {r.OpeningHours}</p>
             <p><strong>Available:</strong> <span className={r.isAvailable ? 'text-green-600' : 'text-red-600'}>{r.isAvailable ? 'Yes' : 'No'}</span></p>
-            <p><strong>Verification:</strong> <span className={r.isVerified ? 'text-green-600' : 'text-red-600'}>{r.isVerified ? 'Yes' : 'No'}</span></p>
+            <p><strong>Verification:</strong> 
+              <span className={
+                r.isVerified === 'Approved' ? 'text-green-600' : 
+                r.isVerified === 'Rejected' ? 'text-red-600' : 
+                'text-yellow-600'
+              }>
+                {r.isVerified}
+              </span>
+            </p>
             {user?.role === "RestaurantAdmin" && user._id === r.restaurantAdminId &&
             (
               <div className="mt-2 space-x-2 flex justify-end">
@@ -218,6 +229,8 @@ const RestaurantManagement = () => {
         ))}
       </div>
     </div>
+    <Footer/>
+    </>
   );
 };
 

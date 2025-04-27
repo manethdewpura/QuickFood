@@ -172,23 +172,70 @@ export const getCustomerOrders = async (customerId) => {
       orders.map(async (order) => {
         try {
           const response = await axios.get(
-            `http://localhost:5007/restaurant/${order.restaurantId}`
+            `http://localhost:5007/restaurantAll/${order.restaurantId}`
           );
           const restaurantData = response.data.data;
 
+          const itemsWithMenuDetails = await Promise.all(
+            order.items.map(async (item) => {
+              try {
+                const menuResponse = await axios.get(
+                  `http://localhost:5003/menu/${item.menuItemId}`
+                );
+                const menuData = menuResponse.data;
+                return {
+                  menuItemId: item.menuItemId,
+                  quantity: item.quantity,
+                  menuItemDetails: menuData,
+                };
+              } catch (error) {
+                return {
+                  menuItemId: item.menuItemId,
+                  quantity: item.quantity,
+                  menuItemDetails: {},
+                };
+              }
+            })
+          );
+        console.log(order._id)
+          const deliveryResponse = await axios
+            .get(`http://localhost:5002/delivery/order/${order._id}`)
+            .catch((error) => {
+              return { data: {} };
+            });
+            console.log(deliveryResponse.data, "deliveryResponse")
+
           return {
-            ...order.toObject(),
+            orderId: order._id,
+            customerId: order.customerId,
             restaurant: {
-              name: restaurantData.restaurantName,
-              location: restaurantData.location,
+              id: order.restaurantId,
+              name: restaurantData?.restaurantName || "Unknown",
+              location: restaurantData?.location || {},
             },
+            items: itemsWithMenuDetails,
+            totalAmount: order.totalAmount,
+            orderStatus: order.orderStatus,
+            deliveryDetails: deliveryResponse.data,
           };
         } catch (error) {
           console.error(
             `Error fetching restaurant ${order.restaurantId}:`,
             error
           );
-          return order;
+          return {
+            orderId: order._id,
+            customerId: order.customerId,
+            restaurant: {
+              id: order.restaurantId,
+              name: "Unknown",
+              location: {},
+            },
+            items: order.items,
+            totalAmount: order.totalAmount,
+            orderStatus: order.orderStatus,
+            deliveryDetails: {}, // Return empty data for delivery
+          };
         }
       })
     );
@@ -361,9 +408,8 @@ export const updateOrderAccept = async (orderId) => {
     order.isOrderAccepted = true;
     await order.save();
     return order;
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error updating order acceptance:", error);
     throw new Error("Failed to update order acceptance: " + error.message);
   }
-}
+};

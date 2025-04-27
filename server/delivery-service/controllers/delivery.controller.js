@@ -88,7 +88,7 @@ export const getDeliveryByOrderId = async (req, res) => {
       const delivery = await deliveryService.getDeliveryByOrderId(orderId);
       res.status(200).json(delivery);
   } catch (error) {
-      res.status(404).json({ message: error.message });
+      res.status(400).json({ message: error.message });
   }
 };
 
