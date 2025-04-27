@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FaShoppingCart, FaSearch } from "react-icons/fa";
 import HamburgerMenu from "./HamburgerMenu";
 import { useLocation } from "../context/LocationContext.jsx";
@@ -8,6 +8,51 @@ import { useNavigate } from "react-router-dom";
 const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
   const { location, loading, error } = useLocation();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const searchRef = useRef(null);
+  const token = localStorage.getItem("token");
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowResults(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSearch = async (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/restaurantAll/search?query=${encodeURIComponent(
+          query
+        )}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        setSearchResults(data.data);
+        setShowResults(true);
+      }
+    } catch (error) {
+      console.error("Error searching restaurants:", error);
+    }
+  };
 
   const locationText = loading
     ? "Getting location..."
@@ -31,13 +76,46 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
       {/* Middle Section */}
       {isLoggedIn && (
         <div className="flex items-center justify-center flex-grow">
-          <div className="relative w-full max-w-md">
-            <input
-              type="text"
-              placeholder="Search for food..."
-              className="w-full p-2 pl-10 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+          <div ref={searchRef} className="relative w-full max-w-md">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearch}
+                onFocus={() => setShowResults(true)}
+                placeholder="Search for Restaurants..."
+                className="w-full p-2 pl-10 border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+            </div>
+
+            {/* Search Results Dropdown */}
+            {showResults && searchResults.length > 0 && (
+              <div className="absolute mt-2 w-full bg-white border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                {searchResults.map((restaurant) => (
+                  <div
+                    key={restaurant._id}
+                    className="p-3 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      navigate("/customer-restaurant/menu", {
+                        state: {
+                          restaurant
+                        },
+                      });
+                      setShowResults(false);
+                      setSearchQuery("");
+                    }}
+                  >
+                    <h3 className="font-semibold">
+                      {restaurant.restaurantName}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {restaurant.Address}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
