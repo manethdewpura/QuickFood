@@ -1,5 +1,6 @@
 import * as driverService from '../services/driver.service.js';
 
+// Create a new driver
 export const createDriver = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
@@ -11,6 +12,7 @@ export const createDriver = async (req, res) => {
   }
 };
 
+//get driver by id
 export const getDriverById = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
@@ -21,6 +23,7 @@ export const getDriverById = async (req, res) => {
   }
 };
 
+//get driver by id param
 export const getDriverByIdParam = async (req, res) => {
   try {
     const { id } = req.params;
@@ -34,6 +37,7 @@ export const getDriverByIdParam = async (req, res) => {
   }
 };
 
+//get nearest ready orders for the driver
 export const getNearestReadyOrders = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
@@ -44,6 +48,7 @@ export const getNearestReadyOrders = async (req, res) => {
   }
 };
 
+//update driver location
 export const updateDriverLocation = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
@@ -55,6 +60,7 @@ export const updateDriverLocation = async (req, res) => {
   }
 };
 
+//update driver availability
 export const updateDriverAvailability = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
@@ -66,6 +72,7 @@ export const updateDriverAvailability = async (req, res) => {
   }
 };
 
+//get all available drivers
 export const getAllAvailableDrivers = async (req, res) => {
   try {
     const drivers = await driverService.getAllAvailableDrivers();
@@ -75,6 +82,7 @@ export const getAllAvailableDrivers = async (req, res) => {
   }
 };
 
+//update driver rating
 export const updateDriverRating = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
@@ -86,6 +94,7 @@ export const updateDriverRating = async (req, res) => {
   }
 };
 
+//check if a driver exists for the authenticated user
 export const checkDriverByUserId = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];

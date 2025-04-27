@@ -1,5 +1,6 @@
 import * as deliveryService from '../services/delivery.service.js';
 
+//create a new delivery
 export const createDelivery = async (req, res) => {
   try {
     const userId = req.headers['x-user-id'];
@@ -11,6 +12,7 @@ export const createDelivery = async (req, res) => {
   }
 };
 
+//get delivery by id
 export const getDeliveryById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -21,6 +23,7 @@ export const getDeliveryById = async (req, res) => {
   }
 };
 
+//update delivery status
 export const updateDeliveryStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -32,7 +35,7 @@ export const updateDeliveryStatus = async (req, res) => {
   }
 };
 
-// Add this to your existing controller
+//update driver location
 export const updateDriverLocation = async (req, res) => {
     try {
       const { id } = req.params;
@@ -44,7 +47,7 @@ export const updateDriverLocation = async (req, res) => {
     }
   };
   
-
+//verify delivery code
 export const verifyDeliveryCode = async (req, res) => {
   try {
     const { orderId, verificationCode } = req.params;
@@ -56,6 +59,7 @@ export const verifyDeliveryCode = async (req, res) => {
   }
 };
 
+//get deliveries by driver id
 export const getDeliveriesByDriver = async (req, res) => {
   try {
     const driverId = req.headers['x-user-id'];
@@ -66,6 +70,7 @@ export const getDeliveriesByDriver = async (req, res) => {
   }
 };
 
+//get deliveries by customer id
 export const getDeliveriesByCustomer = async (req, res) => {
   try {
     const customerId = req.headers['x-user-id'];
@@ -76,7 +81,7 @@ export const getDeliveriesByCustomer = async (req, res) => {
   }
 };
 
-
+//get deliveries by order id
 export const getDeliveryByOrderId = async (req, res) => {
   try {
       const { orderId } = req.params;
@@ -87,6 +92,7 @@ export const getDeliveryByOrderId = async (req, res) => {
   }
 };
 
+//get deliveries by restaurant id
 export const getDeliveriesByRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;
