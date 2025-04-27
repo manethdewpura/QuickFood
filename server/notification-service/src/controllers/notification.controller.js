@@ -58,6 +58,7 @@ export const markAsRead = async (req, res) => {
   }
 };
 
+// Send order confirmation email
 export const sendOrderConfirmation = async (req, res) => {
     try {
         const { name, email, orderId } = req.body;
@@ -68,6 +69,7 @@ export const sendOrderConfirmation = async (req, res) => {
     }
 };
 
+// Send delivery update email
 export const sendDeliveryUpdate = async (req, res) => {
     try {
         const { name, email, orderId, status } = req.body;

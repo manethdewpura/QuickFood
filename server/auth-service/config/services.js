@@ -2,12 +2,18 @@ export const services = [
   {
     route: "/delivery",
     target: "http://localhost:5002/delivery",
-    middleware: ["authenticate", { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] }],
+    middleware: [
+      "authenticate",
+      { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] },
+    ],
   },
-   {
+  {
     route: "/driver",
     target: "http://localhost:5002/driver",
-    middleware: ["authenticate", { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] }],
+    middleware: [
+      "authenticate",
+      { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] },
+    ],
   },
   {
     route: "/menuRes",
@@ -88,7 +94,7 @@ export const limiterConfigs = {
     windowMs: 60 * 1000,
     max: 100,
   },
- "/restaurant": {
+  "/restaurant": {
     windowMs: 60 * 1000,
     max: 50,
   },

@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { getCurrentLocation } from '../../utils/location.util';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { getCurrentLocation } from "../../utils/location.util";
 
 const CreateDriver = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    vehicleType: '',
-    vehicleNumber: '',
-    licenseNumber: '',
-    phoneNumber: '',
-    status: 'available',
+    name: "",
+    vehicleType: "",
+    vehicleNumber: "",
+    licenseNumber: "",
+    phoneNumber: "",
+    status: "available",
     currentLocation: { lat: 0, lng: 0 },
     rating: 0,
     totalDeliveries: 0,
@@ -22,20 +22,20 @@ const CreateDriver = () => {
     // Check if the driver already exists
     const checkDriverExists = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         const response = await axios.get(`http://localhost:5000/driver/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data) {
-          navigate('/driver/dashboard');
+          navigate("/driver/dashboard");
         } else {
           setLoading(false);
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          setLoading(false); 
+          setLoading(false);
         } else {
-          console.error('Error checking driver existence:', error);
+          console.error("Error checking driver existence:", error);
         }
       }
     };
@@ -63,7 +63,7 @@ const CreateDriver = () => {
         },
       }));
     } catch (error) {
-      console.error('Error fetching location:', error);
+      console.error("Error fetching location:", error);
     }
   };
 
@@ -71,18 +71,22 @@ const CreateDriver = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       await axios.post(`http://localhost:5000/driver`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      navigate('/driver/dashboard');
+      navigate("/driver/dashboard");
     } catch (error) {
-      console.error('Error creating driver:', error);
+      console.error("Error creating driver:", error);
     }
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-100">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        Loading...
+      </div>
+    );
   }
 
   return (

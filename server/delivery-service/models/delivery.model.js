@@ -1,66 +1,69 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const DeliverySchema = new mongoose.Schema({
+const DeliverySchema = new mongoose.Schema(
+  {
     orderId: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     restaurantId: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     customerId: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     driverId: {
-        type: String,
-        default: null
+      type: String,
+      default: null,
     },
     status: {
-        type: String,
-        enum: ['assigned', 'picked_up', 'in_transit', 'delivered', 'cancelled'],
-        default: 'assigned'
+      type: String,
+      enum: ["assigned", "picked_up", "in_transit", "delivered", "cancelled"],
+      default: "assigned",
     },
     pickupLocation: {
-        address: String,
-        coordinates: {
-            lat: Number,
-            lng: Number
-        }
+      address: String,
+      coordinates: {
+        lat: Number,
+        lng: Number,
+      },
     },
     deliveryLocation: {
-        address: String,
-        coordinates: {
-            lat: Number,
-            lng: Number
-        }
+      address: String,
+      coordinates: {
+        lat: Number,
+        lng: Number,
+      },
     },
     currentLocation: {
-        address: String,
-        coordinates: {
-            lat: Number,
-            lng: Number
-        }
+      address: String,
+      coordinates: {
+        lat: Number,
+        lng: Number,
+      },
     },
     verificationCode: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     assignedAt: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now,
     },
     pickedUpAt: {
-        type: Date
+      type: Date,
     },
     deliveredAt: {
-        type: Date
+      type: Date,
     },
     estimatedDeliveryTime: {
-        type: Date
-    }
-}, { timestamps: true });
+      type: Date,
+    },
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model('Delivery', DeliverySchema);
+export default mongoose.model("Delivery", DeliverySchema);

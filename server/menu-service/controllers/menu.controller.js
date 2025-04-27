@@ -141,7 +141,6 @@ export const deleteMenuItem = async (req, res) => {
 
 // Get available menu items by restaurant ID
 export const getAvailableMenuItemsByRestaurantId = async (req, res) => {
-  // const { restaurantId } = req.params;
   try {
     const menuItems = await menuService.getAvailableMenuItemsByRestaurantId(
       req.params.restaurantId
@@ -165,14 +164,21 @@ export const getMenuItemsByCuisineTypeForRestaurant = async (req, res) => {
   const { restaurantId, cuisineType } = req.params;
 
   try {
-    const menuItems = await menuService.getMenuItemsByCuisineTypeForRestaurant(restaurantId, cuisineType);
+    const menuItems = await menuService.getMenuItemsByCuisineTypeForRestaurant(
+      restaurantId,
+      cuisineType
+    );
     res.status(200).json({
       success: true,
-      message: "Menu items by cuisine type for the restaurant fetched successfully.",
+      message:
+        "Menu items by cuisine type for the restaurant fetched successfully.",
       data: menuItems,
     });
   } catch (error) {
-    console.error("Error fetching menu items by cuisine type for restaurant:", error);
+    console.error(
+      "Error fetching menu items by cuisine type for restaurant:",
+      error
+    );
     res.status(500).json({ success: false, message: error.message });
   }
 };

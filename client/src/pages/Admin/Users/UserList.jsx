@@ -33,43 +33,47 @@ const UserList = () => {
       });
   }, []);
 
-  const filteredUsers = Array.isArray(users) ? users.filter((user) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchQuery.toLowerCase())
-  ) : [];
+  const filteredUsers = Array.isArray(users)
+    ? users.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          user.role.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'SystemAdmin':
-        return 'bg-purple-100 text-purple-800';
-      case 'RestaurantAdmin':
-        return 'bg-blue-100 text-blue-800';
-      case 'DeliveryPersonnel':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Customer':
-        return 'bg-green-100 text-green-800';
+      case "SystemAdmin":
+        return "bg-purple-100 text-purple-800";
+      case "RestaurantAdmin":
+        return "bg-blue-100 text-blue-800";
+      case "DeliveryPersonnel":
+        return "bg-yellow-100 text-yellow-800";
+      case "Customer":
+        return "bg-green-100 text-green-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const handleEdit = (id) => {
-    const userToEdit = users.find(user => user._id === id);
+    const userToEdit = users.find((user) => user._id === id);
     setSelectedUser(userToEdit);
     setShowForm(true);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
+    if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         const token = localStorage.getItem("token");
         await axios.delete(`http://localhost:5000/auth/user`, {
-          headers: { 
+          headers: {
             "x-user-id": id,
-            Authorization: `Bearer ${token}` },
+            Authorization: `Bearer ${token}`,
+          },
         });
-        setUsers(users.filter(user => user._id !== id));
+        setUsers(users.filter((user) => user._id !== id));
       } catch (error) {
         console.error("Error deleting user:", error);
       }
@@ -80,22 +84,25 @@ const UserList = () => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const userData = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      role: formData.get('role'),
+      name: formData.get("name"),
+      email: formData.get("email"),
+      role: formData.get("role"),
     };
 
     try {
       const token = localStorage.getItem("token");
       await axios.put(`http://localhost:5000/auth/user/`, userData, {
-        headers: { 
+        headers: {
           "x-user-id": selectedUser._id,
-          Authorization: `Bearer ${token}` },
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      setUsers(users.map(user => 
-        user._id === selectedUser._id ? { ...user, ...userData } : user
-      ));
+      setUsers(
+        users.map((user) =>
+          user._id === selectedUser._id ? { ...user, ...userData } : user
+        )
+      );
       setShowForm(false);
       setSelectedUser(null);
     } catch (error) {
@@ -175,7 +182,11 @@ const UserList = () => {
                           {user.email}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(user.role)}`}>
+                          <span
+                            className={`px-2 py-1 text-xs rounded-full ${getRoleColor(
+                              user.role
+                            )}`}
+                          >
                             {user.role}
                           </span>
                         </td>

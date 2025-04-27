@@ -45,10 +45,15 @@ const OrderList = () => {
     }
   };
 
-  const filteredOrders = orders.filter((order) =>
-    order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (order.customer?.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (order.restaurant?.name || "").toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredOrders = orders.filter(
+    (order) =>
+      order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (order.customer?.name || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      (order.restaurant?.name || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -103,7 +108,9 @@ const OrderList = () => {
               <tbody className="divide-y divide-gray-200">
                 {filteredOrders.map((order) => (
                   <tr key={order._id}>
-                    <td className="px-6 py-4 whitespace-nowrap">#{order._id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      #{order._id}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {order.customer?.name || order.customerId}
                     </td>

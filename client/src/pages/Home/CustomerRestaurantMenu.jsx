@@ -28,7 +28,6 @@ const CustomerRestaurantMenu = () => {
         setCart(initialCart);
 
         if (groupByCuisine) {
-          // Group menus by cuisine type
           const grouped = menus.reduce((acc, menu) => {
             const { cuisineType } = menu;
             if (!acc[cuisineType]) {
@@ -142,8 +141,6 @@ const CustomerRestaurantMenu = () => {
       <p className="text-gray-600 mb-2 mx-6">
         Opening Hours: {restaurant?.OpeningHours || "N/A"}
       </p>
-
-      {/* Buttons to switch panels */}
       <div className="my-4 mx-6">
         <button
           className={`px-4 py-2 rounded mr-2 ${

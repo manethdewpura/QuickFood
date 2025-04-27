@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
@@ -9,6 +8,12 @@ const WelcomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
     if (isLoggedIn) {
       navigate("/home");
     }
@@ -27,20 +32,14 @@ const WelcomePage = () => {
   }, []);
 
   return (
-    <div
-      className="relative flex flex-col h-screen bg-cover bg-center bg-no-repeat bg-fixed bg-[url('/WelcomeBg.jpg')]"
-    >
-      {/* Header */}
+    <div className="relative flex flex-col h-screen bg-cover bg-center bg-no-repeat bg-fixed bg-[url('/WelcomeBg.jpg')]">
       <Header
         isLoggedIn={false}
         location="Set Location"
         onLogin={() => console.log("Login clicked")}
         onSignUp={() => console.log("Sign Up clicked")}
       />
-
-      {/* Main Content */}
       <div className="flex flex-row h-full">
-        {/* Left Section */}
         <div className="flex flex-col justify-center items-center w-1/2 p-4">
           <div className="w-fit h-fit bg-white p-18 rounded-4xl flex flex-col items-center">
             <img
@@ -61,8 +60,6 @@ const WelcomePage = () => {
             </div>
           </div>
         </div>
-
-        {/* Right Section */}
         <div className="flex justify-center items-center w-1/2 p-4"></div>
       </div>
     </div>

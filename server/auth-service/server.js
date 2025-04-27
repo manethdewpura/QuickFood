@@ -16,7 +16,6 @@ dotenv.config();
 
 const app = express();
 
-// Global middleware - only apply to non-proxied routes
 app.use((req, res, next) => {
   if (!req.url.startsWith('/auth')) {
     next();
@@ -39,8 +38,7 @@ app.use(defaultLimiter);
 
 const circuitBreaker = new CircuitBreaker(services);
 
-// Add global proxy timeout
-const proxyTimeout = 30000; // 30 seconds
+const proxyTimeout = 30000;
 
 services.forEach(({ route, target, middleware = [] }) => {
   const limiterConfig = limiterConfigs[route] || limiterConfigs.default;
@@ -55,7 +53,6 @@ services.forEach(({ route, target, middleware = [] }) => {
     app.use(route, authorizeRole(...roleMiddleware.authorizeRole));
   }
 
-  // Create proxy middleware with raw request handling
   app.use(route, createProxyMiddleware({
     target,
     changeOrigin: true,
