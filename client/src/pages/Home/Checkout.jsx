@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import Header from "../../components/Header";
@@ -19,6 +19,7 @@ const stripePromise = loadStripe(
 // Separate CheckoutForm component that uses Stripe hooks
 const CheckoutForm = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const elements = useElements();
   const stripe = useStripe();
   const { restaurantId } = location.state || {};
@@ -153,7 +154,19 @@ const CheckoutForm = () => {
     );
 
       alert("Payment successful! Order has been created.");
-      // Redirect or perform any other action after successful payment
+
+      // Fetch order details and navigate to customer orders page
+      const orderResponse = await axios.get(
+        "http://localhost:5000/order/customer",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const orderDetails = orderResponse.data.data;
+      console.log(orderDetails);
+      navigate("/customer/orders", { state: { orderDetails } });
     } catch (error) {
       console.error("Payment Error:", error);
       alert(error.message);
@@ -213,14 +226,14 @@ const CheckoutForm = () => {
               </div>
             ))}
           </div>
-          <div className="space-y-4 border-t border-gray-200 pt-4">
+          <div className="space-y-4 border-t border-gray-200 pt-4 pl-28 pr-3">
             <div className="flex justify-between">
               <p className="text-gray-700 font-semibold">Subtotal:</p>
               <p className="text-gray-700">Rs.{calculateSubtotal()}.00</p>
             </div>
             <div className="flex justify-between">
-              <p className="text-gray-500 font-semibold">Delivery Fee:</p>
-              <p className="text-gray-500">Rs.{shippingFee}.00</p>
+              <p className="text-gray-400 font-semibold">Delivery Fee:</p>
+              <p className="text-gray-400">Rs.{shippingFee}.00</p>
             </div>
             <hr className="border-gray-300" />
             <div className="flex justify-between font-bold text-xl">

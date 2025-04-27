@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const CustomerDeliveries = () => {
   const [deliveries, setDeliveries] = useState([]);
@@ -10,9 +10,9 @@ const CustomerDeliveries = () => {
   useEffect(() => {
     const fetchDeliveries = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         const response = await axios.get(
-          'http://localhost:5000/delivery/customer',
+          "http://localhost:5000/delivery/customer",
           { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log(response.data);
@@ -25,15 +25,15 @@ const CustomerDeliveries = () => {
               );
               return { ...delivery, driverName: driverResponse.data.name };
             }
-            return { ...delivery, driverName: 'Not assigned' };
+            return { ...delivery, driverName: "Not assigned" };
           })
         );
 
         setDeliveries(deliveriesWithDriverNames);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching deliveries:', error);
-        setError('Failed to load your deliveries');
+        console.error("Error fetching deliveries:", error);
+        setError("Failed to load your deliveries");
         setLoading(false);
       }
     };
@@ -52,15 +52,17 @@ const CustomerDeliveries = () => {
           Your Deliveries
         </h1>
         <div className="grid gap-4">
-          {deliveries.map(delivery => (
+          {deliveries.map((delivery) => (
             <div key={delivery._id} className="bg-gray-50 p-4 rounded shadow">
               <h3 className="font-semibold text-lg text-indigo-800">
-                Order #{typeof delivery.orderId === 'object'
+                Order #
+                {typeof delivery.orderId === "object"
                   ? delivery.orderId._id.substring(0, 8)
-                  : (delivery.orderId || '').substring(0, 8)}
+                  : (delivery.orderId || "").substring(0, 8)}
               </h3>
               <p className="text-gray-700">
-                <strong>Restaurant:</strong> {delivery.restaurantDetails.restaurantName || 'Unknown'}
+                <strong>Restaurant:</strong>{" "}
+                {delivery.restaurantDetails?.restaurantName || "Unknown"}
               </p>
               <p className="text-gray-700">
                 <strong>Status:</strong> {delivery.status}
@@ -69,19 +71,25 @@ const CustomerDeliveries = () => {
                 <strong>Driver:</strong> {delivery.driverName}
               </p>
               <p className="text-gray-700">
-                <strong>Estimated Delivery:</strong> {delivery.estimatedDeliveryTime
-                  ? new Date(delivery.estimatedDeliveryTime).toLocaleTimeString()
-                  : 'N/A'}
+                <strong>Estimated Delivery:</strong>{" "}
+                {delivery.estimatedDeliveryTime
+                  ? new Date(
+                      delivery.estimatedDeliveryTime
+                    ).toLocaleTimeString()
+                  : "N/A"}
               </p>
               <p className="text-gray-700">
-                <strong>Verification Code:</strong> {delivery.verificationCode || 'N/A'}
+                <strong>Verification Code:</strong>{" "}
+                {delivery.verificationCode || "N/A"}
               </p>
-              <Link
-                to={`/track-delivery/${delivery._id}`}
-                className="mt-4 inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-              >
-                Track Delivery
-              </Link>
+              {delivery._id && (
+                <Link
+                  to={`/track-delivery/${delivery._id}`}
+                  className="mt-4 inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                >
+                  Track Delivery
+                </Link>
+              )}
             </div>
           ))}
         </div>
