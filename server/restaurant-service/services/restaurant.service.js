@@ -1,5 +1,6 @@
 import Restaurant from '../models/restaurant.model.js';
 import mongoose from 'mongoose';
+import axios from 'axios';
 
 //Create a new restaurant
 export const createRestaurant = async (restaurantData) => {
@@ -127,7 +128,7 @@ export const updateAvailability = async (id, isAvailable) => {
             { isAvailable },
             { new: true }
         );
-        
+
         if (!updatedAvailability) {
             throw new Error("Restaurant not found.");
         }
@@ -139,10 +140,10 @@ export const updateAvailability = async (id, isAvailable) => {
     }
 };
 
-//Ger the nearest restaurants by location 
+//Get the nearest restaurants by location 
 export const getNearestRestaurants = async (lat, lon) => {
-    const allRestaurants = await Restaurant.find({ isAvailable: true });
-    
+    const allRestaurants = await Restaurant.find({ isAvailable: true, isVerified: 'Approved' });
+
     const withDistance = allRestaurants.map(restaurant => {
         const distance = calculateDistance(lat, lon, restaurant.location.latitude, restaurant.location.longitude);
         return { ...restaurant.toObject(), distance };
@@ -159,8 +160,8 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // Distance in km
 };
@@ -183,3 +184,37 @@ export const getRestaurantsByUserId = async (userId) => {
         throw new Error("Failed to fetch restaurant by user ID.");
     }
 };
+
+//verify order by restaurant
+export const verifyOrderforPickup = async (orderId, verificationCode) => {
+    try{
+        const verification = await axios.get(`http://localhost:5002/delivery/verification/${orderId}/${verificationCode}`);
+        console.log(verification);
+        if (verification.data == false) {
+            return "Verification code is incorrect.";
+        }
+        
+        await axios.put(`http://localhost:5005/order/status/${orderId}`,
+            { orderStatus: "Picked Up" },
+        );
+        return "Verified";
+    }
+    catch (error) {
+        throw new Error("Failed to fetch data.");
+    }
+};
+
+//Search restaurants by name
+export const searchRestaurantsByName = async (searchQuery) => {
+    try {
+        const restaurants = await Restaurant.find({
+            restaurantName: { $regex: searchQuery, $options: 'i' },
+            isVerified: 'Approved'
+        });
+        return restaurants;
+    } catch (error) {
+        console.error("Error searching restaurants:", error.message);
+        throw new Error("Failed to search restaurants.");
+    }
+};
+

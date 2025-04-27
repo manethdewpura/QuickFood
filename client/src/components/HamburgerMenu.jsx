@@ -51,7 +51,10 @@ const HamburgerMenu = ({ isLoggedIn }) => {
                 <FiFileText className="text-2xl mr-5 text-gray-600" />
                 Orders
               </li>
-              <li className="flex flex-row hover:text-blue-500 cursor-pointer">
+              <li
+                className="flex flex-row hover:text-blue-500 cursor-pointer"
+                onClick={() => navigate('/profile')}
+              >
                 <IoPersonCircleOutline className="text-2xl mr-5 text-gray-700" />
                 Profile
               </li>
