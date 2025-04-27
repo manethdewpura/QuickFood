@@ -18,7 +18,7 @@ router.get('/restaurant/:restaurantId', deliveryController.getDeliveriesByRestau
 // Get delivery by ID
 router.get('/:id', deliveryController.getDeliveryById);
 
-router.get('/:orderId', deliveryController.getDeliveryByOrderId);
+router.get('/order/:orderId', deliveryController.getDeliveryByOrderId);
 
 // Update delivery status
 router.patch('/:id/status', deliveryController.updateDeliveryStatus);
