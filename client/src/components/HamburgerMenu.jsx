@@ -19,6 +19,10 @@ const HamburgerMenu = ({ isLoggedIn }) => {
     window.location.reload();
   };
 
+  const handleOrders = () => {
+    navigate("/customer/orders");
+  };
+
   return (
     <>
       <button
@@ -47,13 +51,16 @@ const HamburgerMenu = ({ isLoggedIn }) => {
         <ul className="flex flex-col p-4 space-y-4 flex-grow">
           {isLoggedIn ? (
             <>
-              <li className="flex flex-row hover:text-blue-500 cursor-pointer">
+              <li
+                className="flex flex-row hover:text-blue-500 cursor-pointer"
+                onClick={handleOrders}
+              >
                 <FiFileText className="text-2xl mr-5 text-gray-600" />
                 Orders
               </li>
               <li
                 className="flex flex-row hover:text-blue-500 cursor-pointer"
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate("/profile")}
               >
                 <IoPersonCircleOutline className="text-2xl mr-5 text-gray-700" />
                 Profile
