@@ -6,18 +6,8 @@ import axios from 'axios'; // Import axios for making HTTP requests
 
 export const createDelivery = async (orderData, userId) => {
     try {
-        // Find the nearest available driver
-        // const driver = await findNearestDriver({
-        //     lat: orderData.restaurant.latitude,
-        //     lng: orderData.restaurant.longitude
-        // });
-
-        // if (!driver) {
-        //     throw new Error('No available drivers found');
-        // }
-
         const driver = await Driver.findOne({ userId: userId });
-        console.log(driver)
+        console.log(orderData)
 
         // Generate a verification code for delivery confirmation
         const verificationCode = generateVerificationCode();
@@ -44,7 +34,7 @@ export const createDelivery = async (orderData, userId) => {
                 coordinates: pickupCoords
             },
             deliveryLocation: {
-                address: 'Customer Address', // Replace with actual customer address if available
+                address: orderData.customerAddress, 
                 coordinates: deliveryCoords
             },
             currentLocation: {
@@ -78,7 +68,9 @@ export const getDeliveryById = async (deliveryId) => {
         const delivery = await Delivery.findById(deliveryId)
             .populate('driverId', 'name phoneNumber vehicleType vehicleNumber rating')
             .populate('orderId', 'items totalAmount')
-            .populate('restaurantId', 'name address phoneNumber');
+            .populate('restaurantId', 'restaurantName Address');
+
+            console.log(delivery)
 
         if (!delivery) {
             throw new Error('Delivery not found');

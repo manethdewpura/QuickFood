@@ -19,7 +19,9 @@ const DeliveryPage = () => {
         const response = await axios.get(
           `http://localhost:5000/delivery/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
-        ); setDelivery(response.data);
+        ); 
+        console.log(response.data);
+        setDelivery(response.data);
         setLoading(false);
       } catch (err) {
         setError('Failed to load delivery details');
@@ -150,7 +152,6 @@ const DeliveryPage = () => {
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-indigo-600 mb-2">Order Details</h2>
             <div className="space-y-1">
-              <p><span className="font-semibold">Restaurant:</span> {delivery.restaurantId.name}</p>
               <p><span className="font-semibold">Restaurant Address:</span> {delivery.pickupLocation.address}</p>
               <p><span className="font-semibold">Customer Address:</span> {delivery.deliveryLocation.address}</p>
               <p><span className="font-semibold">Verification Code:</span> {delivery.verificationCode}</p>
