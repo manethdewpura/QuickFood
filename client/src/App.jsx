@@ -21,7 +21,6 @@ import CustomerRestaurantMenu from "./pages/Home/CustomerRestaurantMenu.jsx";
 import RestaurantOrders from "./pages/Restaurant/RestaurantOrders.jsx";
 import Cart from "./pages/Home/Cart.jsx";
 import Checkout from "./pages/Home/Checkout.jsx";
-import CustomerDeliveries from "./pages/Home/CustomerDeliveries.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import EditProfile from "./pages/Profile/EditProfile.jsx";
 import CustomerOrders from "./pages/Home/CustomerOrders.jsx";
@@ -53,7 +52,6 @@ const App = () => {
         <Route path="/restaurant/order/:id" element={<RestaurantOrders />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/customer/deliveries" element={<CustomerDeliveries />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<EditProfile />} />
         <Route path="/customer/orders" element={<CustomerOrders />} />
