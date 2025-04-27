@@ -16,7 +16,7 @@ export const createDelivery = async (orderData, userId) => {
         //     throw new Error('No available drivers found');
         // }
 
-        const driver = await Driver.findOne({ userId: userId }); 
+        const driver = await Driver.findOne({ userId: userId });
         console.log(driver)
 
         // Generate a verification code for delivery confirmation
@@ -244,14 +244,14 @@ export const updateDriverLocation = async (deliveryId, currentLocation) => {
     }
 };
 
-export const getDeliveryByOrderId = async (orderId) => {
-    try {
-        const delivery = await Delivery.findOne({ orderId });
-        return delivery;
-    } catch (error) {
-        throw error;
-    }
-};
+// export const getDeliveryByOrderId = async (orderId) => {
+//     try {
+//         const delivery = await Delivery.findOne({ orderId });
+//         return delivery;
+//     } catch (error) {
+//         throw error;
+//     }
+// };
 
 export const verifyDeliveryCode = async (orderId, verificationCode) => {
     try {
@@ -270,14 +270,36 @@ export const verifyDeliveryCode = async (orderId, verificationCode) => {
 export const getDeliveriesByDriver = async (driverId) => {
     try {
         const deliveries = await Delivery.find({
-            driverId:driverId,
+            driverId: driverId,
             status: { $ne: 'delivered' }
         })
-            .populate('orderId', 'items totalAmount')
             .populate('restaurantId', 'name address phoneNumber')
             .sort({ createdAt: -1 });
 
-        return deliveries;
+        // Fetch order details for each delivery
+        const deliveriesWithOrderDetails = await Promise.all(
+            deliveries.map(async (delivery) => {
+                try {
+                    const response = await axios.get(
+                        `http://localhost:5005/order/${delivery.orderId}` // Replace with the actual route for getOrderById
+                    );
+
+                    if (response.data) {
+                        delivery = delivery.toObject(); // Convert Mongoose document to plain object
+                        delivery.orderDetails = response.data; // Attach order details
+                    }
+                } catch (error) {
+                    console.error(
+                        `Failed to fetch order details for order ID: ${delivery.orderId}`,
+                        error.message
+                    );
+                    delivery.orderDetails = null; // Handle failure gracefully
+                }
+                return delivery;
+            })
+        );
+
+        return deliveriesWithOrderDetails;
     } catch (error) {
         throw error;
     }
@@ -329,6 +351,23 @@ export const getDeliveriesByRestaurant = async (restaurantId) => {
             .sort({ createdAt: -1 });
 
         return deliveries;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getDeliveryByOrderId = async (orderId) => {
+    try {
+        const delivery = await Delivery.findOne({ orderId })
+            .populate('driverId', 'name phoneNumber vehicleType vehicleNumber rating')
+            .populate('restaurantId', 'name address phoneNumber')
+            .populate('orderId', 'items totalAmount');
+
+        if (!delivery) {
+            throw new Error('Delivery not found');
+        }
+
+        return delivery;
     } catch (error) {
         throw error;
     }

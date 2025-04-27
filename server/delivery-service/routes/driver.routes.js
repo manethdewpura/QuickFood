@@ -24,6 +24,9 @@ router.patch('/availability', driverController.updateDriverAvailability);
 // Update driver rating
 router.patch('/rating', driverController.updateDriverRating);
 
+// Check if a driver exists for the authenticated user
+router.get('/me', driverController.checkDriverByUserId);
+
 router.get('/:id', driverController.getDriverByIdParam);
 
 export default router;

@@ -76,6 +76,17 @@ export const getDeliveriesByCustomer = async (req, res) => {
   }
 };
 
+
+export const getDeliveryByOrderId = async (req, res) => {
+  try {
+      const { orderId } = req.params;
+      const delivery = await deliveryService.getDeliveryByOrderId(orderId);
+      res.status(200).json(delivery);
+  } catch (error) {
+      res.status(404).json({ message: error.message });
+  }
+};
+
 export const getDeliveriesByRestaurant = async (req, res) => {
   try {
     const { restaurantId } = req.params;

@@ -86,7 +86,7 @@ const RouteLayer = ({ pickupCoords, deliveryCoords, currentCoords }) => {
     const routeToDelivery = L.polyline([
       pickupCoords,
       deliveryCoords
-    ], { color: 'green' });
+    ], { color: 'blue', dashArray: '5, 10' });
 
     routeToPickup.addTo(map);
     routeToDelivery.addTo(map);
