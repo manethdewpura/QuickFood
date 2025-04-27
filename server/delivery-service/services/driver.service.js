@@ -1,26 +1,26 @@
 import Driver from '../models/driver.model.js';
 import axios from 'axios';
-import { calculateDistance } from '../utils/helpers.js'; // Assuming you have a utility function for distance calculation
+import { calculateDistance } from '../utils/helpers.js'; 
 
 export const createDriver = async (driverData, userId) => {
   try {
 
-    // 1. Check if a driver already exists for the given userId
+    // Check if a driver already exists for the given userId
     const existingDriver = await Driver.findOne({ userId });
     if (existingDriver) {
       throw new Error('Driver already exists for this user');
     }
-    // 2. Fetch user info from Auth-Service
+    //Fetch user info from Auth-Service
     const userRes = await axios.get(`http://localhost:5000/auth/user`, {
       headers: { 'x-user-id': userId }
     });
     const user = userRes.data.user;
 
-    // 3. Check if user exists and is DeliveryPersonnel
+    //Check if user exists and is DeliveryPersonnel
     if (!user) throw new Error('User not found');
     if (user.role !== 'DeliveryPersonnel') throw new Error('User must have DeliveryPersonnel role');
 
-    // 4. Create the driver profile
+    // Create the driver profile
     const driver = new Driver({
       userId: user._id,
       name: user.name,
@@ -41,6 +41,7 @@ export const createDriver = async (driverData, userId) => {
   }
 };
 
+// Fetch driver by userId
 export const getDriverById = async (driverId) => {
   try {
     const driver = await Driver.findById(driverId);
@@ -55,6 +56,7 @@ export const getDriverById = async (driverId) => {
   }
 };
 
+// Fetch driver by userId from params
 export const getDriverByParamId = async (driverId) => {
   try {
     const driver = await Driver.findOne({ userId: driverId });
@@ -67,8 +69,9 @@ export const getDriverByParamId = async (driverId) => {
   }
 };
 
+//get nearest ready orders for the driver
 export const getNearestReadyOrders = async (userId) => {
-  // 1. Find the driver by userId
+  //Find the driver by userId
   const driver = await Driver.findOne({ userId });
   if (!driver) throw new Error('Driver not found');
   if (
@@ -79,17 +82,12 @@ export const getNearestReadyOrders = async (userId) => {
     throw new Error('Driver location not set');
   }
 
-  // 2. Fetch all ready orders from the order service
+  //Fetch all ready orders from the order service
   const { data } = await axios.get('http://localhost:5005/order/ready');
   const readyOrders = data.data || []; // Adjust for your API's structure
 
-  // 3. Sort orders by distance from the driver's current location
+  //Sort orders by distance from the driver's current location
   const ordersWithDistance = readyOrders.map(order => {
-    // Extract restaurant location
-    // const restLoc = order.restaurant?.location;
-    // if (!restLoc || typeof restLoc.latitude !== 'number' || typeof restLoc.longitude !== 'number') {
-    //   return { ...order, distance: Infinity }; // Skip if location is missing
-    // }
     const distance = calculateDistance(
       driver.currentLocation.lat,
       driver.currentLocation.lng,
@@ -99,12 +97,12 @@ export const getNearestReadyOrders = async (userId) => {
     return { ...order, distance };
   });
 
-  // 4. Sort and return (optionally, limit to top N)
   ordersWithDistance.sort((a, b) => a.distance - b.distance);
 
-  return ordersWithDistance; // Or .slice(0, 10) for top 10 nearest
+  return ordersWithDistance;
 };
 
+//update driver location
 export const updateDriverLocation = async (driverId, location) => {
   try {
     const driver = await Driver.findOne({ userId: driverId });
@@ -125,7 +123,7 @@ export const updateDriverLocation = async (driverId, location) => {
   }
 };
 
-
+//update driver availability
 export const updateDriverAvailability = async (driverId, status) => {
   try {
     const driver = await Driver.findById(driverId);
@@ -147,7 +145,7 @@ export const updateDriverAvailability = async (driverId, status) => {
   }
 };
 
-
+// Fetch all available drivers
 export const getAllAvailableDrivers = async () => {
   try {
     const drivers = await Driver.find({ status: 'available' });
@@ -157,6 +155,7 @@ export const getAllAvailableDrivers = async () => {
   }
 };
 
+//update driver rating
 export const updateDriverRating = async (driverId, rating) => {
   try {
     const driver = await Driver.findById(driverId);
@@ -180,10 +179,11 @@ export const updateDriverRating = async (driverId, rating) => {
   }
 };
 
+// Check if a driver exists for the authenticated user
 export const checkDriverByUserId = async (userId) => {
   try {
     const driver = await Driver.findOne({ userId });
-    return driver; // Returns null if no driver is found
+    return driver;
   } catch (error) {
     throw error;
   }

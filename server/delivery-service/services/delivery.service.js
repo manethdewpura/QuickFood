@@ -2,7 +2,7 @@ import Delivery from '../models/delivery.model.js';
 import Driver from '../models/driver.model.js';
 import { generateVerificationCode, calculateDistance } from '../utils/helpers.js';
 import { emitLocationUpdate, emitStatusUpdate } from '../socket.js';
-import axios from 'axios'; // Import axios for making HTTP requests
+import axios from 'axios'; 
 
 export const createDelivery = async (orderData, userId) => {
     try {
@@ -55,7 +55,6 @@ export const createDelivery = async (orderData, userId) => {
         // Update driver status to busy
         await Driver.findByIdAndUpdate(driver._id, { status: 'busy' });
 
-        // Save the delivery
         const savedDelivery = await delivery.save();
         return savedDelivery;
     } catch (error) {
@@ -63,6 +62,7 @@ export const createDelivery = async (orderData, userId) => {
     }
 };
 
+//get delivery by id
 export const getDeliveryById = async (deliveryId) => {
     try {
         const delivery = await Delivery.findById(deliveryId)
@@ -82,6 +82,7 @@ export const getDeliveryById = async (deliveryId) => {
     }
 };
 
+//update delivery status
 export const updateDeliveryStatus = async (deliveryId, status, currentLocation) => {
     try {
         const delivery = await Delivery.findById(deliveryId);
@@ -197,6 +198,7 @@ export const updateDeliveryStatus = async (deliveryId, status, currentLocation) 
     }
 };
 
+//update driver location
 export const updateDriverLocation = async (deliveryId, currentLocation) => {
     try {
         const delivery = await Delivery.findById(deliveryId);
@@ -236,15 +238,7 @@ export const updateDriverLocation = async (deliveryId, currentLocation) => {
     }
 };
 
-// export const getDeliveryByOrderId = async (orderId) => {
-//     try {
-//         const delivery = await Delivery.findOne({ orderId });
-//         return delivery;
-//     } catch (error) {
-//         throw error;
-//     }
-// };
-
+//verify delivery code
 export const verifyDeliveryCode = async (orderId, verificationCode) => {
     try {
         const delivery = await Delivery.findOne({ orderId, verificationCode });
@@ -259,6 +253,7 @@ export const verifyDeliveryCode = async (orderId, verificationCode) => {
     }
 };
 
+//get deliveries by driver id
 export const getDeliveriesByDriver = async (driverId) => {
     try {
         const deliveries = await Delivery.find({
@@ -273,19 +268,19 @@ export const getDeliveriesByDriver = async (driverId) => {
             deliveries.map(async (delivery) => {
                 try {
                     const response = await axios.get(
-                        `http://localhost:5005/order/${delivery.orderId}` // Replace with the actual route for getOrderById
+                        `http://localhost:5005/order/${delivery.orderId}`
                     );
 
                     if (response.data) {
-                        delivery = delivery.toObject(); // Convert Mongoose document to plain object
-                        delivery.orderDetails = response.data; // Attach order details
+                        delivery = delivery.toObject(); 
+                        delivery.orderDetails = response.data; 
                     }
                 } catch (error) {
                     console.error(
                         `Failed to fetch order details for order ID: ${delivery.orderId}`,
                         error.message
                     );
-                    delivery.orderDetails = null; // Handle failure gracefully
+                    delivery.orderDetails = null;
                 }
                 return delivery;
             })
@@ -297,6 +292,7 @@ export const getDeliveriesByDriver = async (driverId) => {
     }
 };
 
+//get deliveries by customer id
 export const getDeliveriesByCustomer = async (customerId) => {
     try {
         const deliveries = await Delivery.find({ customerId })
@@ -313,15 +309,15 @@ export const getDeliveriesByCustomer = async (customerId) => {
                             `http://localhost:5007/restaurantAll/${delivery.restaurantId}`
                         );
                         if (response.data && response.data.data) {
-                            delivery = delivery.toObject(); // Convert Mongoose document to plain object
-                            delivery.restaurantDetails = response.data.data; // Attach restaurant details
+                            delivery = delivery.toObject();
+                            delivery.restaurantDetails = response.data.data; 
                         }
                     } catch (error) {
                         console.error(
                             `Failed to fetch restaurant details for ID: ${delivery.restaurantId}`,
                             error.message
                         );
-                        delivery.restaurantDetails = null; // Handle failure gracefully
+                        delivery.restaurantDetails = null;
                     }
                 }
                 return delivery;
@@ -334,6 +330,7 @@ export const getDeliveriesByCustomer = async (customerId) => {
     }
 };
 
+//get deliveries by restaurant id
 export const getDeliveriesByRestaurant = async (restaurantId) => {
     try {
         const deliveries = await Delivery.find({ restaurantId })
@@ -348,6 +345,7 @@ export const getDeliveriesByRestaurant = async (restaurantId) => {
     }
 };
 
+//get delivery by order id
 export const getDeliveryByOrderId = async (orderId) => {
     try {
         const delivery = await Delivery.findOne({ orderId })
@@ -392,6 +390,7 @@ const findNearestDriver = async (pickupLocation) => {
     }
 };
 
+// Function to calculate estimated delivery time based on driver and pickup locations
 const calculateEstimatedDeliveryTime = (driverLocation, pickupLocation, deliveryLocation) => {
     try {
         if (!driverLocation || !pickupLocation || !deliveryLocation) {

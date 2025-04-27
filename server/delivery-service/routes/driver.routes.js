@@ -16,6 +16,7 @@ router.post('/', driverController.createDriver);
 // Get driver by ID
 router.get('/', driverController.getDriverById);
 
+// Get nearest ready orders for the driver
 router.get('/nearest-ready-orders', driverController.getNearestReadyOrders);
 
 // Update driver availability
@@ -27,6 +28,7 @@ router.patch('/rating', driverController.updateDriverRating);
 // Check if a driver exists for the authenticated user
 router.get('/me', driverController.checkDriverByUserId);
 
+//get driver details by id
 router.get('/:id', driverController.getDriverByIdParam);
 
 export default router;

@@ -19,6 +19,7 @@ const CreateDriver = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if the driver already exists
     const checkDriverExists = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -32,7 +33,7 @@ const CreateDriver = () => {
         }
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          setLoading(false); // Driver does not exist
+          setLoading(false); 
         } else {
           console.error('Error checking driver existence:', error);
         }
@@ -50,6 +51,7 @@ const CreateDriver = () => {
     }));
   };
 
+  // Function to get current location
   const handleGetLocation = async () => {
     try {
       const location = await getCurrentLocation();
@@ -65,6 +67,7 @@ const CreateDriver = () => {
     }
   };
 
+  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
