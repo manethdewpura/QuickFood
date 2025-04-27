@@ -1,43 +1,46 @@
-import e from 'express';
-import mongoose from 'mongoose';
+import e from "express";
+import mongoose from "mongoose";
 
-const restaurantSchema = new mongoose.Schema({
+const restaurantSchema = new mongoose.Schema(
+  {
     restaurantAdminId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     restaurantName: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     Address: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     Hotline: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     OpeningHours: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     isAvailable: {
-        type: Boolean,
-        default: true,
+      type: Boolean,
+      default: true,
     },
     location: {
-        latitude: { type: Number, required: true },
-        longitude: { type: Number, required: true }
+      latitude: { type: Number, required: true },
+      longitude: { type: Number, required: true },
     },
     isVerified: {
-        type: String,
-        default: "Pending",
-        enum: ["Pending", "Approved", "Rejected"]
+      type: String,
+      default: "Pending",
+      enum: ["Pending", "Approved", "Rejected"],
     },
-}, {
+  },
+  {
     timestamps: true,
-});
+  }
+);
 
-export default mongoose.model('Restaurant', restaurantSchema);
+export default mongoose.model("Restaurant", restaurantSchema);

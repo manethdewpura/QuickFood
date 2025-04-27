@@ -128,7 +128,7 @@ const CheckoutForm = () => {
               email: formData.email,
             },
           },
-        }, 
+        }
       );
 
       if (error) {
@@ -136,22 +136,24 @@ const CheckoutForm = () => {
       }
 
       // Create order and receipt after successful payment
-      await axios.post("http://localhost:5000/payment/success-payment", {
-        amount: calculateSubtotal() + shippingFee,
-        currency: "lkr",
-        paymentIntentId: paymentIntent.id,
-        orderData: {
-          restaurantId,
-          customerLatitude: locationContext.latitude,
-          customerLongitude: locationContext.longitude
-        }
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.post(
+        "http://localhost:5000/payment/success-payment",
+        {
+          amount: calculateSubtotal() + shippingFee,
+          currency: "lkr",
+          paymentIntentId: paymentIntent.id,
+          orderData: {
+            restaurantId,
+            customerLatitude: locationContext.latitude,
+            customerLongitude: locationContext.longitude,
+          },
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       alert("Payment successful! Order has been created.");
 
@@ -326,7 +328,6 @@ const CheckoutForm = () => {
   );
 };
 
-// Main Checkout component that provides the Stripe Elements context
 const Checkout = () => {
   return (
     <Elements stripe={stripePromise}>

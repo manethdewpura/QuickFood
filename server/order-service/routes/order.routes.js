@@ -7,7 +7,7 @@ import {
   getCustomerOrders,
   getRestaurantOrders,
   getOrderById,
-  updateOrderAccept
+  updateOrderAccept,
 } from "../controllers/order.controller.js";
 
 const router = express.Router();
@@ -19,6 +19,6 @@ router.get("/allorders", getAllOrders); // Route to get all orders
 router.get("/customer", getCustomerOrders); // Route to get all orders for a customer
 router.get("/restaurant/:restaurantId", getRestaurantOrders); // Route to get all orders for a restaurant
 router.get("/:orderId", getOrderById); // Route to get a specific order by ID
-router.put('/update/accept/:orderId', updateOrderAccept); // Route to accept an order
+router.put("/update/accept/:orderId", updateOrderAccept); // Route to accept an order
 
 export default router;

@@ -24,7 +24,6 @@ const Cart = () => {
       .then((response) => {
         const cartData = response.data.data;
         if (cartData.length > 0) {
-          // Group items by restaurantName
           const groupedItems = cartData.reduce((acc, cart) => {
             const restaurantId = cart.restaurantId;
             const restaurantName = cart.restaurant.data.restaurantName;
@@ -63,7 +62,9 @@ const Cart = () => {
       <div className="flex flex-col min-h-screen">
         <Header isLoggedIn={token !== null} onCartClick={() => {}} />
         <div className="flex-grow flex items-center justify-center">
-          <p className="text-xl text-gray-600 font-semibold">Your cart is empty.</p>
+          <p className="text-xl text-gray-600 font-semibold">
+            Your cart is empty.
+          </p>
         </div>
         <Footer />
       </div>

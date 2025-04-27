@@ -21,7 +21,9 @@ const RestaurantAdminHeader = () => {
   return (
     <header className="max-w-full mx-auto px-4 py-4 bg-white shadow-md">
       <nav className="flex items-center justify-between gap-6">
-        <div className="text-blue-600 font-bold text-2xl">QuickFood Restaurant Admin</div>
+        <div className="text-blue-600 font-bold text-2xl">
+          QuickFood Restaurant Admin
+        </div>
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 text-red-500 hover:text-red-700"

@@ -140,22 +140,37 @@ export const getAvailableMenuItemsByRestaurantId = async (restaurantId) => {
     if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
       throw new Error("Invalid restaurant ID format.");
     }
-    return await Menu.find({ restaurantId, isAvailable: true }).sort({ createdAt: -1 });
+    return await Menu.find({ restaurantId, isAvailable: true }).sort({
+      createdAt: -1,
+    });
   } catch (error) {
-    console.error("Error fetching available menu items by restaurant ID:", error.message);
+    console.error(
+      "Error fetching available menu items by restaurant ID:",
+      error.message
+    );
     throw new Error("Failed to fetch available menu items by restaurant ID.");
   }
 };
 
 // Get menu items by cuisine type for a specific restaurant
-export const getMenuItemsByCuisineTypeForRestaurant = async (restaurantId, cuisineType) => {
+export const getMenuItemsByCuisineTypeForRestaurant = async (
+  restaurantId,
+  cuisineType
+) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
       throw new Error("Invalid restaurant ID format.");
     }
-    return await Menu.find({ restaurantId, cuisineType }).sort({ createdAt: -1 });
+    return await Menu.find({ restaurantId, cuisineType }).sort({
+      createdAt: -1,
+    });
   } catch (error) {
-    console.error("Error fetching menu items by cuisine type for restaurant:", error.message);
-    throw new Error("Failed to fetch menu items by cuisine type for restaurant.");
+    console.error(
+      "Error fetching menu items by cuisine type for restaurant:",
+      error.message
+    );
+    throw new Error(
+      "Failed to fetch menu items by cuisine type for restaurant."
+    );
   }
 };

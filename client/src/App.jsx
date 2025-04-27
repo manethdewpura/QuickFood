@@ -24,7 +24,7 @@ import Checkout from "./pages/Home/Checkout.jsx";
 import CustomerDeliveries from "./pages/Home/CustomerDeliveries.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import EditProfile from "./pages/Profile/EditProfile.jsx";
-import CustomerOrders from './pages/Home/CustomerOrders.jsx';
+import CustomerOrders from "./pages/Home/CustomerOrders.jsx";
 
 const App = () => {
   return (
@@ -40,9 +40,7 @@ const App = () => {
         <Route path="/restaurant/menu/:id" element={<RestaurantMenu />} />
         <Route path="/driver/delivery/:id" element={<DeliveryPage />} />
         <Route path="/driver/create" element={<CreateDriverForm />} />
-
         <Route path="/driver/dashboard" element={<DriverDashboard />} />
-
         <Route path="/track-delivery/:id" element={<TrackDelivery />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<UserList />} />
