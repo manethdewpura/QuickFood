@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 
+// Middleware to authenticate JWT token
 export const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'No token provided' });
@@ -15,6 +16,7 @@ export const authenticate = (req, res, next) => {
   }
 };
 
+// Middleware to authorize user roles
 export const authorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
     if (!allowedRoles.includes(req.user.role)) {
