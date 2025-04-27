@@ -59,7 +59,15 @@ const Cart = () => {
   }
 
   if (!Object.keys(cartItemsByRestaurant).length) {
-    return <p>Your cart is empty.</p>;
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Header isLoggedIn={token !== null} onCartClick={() => {}} />
+        <div className="flex-grow flex items-center justify-center">
+          <p className="text-xl text-gray-600 font-semibold">Your cart is empty.</p>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (

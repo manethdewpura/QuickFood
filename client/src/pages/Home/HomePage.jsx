@@ -61,44 +61,60 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header isLoggedIn={token !== null} />
-      <div className="flex-1 p-6 bg-gray-100">
-        <h1 className="text-3xl font-bold mb-6">Nearby Restaurants</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {restaurants.map((restaurant) => (
-            <div
-              key={restaurant._id}
-              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-            >
-              <h2 className="text-xl font-semibold mb-2">
-                {restaurant.restaurantName}
-              </h2>
-              <p className="text-gray-600 mb-2">
-                {restaurant.location?.latitude
-                  ? `${restaurant.Address}`
-                  : restaurant.location}
-              </p>
-              <p className="text-gray-600 mb-2">
-                <span className="font-semibold">Hours:</span>{" "}
-                {restaurant.OpeningHours}
-              </p>
-              <p className="text-gray-600 mb-2">
-                <span className="font-semibold">Contact:</span>{" "}
-                {restaurant.Hotline}
-              </p>
-              {restaurant.distance && (
-                <p className="text-gray-600">
-                  <span className="font-semibold">Distance:</span>{" "}
-                  {(restaurant.distance / 1000).toFixed(1)} km
+      <div className="flex-1 p-6 relative">
+        <div 
+          className="absolute inset-0 z-0" 
+          style={{ 
+            backgroundImage: "url('/bg1.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+        <div 
+          className="absolute inset-0 z-0" 
+          style={{ 
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          }}
+        />
+        <div className="relative z-10 mx-6">
+          <h1 className="text-4xl font-bold pl-1 text-white mb-6">Nearby Restaurants</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {restaurants.map((restaurant) => (
+              <div
+                key={restaurant._id}
+                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              >
+                <h2 className="text-xl font-semibold mb-2">
+                  {restaurant.restaurantName}
+                </h2>
+                <p className="text-gray-600 mb-2">
+                  {restaurant.location?.latitude
+                    ? `${restaurant.Address}`
+                    : restaurant.location}
                 </p>
-              )}
-              <div className="mt-4">
-                <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-                onClick={() => handleViewMenu(restaurant)}>
-                  View Menu
-                </button>
+                <p className="text-gray-600 mb-2">
+                  <span className="font-semibold">Hours:</span>{" "}
+                  {restaurant.OpeningHours}
+                </p>
+                <p className="text-gray-600 mb-2">
+                  <span className="font-semibold">Contact:</span>{" "}
+                  {restaurant.Hotline}
+                </p>
+                {restaurant.distance && (
+                  <p className="text-gray-600">
+                    <span className="font-semibold">Distance:</span>{" "}
+                    {(restaurant.distance / 1000).toFixed(1)} km
+                  </p>
+                )}
+                <div className="mt-4">
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                  onClick={() => handleViewMenu(restaurant)}>
+                    View Menu
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
       <Footer />
