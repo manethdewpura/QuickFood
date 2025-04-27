@@ -173,16 +173,14 @@ export const getAllOrders = async (req, res) => {
 export const updateOrderAccept = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { orderAccept } = req.body;
-    if (!orderId || !orderAccept) {
+    if (!orderId) {
       return res.status(400).json({
         success: false,
         message: "Order ID and status are required",
       });
     }
     const updatedOrder = await orderService.updateOrderAccept(
-      orderId,
-      orderAccept
+      orderId
     );
     return res.status(200).json({
       success: true,
