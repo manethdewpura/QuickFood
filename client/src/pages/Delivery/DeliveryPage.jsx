@@ -19,7 +19,7 @@ const DeliveryPage = () => {
         const response = await axios.get(
           `http://localhost:5000/delivery/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
-        ); 
+        );
         console.log(response.data);
         setDelivery(response.data);
         setLoading(false);

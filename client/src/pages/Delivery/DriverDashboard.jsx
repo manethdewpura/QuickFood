@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { getLocationName } from '../../utils/location.util';
-import DriverHeader from '../../components/Driver/DriverHeader'; // Import DriverHeader
+import DriverHeader from '../../components/Driver/DriverHeader';
+import Footer from '../../components/Footer';
 
 const DriverDashboard = () => {
   const [deliveries, setDeliveries] = useState([]);
@@ -13,6 +14,7 @@ const DriverDashboard = () => {
   const [customerLocations, setCustomerLocations] = useState({});
 
   useEffect(() => {
+    // fetch the nearest orders first for the driver
     const fetchNearestOrders = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -31,6 +33,7 @@ const DriverDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch deliveries for the driver
   useEffect(() => {
     const fetchDeliveries = async () => {
       try {
@@ -51,6 +54,7 @@ const DriverDashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Update driver location every 2 minutes
   useEffect(() => {
     const updateLocation = () => {
       navigator.geolocation.getCurrentPosition(
@@ -123,7 +127,7 @@ const DriverDashboard = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen relative">
-      <DriverHeader /> {/* Include DriverHeader */}
+      <DriverHeader />
 
       {/* Availability Toggle */}
       <div className="absolute top-20 right-4">
@@ -239,6 +243,7 @@ const DriverDashboard = () => {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
