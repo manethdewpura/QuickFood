@@ -122,8 +122,31 @@ const DriverDashboard = () => {
   if (error) return <div className="text-center text-red-500 mt-10">{error}</div>;
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen relative">
       <DriverHeader /> {/* Include DriverHeader */}
+
+      {/* Availability Toggle */}
+      <div className="absolute top-20 right-4">
+        {deliveries.length === 0 ? (
+          <button
+            className={`px-6 py-3 rounded-md font-semibold shadow ${isAvailable
+              ? 'bg-green-600 text-white hover:bg-green-700'
+              : 'bg-red-600 text-white hover:bg-red-700'
+              }`}
+            onClick={toggleAvailability}
+          >
+            {isAvailable ? 'Available for Deliveries' : 'Not Available'}
+          </button>
+        ) : (
+          <button
+            className="px-6 py-3 rounded-md font-semibold shadow bg-yellow-500 text-white cursor-not-allowed"
+            disabled
+          >
+            Busy
+          </button>
+        )}
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-center text-black mb-8">Driver Dashboard</h1>
 
@@ -186,12 +209,14 @@ const DriverDashboard = () => {
                             restaurantId: order.restaurantId,
                             customerLatitude: order.customerLatitude,
                             customerLongitude: order.customerLongitude,
+                            customerAddress: customerLocations[order._id],
                             restaurant: {
                               latitude: order.restaurant.latitude,
                               longitude: order.restaurant.longitude,
-                              Address: order.restaurant.name
+                              Address: order.restaurant.Address
                             }
                           },
+
                           { headers: { Authorization: `Bearer ${token}` } }
                         );
                         await axios.put(
@@ -212,19 +237,6 @@ const DriverDashboard = () => {
               ))}
             </div>
           )}
-        </div>
-
-        {/* Availability Toggle */}
-        <div className="flex justify-center">
-          <button
-            className={`px-6 py-3 rounded-md font-semibold shadow ${isAvailable
-              ? 'bg-green-600 text-white hover:bg-green-700'
-              : 'bg-red-600 text-white hover:bg-red-700'
-              }`}
-            onClick={toggleAvailability}
-          >
-            {isAvailable ? 'Available for Deliveries' : 'Not Available'}
-          </button>
         </div>
       </div>
     </div>
