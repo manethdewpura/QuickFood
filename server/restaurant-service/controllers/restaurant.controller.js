@@ -173,3 +173,39 @@ export const getRestaurantsByUserId = async (req, res) => {
         res.status(404).json({ success: false, message: error.message });
     }
 };
+
+//verify order by restaurant
+export const verifyOrder = async (req, res) => {
+    try {
+        const { orderId, verificationCode } = req.params;
+     
+        const restaurant = await restaurantService.verifyOrderforPickup(orderId, verificationCode);
+        res.status(200).json({
+            restaurant
+        });
+    }
+    catch (error) {
+        res.status(404).json({ success: false, message: error.message });
+    }
+};
+
+//Search restaurants by name
+export const searchRestaurants = async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) {
+            return res.status(400).json({
+                success: false,
+                message: 'Search query is required',
+            });
+        }
+        const restaurants = await restaurantService.searchRestaurantsByName(query);
+        res.status(200).json({
+            success: true,
+            message: "Restaurants found successfully",
+            data: restaurants,
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
