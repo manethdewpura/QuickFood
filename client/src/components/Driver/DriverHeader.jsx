@@ -25,9 +25,7 @@ const DriverHeader = () => {
           <Link to="/driver/dashboard" className="text-gray-600 hover:text-blue-600">
             Dashboard
           </Link>
-          <Link to="/driver/deliveries" className="text-gray-600 hover:text-blue-600">
-            My Deliveries
-          </Link>
+          
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 text-red-500 hover:text-red-700"

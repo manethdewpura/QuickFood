@@ -1,5 +1,4 @@
-// 
-// In your frontend socket.js file
+
 import { io } from 'socket.io-client';
 
 const socket = io("http://localhost:5002", {

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import socket from '../../utils/socket'; // Adjust the import path as necessary
+import socket from '../../utils/socket';
 
 // Fix Leaflet icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -24,7 +24,7 @@ const createCustomIcon = (iconUrl, iconSize) => {
   });
 };
 
-// Helper function to safely extract coordinates from location objects
+// Helper function to extract coordinates from location objects
 const getCoordinates = (location) => {
   if (!location || !location.coordinates) return null;
   const { lat, lng } = location.coordinates;
@@ -106,15 +106,15 @@ const RouteLayer = ({ pickupCoords, deliveryCoords, currentCoords }) => {
 
 const DeliveryMap = ({ deliveryId, pickupLocation, deliveryLocation, initialCurrentLocation }) => {
   const [currentLocation, setCurrentLocation] = useState(initialCurrentLocation);
-  const mapRef = useRef(null);  // Add this line to create a ref
+  const mapRef = useRef(null);
 
 
-  // Icons for different markers
+
   const driverIcon = createCustomIcon('https://cdn-icons-png.flaticon.com/512/3448/3448636.png', [32, 32], {
-    zIndexOffset: 1000  // This will raise the driver icon above others
+    zIndexOffset: 1000
   });
-  
-    const restaurantIcon = createCustomIcon('https://cdn-icons-png.flaticon.com/512/562/562678.png', [32, 32]);
+
+  const restaurantIcon = createCustomIcon('https://cdn-icons-png.flaticon.com/512/562/562678.png', [32, 32]);
   const customerIcon = createCustomIcon('https://cdn-icons-png.flaticon.com/512/1077/1077063.png', [32, 32]);
 
   // Extract coordinates from location objects
