@@ -30,7 +30,8 @@ const TrackDelivery = () => {
         }
 
         setLoading(false);
-      } catch (err) {
+      } catch (error) {
+        console.error('Error fetching delivery details:', error);
         setError('Failed to load delivery details');
         setLoading(false);
       }

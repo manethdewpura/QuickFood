@@ -1,5 +1,6 @@
 import { registerUser, loginUser, getUserById, updateUserById, deleteUserById, getAllUsersService } from '../services/auth.service.js';
 
+//Register a new user
 export const register = async (req, res) => {
     try {
          const { name, email, password, role, contact, address } = req.body;
@@ -11,6 +12,7 @@ export const register = async (req, res) => {
     }
 };
 
+//Login a user
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -22,6 +24,7 @@ export const login = async (req, res) => {
     }
 };
 
+//Get user details by ID
 export const getUser = async (req, res) => {
     try {
         const userId = req.headers['x-user-id'];
@@ -33,6 +36,7 @@ export const getUser = async (req, res) => {
     }
 };
 
+//Update user details by ID
 export const updateUser = async (req, res) => {
     try {
         const userId = req.headers['x-user-id'];
@@ -45,6 +49,7 @@ export const updateUser = async (req, res) => {
     }
 };
 
+//Delete user by ID
 export const deleteUser = async (req, res) => {
     try {
         const userId = req.headers['x-user-id'];
@@ -56,6 +61,7 @@ export const deleteUser = async (req, res) => {
     }
 };
 
+//Get all users
 export const getAllUsers = async (req, res) => {
     try {
         const users = await getAllUsersService();
