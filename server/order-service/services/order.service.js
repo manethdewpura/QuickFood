@@ -351,3 +351,19 @@ export const getAllOrders = async () => {
     throw new Error("Failed to fetch all orders: " + error.message);
   }
 };
+
+export const updateOrderAccept = async (orderId, isOrderAccepted) => {
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) {
+      throw new Error("Order not found");
+    }
+    order.isOrderAccepted = isOrderAccepted;
+    await order.save();
+    return order;
+  }
+  catch (error) {
+    console.error("Error updating order acceptance:", error);
+    throw new Error("Failed to update order acceptance: " + error.message);
+  }
+}
