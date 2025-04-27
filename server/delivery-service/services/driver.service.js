@@ -4,16 +4,23 @@ import { calculateDistance } from '../utils/helpers.js'; // Assuming you have a 
 
 export const createDriver = async (driverData, userId) => {
   try {
-    // 1. Fetch user info from Auth-Service
+
+    // 1. Check if a driver already exists for the given userId
+    const existingDriver = await Driver.findOne({ userId });
+    if (existingDriver) {
+      throw new Error('Driver already exists for this user');
+    }
+    // 2. Fetch user info from Auth-Service
     const userRes = await axios.get(`http://localhost:5000/auth/user`, {
-      headers: { 'x-user-id': userId }});
+      headers: { 'x-user-id': userId }
+    });
     const user = userRes.data.user;
 
-    // 2. Check if user exists and is DeliveryPersonnel
+    // 3. Check if user exists and is DeliveryPersonnel
     if (!user) throw new Error('User not found');
     if (user.role !== 'DeliveryPersonnel') throw new Error('User must have DeliveryPersonnel role');
 
-    // 3. Create the driver profile
+    // 4. Create the driver profile
     const driver = new Driver({
       userId: user._id,
       name: user.name,
@@ -37,11 +44,11 @@ export const createDriver = async (driverData, userId) => {
 export const getDriverById = async (driverId) => {
   try {
     const driver = await Driver.findById(driverId);
-    
+
     if (!driver) {
       throw new Error('Driver not found');
     }
-    
+
     return driver;
   } catch (error) {
     throw error;
@@ -105,12 +112,12 @@ export const updateDriverLocation = async (driverId, location) => {
     if (!driver) {
       throw new Error('Driver not found');
     }
-    
+
     driver.currentLocation = {
       lat: location.lat || location.latitude,
       lng: location.lng || location.longitude
     };
-    
+
     const updatedDriver = await driver.save();
     return updatedDriver;
   } catch (error) {
@@ -122,16 +129,16 @@ export const updateDriverLocation = async (driverId, location) => {
 export const updateDriverAvailability = async (driverId, status) => {
   try {
     const driver = await Driver.findById(driverId);
-    
+
     if (!driver) {
       throw new Error('Driver not found');
     }
-    
+
     // Ensure status is one of the allowed values
     if (!['available', 'busy', 'offline'].includes(status)) {
       throw new Error('Invalid status value');
     }
-    
+
     driver.status = status;
     const updatedDriver = await driver.save();
     return updatedDriver;
@@ -153,21 +160,30 @@ export const getAllAvailableDrivers = async () => {
 export const updateDriverRating = async (driverId, rating) => {
   try {
     const driver = await Driver.findById(driverId);
-    
+
     if (!driver) {
       throw new Error('Driver not found');
     }
-    
+
     // Calculate new average rating
     const totalRatings = driver.totalDeliveries;
     const currentRatingSum = driver.rating * totalRatings;
     const newRatingSum = currentRatingSum + rating;
     const newAverageRating = newRatingSum / (totalRatings + 1);
-    
+
     driver.rating = newAverageRating;
-    
+
     const updatedDriver = await driver.save();
     return updatedDriver;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const checkDriverByUserId = async (userId) => {
+  try {
+    const driver = await Driver.findOne({ userId });
+    return driver; // Returns null if no driver is found
   } catch (error) {
     throw error;
   }

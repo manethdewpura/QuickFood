@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import DeliveryMap from '../DeliveryComponents/DeliveryMap';
 import DeliveryStatus from '../DeliveryComponents/DeliveryStatus';
+import DriverHeader from '../../components/Driver/DriverHeader';
 
 const DeliveryPage = () => {
   const [delivery, setDelivery] = useState(null);
@@ -137,47 +138,51 @@ const DeliveryPage = () => {
   if (!delivery) return <div>Delivery not found</div>;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-2xl">
-        <h1 className="text-2xl font-bold mb-6 text-center text-indigo-700">
-          Delivery #{delivery._id.substring(0, 8)}
-        </h1>
+    <div>
+      <DriverHeader />
 
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-indigo-600 mb-2">Order Details</h2>
-          <div className="space-y-1">
-            <p><span className="font-semibold">Restaurant:</span> {delivery.restaurantId.name}</p>
-            <p><span className="font-semibold">Restaurant Address:</span> {delivery.pickupLocation.address}</p>
-            <p><span className="font-semibold">Customer Address:</span> {delivery.deliveryLocation.address}</p>
-            <p><span className="font-semibold">Verification Code:</span> {delivery.verificationCode}</p>
-            <p><span className="font-semibold">Estimated Delivery Time:</span> {new Date(delivery.estimatedDeliveryTime).toLocaleTimeString()}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 mt-10 rounded shadow-md w-full max-w-2xl">
+          <h1 className="text-2xl font-bold mb-6 text-center text-indigo-700">
+            Delivery #{delivery._id.substring(0, 8)}
+          </h1>
+
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-indigo-600 mb-2">Order Details</h2>
+            <div className="space-y-1">
+              <p><span className="font-semibold">Restaurant:</span> {delivery.restaurantId.name}</p>
+              <p><span className="font-semibold">Restaurant Address:</span> {delivery.pickupLocation.address}</p>
+              <p><span className="font-semibold">Customer Address:</span> {delivery.deliveryLocation.address}</p>
+              <p><span className="font-semibold">Verification Code:</span> {delivery.verificationCode}</p>
+              <p><span className="font-semibold">Estimated Delivery Time:</span> {new Date(delivery.estimatedDeliveryTime).toLocaleTimeString()}</p>
+            </div>
           </div>
+
+          <DeliveryStatus
+            currentStatus={delivery.status}
+            onUpdateStatus={updateDeliveryStatus}
+          />
+
+          <div className="tracking-controls my-4">
+            <button
+              className={`tracking-btn w-full py-2 rounded font-semibold ${isTracking ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'
+                }`}
+              onClick={toggleTracking}
+            >
+              {isTracking ? 'Stop Location Sharing' : 'Start Location Sharing'}
+            </button>
+            <p className="tracking-status text-center mt-2 text-sm text-gray-500">
+              {isTracking ? 'Your location is being shared in real-time' : 'Location sharing is paused'}
+            </p>
+          </div>
+
+          <DeliveryMap
+            deliveryId={delivery._id}
+            pickupLocation={delivery.pickupLocation}
+            deliveryLocation={delivery.deliveryLocation}
+            initialCurrentLocation={delivery.currentLocation}
+          />
         </div>
-
-        <DeliveryStatus
-          currentStatus={delivery.status}
-          onUpdateStatus={updateDeliveryStatus}
-        />
-
-        <div className="tracking-controls my-4">
-          <button
-            className={`tracking-btn w-full py-2 rounded font-semibold ${isTracking ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'
-              }`}
-            onClick={toggleTracking}
-          >
-            {isTracking ? 'Stop Location Sharing' : 'Start Location Sharing'}
-          </button>
-          <p className="tracking-status text-center mt-2 text-sm text-gray-500">
-            {isTracking ? 'Your location is being shared in real-time' : 'Location sharing is paused'}
-          </p>
-        </div>
-
-        <DeliveryMap
-          deliveryId={delivery._id}
-          pickupLocation={delivery.pickupLocation}
-          deliveryLocation={delivery.deliveryLocation}
-          initialCurrentLocation={delivery.currentLocation}
-        />
       </div>
     </div>
 

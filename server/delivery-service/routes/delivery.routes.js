@@ -18,6 +18,8 @@ router.get('/restaurant/:restaurantId', deliveryController.getDeliveriesByRestau
 // Get delivery by ID
 router.get('/:id', deliveryController.getDeliveryById);
 
+router.get('/order/:orderId', deliveryController.getDeliveryByOrderId);
+
 // Update delivery status
 router.patch('/:id/status', deliveryController.updateDeliveryStatus);
 
@@ -26,6 +28,8 @@ router.patch('/:id/location', deliveryController.updateDriverLocation);
 
 // Verify delivery code
 router.get('/verification/:orderId/:verificationCode', deliveryController.verifyDeliveryCode);
+
+
 
 
 export default router;

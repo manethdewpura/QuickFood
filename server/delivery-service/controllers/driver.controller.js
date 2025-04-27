@@ -85,3 +85,16 @@ export const updateDriverRating = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const checkDriverByUserId = async (req, res) => {
+  try {
+    const userId = req.headers['x-user-id'];
+    const driver = await driverService.checkDriverByUserId(userId);
+    if (!driver) {
+      return res.status(404).json({ message: 'Driver not found' });
+    }
+    res.status(200).json(driver);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
