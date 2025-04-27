@@ -169,3 +169,29 @@ export const getAllOrders = async (req, res) => {
     });
   }
 };
+
+export const updateOrderAccept = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    if (!orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "Order ID and status are required",
+      });
+    }
+    const updatedOrder = await orderService.updateOrderAccept(
+      orderId
+    );
+    return res.status(200).json({
+      success: true,
+      message: "Order accepted successfully",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    console.error("Error in updateOrderAccept:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Error accepting order",
+    });
+  }
+};
