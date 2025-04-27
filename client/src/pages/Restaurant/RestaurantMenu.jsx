@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import RestaurantAdminHeader from './RestaurantHeader.jsx';
+import Footer from '../../components/Footer.jsx';
 
 const RestaurantMenu = ({ restaurantId }) => {
   const [menuItems, setMenuItems] = useState([]);
@@ -15,12 +17,9 @@ const RestaurantMenu = ({ restaurantId }) => {
     imageUrl: '',
   });
   const [editingId, setEditingId] = useState(null);
-  // const user = JSON.parse(localStorage.getItem('user'));
 
   const fetchMenuItems = async () => {
     try {
-      //todo: update to get only restaurants menu items
-      // const restaurantId = '680b0608f204745ccb83e63c'; // Replace with actual restaurant ID
       const res = await axios.get(`http://localhost:5000/menu/restaurant/${restaurantIdFromParams}`,{
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
@@ -110,6 +109,8 @@ const RestaurantMenu = ({ restaurantId }) => {
   };
 
   return (
+    <>
+    <RestaurantAdminHeader/>
     <div className="max-w-4xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-4">{editingId ? 'Update' : 'Add'} Menu Item</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow">
@@ -163,23 +164,7 @@ const RestaurantMenu = ({ restaurantId }) => {
             <label htmlFor="isAvailable" className="text-sm">Available</label>
           </div>
 
-          <div className="col-span-2 flex items-center space-x-2">
-            {/* <button
-              type="button"
-              onClick={async () => {
-                const location = await getCurrentLocation();
-                setForm((prev) => ({
-                  ...prev,
-                  location: {
-                    latitude: location.latitude,
-                    longitude: location.longitude
-                  }
-                }));
-              }}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-              Get Current Location
-            </button> */}
+          <div className="col-span-2 flex items-center space-x-2"> 
             <input
               type="file"
               name="image"
@@ -207,7 +192,6 @@ const RestaurantMenu = ({ restaurantId }) => {
             <p><strong>Description : </strong> {m.description}</p>
             <p><strong>Cuisine Type : </strong> {m.cuisineType}</p>
             <p><strong>Available : </strong> <span className={m.isAvailable ? 'text-green-600' : 'text-red-600'}>{m.isAvailable ? 'Yes' : 'No'}</span></p>
-            {/* {user?.role === "RestaurantAdmin" && user._id === r.restaurantAdminId && */}
             {(
               <div className="mt-2 space-x-2 flex justify-end">
                 <button onClick={() => handleEdit(m)} className="px-3 py-1 bg-yellow-500 text-white rounded">
@@ -222,6 +206,8 @@ const RestaurantMenu = ({ restaurantId }) => {
         ))}
       </div>
     </div>
+    <Footer/>
+  </>
   );
 };
 
