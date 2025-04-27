@@ -24,6 +24,7 @@ import Checkout from "./pages/Home/Checkout.jsx";
 import CustomerDeliveries from "./pages/Home/CustomerDeliveries.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
 import EditProfile from "./pages/Profile/EditProfile.jsx";
+import CustomerOrders from './pages/Home/CustomerOrders.jsx';
 
 const App = () => {
   return (
@@ -57,6 +58,7 @@ const App = () => {
         <Route path="/customer/deliveries" element={<CustomerDeliveries />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/edit" element={<EditProfile />} />
+        <Route path="/customer/orders" element={<CustomerOrders />} />
       </Routes>
     </LocationProvider>
   );
