@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+// Register a new user
 export const registerUser = async ({ name, email, password, role, contact, address }) => {
     const existingUSer = await User.findOne({ email });
     if (existingUSer) {
@@ -28,6 +29,7 @@ export const registerUser = async ({ name, email, password, role, contact, addre
     return { user: newUser, token };
 };
 
+// Login a user
 export const loginUser = async ({ email,password }) => {
     const user = await User.findOne({ email});
     if (!user) {
@@ -48,6 +50,7 @@ export const loginUser = async ({ email,password }) => {
     return { user, token };
 };
 
+// Get user details by ID
 export const getUserById = async (userId) => {
     const user = await User.findById(userId);
     if (!user) {
@@ -56,6 +59,7 @@ export const getUserById = async (userId) => {
     return user;
 };
 
+// Update user details by ID
 export const updateUserById = async (userId, updateData) => {
     const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
     if (!user) {
@@ -64,6 +68,7 @@ export const updateUserById = async (userId, updateData) => {
     return user;
 };
 
+// Delete user by ID
 export const deleteUserById = async (userId) => {
     const user = await User.findByIdAndDelete(userId);
     if (!user) {
@@ -72,6 +77,7 @@ export const deleteUserById = async (userId) => {
     return user;
 };
 
+// Get all users
 export const getAllUsersService = async () => {
     const users = await User.find();
     return users;
