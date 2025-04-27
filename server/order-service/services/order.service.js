@@ -352,13 +352,13 @@ export const getAllOrders = async () => {
   }
 };
 
-export const updateOrderAccept = async (orderId, isOrderAccepted) => {
+export const updateOrderAccept = async (orderId) => {
   try {
     const order = await Order.findById(orderId);
     if (!order) {
       throw new Error("Order not found");
     }
-    order.isOrderAccepted = isOrderAccepted;
+    order.isOrderAccepted = true;
     await order.save();
     return order;
   }
