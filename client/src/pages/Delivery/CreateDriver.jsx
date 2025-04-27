@@ -1,119 +1,154 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { getCurrentLocation } from '../../utils/location.util';
 
-const CreateDriverForm = () => {
+const CreateDriver = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    vehicleType: "",
-    vehicleNumber: "",
-    licenseNumber: "",
+    name: '',
+    vehicleType: '',
+    vehicleNumber: '',
+    licenseNumber: '',
+    phoneNumber: '',
+    status: 'available',
+    currentLocation: { lat: 0, lng: 0 },
+    rating: 0,
+    totalDeliveries: 0,
   });
-  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Extract userId from JWT in localStorage
-  const getUserIdFromToken = () => {
-    const token = localStorage.getItem("token"); // Or your token key
-    if (!token) return null;
-    try {
-      const decoded = jwtDecode(token);
-      // Adjust this if your JWT uses a different claim for user ID
-      return decoded.id || decoded.userId || decoded.sub || null;
-    } catch (err) {
-      return null;
-    }
-  };
+  useEffect(() => {
+    const checkDriverExists = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://localhost:5000/driver/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data) {
+          navigate('/driver/dashboard');
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          setLoading(false); // Driver does not exist
+        } else {
+          console.error('Error checking driver existence:', error);
+        }
+      }
+    };
+
+    checkDriverExists();
+  }, [navigate]);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
+  };
+
+  const handleGetLocation = async () => {
+    try {
+      const location = await getCurrentLocation();
+      setFormData((prev) => ({
+        ...prev,
+        currentLocation: {
+          lat: location.latitude,
+          lng: location.longitude,
+        },
+      }));
+    } catch (error) {
+      console.error('Error fetching location:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const userId = getUserIdFromToken();
-    if (!userId) {
-      setMessage("You must be logged in as a DeliveryPersonnel to create a driver profile.");
-      return;
-    }
     try {
-      await axios.post("http://localhost:5002/driver", {
-        userId,
-        ...formData,
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:5000/driver`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setMessage("Driver profile created successfully!");
-      setFormData({ vehicleType: "", vehicleNumber: "", licenseNumber: "" });
+      navigate('/driver/dashboard');
     } catch (error) {
-      setMessage(
-        error.response?.data?.message ||
-          "Failed to create driver. Make sure you are a DeliveryPersonnel user."
-      );
+      console.error('Error creating driver:', error);
     }
   };
 
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-100">Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-full max-w-md space-y-4"
-      >
-        <h2 className="text-2xl font-bold text-center text-indigo-700 mb-4">
-          Create Driver Profile
-        </h2>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Vehicle Type
-          </label>
+      <div className="max-w-md mt-10 ml-10 p-6 bg-white shadow-md rounded-md w-full md:w-1/2">
+        <h1 className="text-2xl font-bold mb-4 text-center">Create Driver</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
           <input
             type="text"
             name="vehicleType"
+            placeholder="Vehicle Type"
             value={formData.vehicleType}
             onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="e.g., motorcycle, car, van"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Vehicle Number
-          </label>
           <input
             type="text"
             name="vehicleNumber"
+            placeholder="Vehicle Number"
             value={formData.vehicleNumber}
             onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="e.g., AB1234"
           />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            License Number
-          </label>
           <input
             type="text"
             name="licenseNumber"
+            placeholder="License Number"
             value={formData.licenseNumber}
             onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="e.g., DL1234567890"
           />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded shadow hover:bg-indigo-700 font-semibold"
-        >
-          Create Driver
-        </button>
-        {message && (
-          <div className="mt-2 text-center text-sm text-red-600">{message}</div>
-        )}
-      </form>
+          <input
+            type="text"
+            name="phoneNumber"
+            placeholder="Phone Number"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <button
+            type="button"
+            onClick={handleGetLocation}
+            className="w-full bg-gray-500 text-black py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Get Current Location
+          </button>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Create Driver
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default CreateDriverForm;
+export default CreateDriver;

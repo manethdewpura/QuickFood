@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { getLocationName } from '../../utils/location.util';
+import DriverHeader from '../../components/Driver/DriverHeader'; // Import DriverHeader
 
 const DriverDashboard = () => {
   const [deliveries, setDeliveries] = useState([]);
@@ -19,7 +20,6 @@ const DriverDashboard = () => {
           `http://localhost:5000/driver/nearest-ready-orders`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log('Nearest orders data:', response.data);
         setNearestOrders(response.data);
       } catch (err) {
         console.error('Error fetching nearest orders:', err);
@@ -36,7 +36,7 @@ const DriverDashboard = () => {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:5000/delivery/driver`, { headers: { Authorization: `Bearer ${token}` } });
-        console.log('Deliveries data:', response.data);
+        console.log(response.data);
         setDeliveries(response.data);
         setLoading(false);
       } catch (err) {
@@ -47,15 +47,11 @@ const DriverDashboard = () => {
     };
 
     fetchDeliveries();
-
-    // Set up interval to refresh data
     const interval = setInterval(fetchDeliveries, 60000);
-
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    // Update driver location periodically
     const updateLocation = () => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -81,10 +77,8 @@ const DriverDashboard = () => {
       );
     };
 
-    // Update location immediately and then every 2 minutes
     updateLocation();
     const interval = setInterval(updateLocation, 120000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -110,7 +104,6 @@ const DriverDashboard = () => {
 
   const toggleAvailability = async () => {
     try {
-      // Use the status field directly instead of isAvailable
       const token = localStorage.getItem('token');
       const newStatus = isAvailable ? 'busy' : 'available';
       await axios.patch(
@@ -125,106 +118,106 @@ const DriverDashboard = () => {
     }
   };
 
-  // Helper function to safely get order ID
-  // const getOrderId = (delivery) => {
-  //   if (!delivery || !delivery.orderId) return 'N/A';
-
-  //   if (typeof delivery.orderId === 'string') {
-  //     return delivery.orderId.substring(0, 8);
-  //   }
-
-  //   if (delivery.orderId && delivery.orderId._id) {
-  //     return delivery.orderId._id.substring(0, 8);
-  //   }
-
-  //   return 'N/A';
-  // };
-
-  // Helper function to safely get restaurant name
-  // const getRestaurantName = (delivery) => {
-  //   if (!delivery || !delivery.restaurantId) return 'Unknown';
-
-  //   if (typeof delivery.restaurantId === 'string') {
-  //     return 'Restaurant #' + delivery.restaurantId.substring(0, 8);
-  //   }
-
-  //   return delivery.restaurantId.name || 'Unknown';
-  // };
-
-  if (loading) return <div>Loading deliveries...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="text-center text-gray-600 mt-10">Loading deliveries...</div>;
+  if (error) return <div className="text-center text-red-500 mt-10">{error}</div>;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-3xl">
-        <h1 className="text-2xl font-bold mb-6 text-center text-indigo-700">Driver Dashboard</h1>
+    <div className="bg-gray-100 min-h-screen">
+      <DriverHeader /> {/* Include DriverHeader */}
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-center text-black mb-8">Driver Dashboard</h1>
 
-        <h2 className="text-xl font-semibold mb-4 text-indigo-600">Nearest Ready Orders</h2>
-        {nearestOrders.length === 0 ? (
-          <p className="text-gray-500">No ready orders nearby at the moment.</p>
-        ) : (
-          <div className="grid gap-4">
-            {nearestOrders.map(order => (
-              <div key={order._id} className="bg-gray-50 p-4 rounded shadow flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg text-indigo-800">
-                    Order #{order._id.substring(0, 8)}
-                  </h3>
-                  <p className="text-gray-700"><strong>Distance:</strong> {order.distance.toFixed(2)} km</p>
-                  <p className="text-gray-700"><strong>Pickup:</strong> {order.restaurant.Address}</p>
-                  <p className="text-gray-700"><strong>Customer Location:</strong> {customerLocations[order._id] || 'Fetching...'}</p>
-                  <p className="text-gray-700"><strong>Status:</strong> {order.orderStatus}</p>
+        {/* Current Deliveries Section */}
+        {deliveries.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold text-black mb-4">Current Deliveries</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {deliveries.map(delivery => (
+                <div key={delivery._id} className="bg-white p-6 rounded-lg shadow-md">
+                  <div className="text-gray-700 space-y-1">
+                    <p><strong>Restaurant:</strong> {delivery.orderDetails.data.restaurant.name}</p>
+                    <p><strong>Pickup Location:</strong> {delivery.orderDetails.data.restaurant.address}</p>
+                    <p><strong>Verification Code:</strong>{delivery.verificationCode}</p>
+                    <p><strong>Customer Location:</strong> {delivery.deliveryLocation.address}</p>
+                    <p><strong>Status:</strong> {delivery.status}</p>
+                    <p><strong>Estimated Delivery:</strong> {new Date(delivery.estimatedDeliveryTime).toLocaleTimeString()}</p>
+                  </div>
+                  <Link
+                    to={`/driver/delivery/${delivery._id}`}
+                    className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700 font-semibold block text-center"
+                  >
+                    View Details
+                  </Link>
                 </div>
-                <button
-                  className="mt-2 md:mt-0 bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 font-semibold"
-                  onClick={async () => {
-                    try {
-                      const token = localStorage.getItem('token');
-                      
-                      // Call the createDelivery API
-                      await axios.post(
-                        `http://localhost:5000/delivery`,
-                        {
-                          _id: order._id,
-                          customerId: order.customerId,
-                          restaurantId: order.restaurantId,
-                          customerLatitude: order.customerLatitude,
-                          customerLongitude: order.customerLongitude,
-                          restaurant: {
-                            latitude: order.restaurant.latitude,
-                            longitude: order.restaurant.longitude,
-                            Address: order.restaurant.name // or use a real address if available
-                          }
-                        },
-                        { headers: { Authorization: `Bearer ${token}` } }
-                      );
-                      
-
-                      // Update the order status to "Accepted"
-                      await axios.put(
-                        `http://localhost:5000/order/status/${order._id}`,
-                        { orderStatus: "Accepted" },
-                        { headers: { Authorization: `Bearer ${token}` } }
-                      );
-
-                      alert('Order accepted successfully!');
-                    } catch (err) {
-                      console.error('Failed to accept order:', err);
-                      alert('Failed to accept order. Please try again.');
-                    }
-                  }}
-                >
-                  Accept
-                </button>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
+        {/* Nearest Ready Orders Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-semibold text-black mb-4">Nearest Ready Orders</h2>
+          {nearestOrders.length === 0 ? (
+            <p className="text-gray-500 text-center">No ready orders nearby at the moment.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {nearestOrders.map(order => (
+                <div key={order._id} className="bg-white p-6 rounded-lg shadow-md">
+                  <h3 className="font-semibold text-lg text-black mb-2">
+                    Order #{order._id.substring(0, 8)}
+                  </h3>
+                  <div className="text-gray-700 space-y-1">
+                    <p><strong>Distance:</strong> {order.distance.toFixed(2)} km</p>
+                    <p><strong>Restaurant:</strong> {order.restaurant.name}</p>
+                    <p><strong>Pickup:</strong> {order.restaurant.Address}</p>
+                    <p><strong>Customer Location:</strong> {customerLocations[order._id] || 'Fetching...'}</p>
+                    <p><strong>Status:</strong> {order.orderStatus}</p>
+                  </div>
+                  <button
+                    className="mt-4 bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 font-semibold w-full"
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem('token');
+                        await axios.post(
+                          `http://localhost:5000/delivery`,
+                          {
+                            _id: order._id,
+                            customerId: order.customerId,
+                            restaurantId: order.restaurantId,
+                            customerLatitude: order.customerLatitude,
+                            customerLongitude: order.customerLongitude,
+                            restaurant: {
+                              latitude: order.restaurant.latitude,
+                              longitude: order.restaurant.longitude,
+                              Address: order.restaurant.name
+                            }
+                          },
+                          { headers: { Authorization: `Bearer ${token}` } }
+                        );
+                        await axios.put(
+                          `http://localhost:5000/order/status/${order._id}`,
+                          { orderStatus: "Accepted" },
+                          { headers: { Authorization: `Bearer ${token}` } }
+                        );
+                        alert('Order accepted successfully!');
+                      } catch (err) {
+                        console.error('Failed to accept order:', err);
+                        alert('Failed to accept order. Please try again.');
+                      }
+                    }}
+                  >
+                    Accept
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-        <div className="mb-6 flex justify-end">
+        {/* Availability Toggle */}
+        <div className="flex justify-center">
           <button
-            className={`px-4 py-2 rounded-md font-semibold shadow ${isAvailable
+            className={`px-6 py-3 rounded-md font-semibold shadow ${isAvailable
               ? 'bg-green-600 text-white hover:bg-green-700'
               : 'bg-red-600 text-white hover:bg-red-700'
               }`}
@@ -233,35 +226,8 @@ const DriverDashboard = () => {
             {isAvailable ? 'Available for Deliveries' : 'Not Available'}
           </button>
         </div>
-
-        <h2 className="text-xl font-semibold mb-4 text-indigo-600">Current Deliveries</h2>
-        {deliveries.length === 0 ? (
-          <p className="text-gray-500">No active deliveries at the moment.</p>
-        ) : (
-          <div className="grid gap-4">
-            {deliveries.map(delivery => (
-              <div key={delivery._id} className="bg-gray-50 p-4 rounded shadow flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg text-indigo-800">
-                    Order #{delivery.orderId ? delivery.orderId.substring(0, 8) : 'N/A'}
-                  </h3>
-                  <p className="text-gray-700"><strong>Restaurant:</strong> {delivery.restaurantId.name}</p>
-                  <p className="text-gray-700"><strong>Status:</strong> {delivery.status}</p>
-                  <p className="text-gray-700"><strong>Estimated Delivery:</strong> {new Date(delivery.estimatedDeliveryTime).toLocaleTimeString()}</p>
-                </div>
-                <Link
-                  to={`/driver/delivery/${delivery._id}`}
-                  className="mt-2 md:mt-0 bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700 font-semibold"
-                >
-                  View Details
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
-
   );
 };
 
