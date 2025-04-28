@@ -144,8 +144,19 @@ const CheckoutForm = () => {
           paymentIntentId: paymentIntent.id,
           orderData: {
             restaurantId,
+            restaurantName: restaurantName,
             customerLatitude: locationContext.latitude,
             customerLongitude: locationContext.longitude,
+            items: items,
+            deliveryAddress: formData.address,
+            customerDetails: {
+              firstName: formData.first_name,
+              lastName: formData.last_name,
+              email: formData.email,
+              phone: formData.phone,
+              address: formData.address,
+              city: formData.city,
+            },
           },
         },
         {

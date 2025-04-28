@@ -29,8 +29,8 @@ export const services = [
     middleware: ["authenticate"],
   },
   {
-    route: "/notification",
-    target: "http://localhost:5004",
+    route: "/notifications",
+    target: "http://localhost:5004/notifications",
     middleware: ["authenticate"],
   },
   {
@@ -67,23 +67,23 @@ export const services = [
 
 export const limiterConfigs = {
   "/auth": {
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 30, // 30 requests per windowMs
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: "Too many authentication attempts, please try again later",
   },
   "/payment": {
-    windowMs: 60 * 1000, // 1 minute
-    max: 10,
+    windowMs: 60 * 1000,
+    max: 100,
     message: "Too many payment requests, please try again later",
   },
   "/order": {
-    windowMs: 60 * 1000, // 1 minute
-    max: 20,
+    windowMs: 60 * 1000,
+    max: 100,
     message: "Too many order requests, please try again later",
   },
   "/cart": {
-    windowMs: 60 * 1000, // 1 minute
-    max: 20,
+    windowMs: 60 * 1000,
+    max: 100,
     message: "Too many cart requests, please try again later",
   },
   "/menu": {
@@ -96,29 +96,29 @@ export const limiterConfigs = {
   },
   "/restaurant": {
     windowMs: 60 * 1000,
-    max: 50,
+    max: 100,
   },
   "/restaurantAll": {
     windowMs: 60 * 1000,
-    max: 50,
+    max: 100,
   },
   "/restaurantAdmin": {
     windowMs: 60 * 1000,
-    max: 50,
+    max: 100,
   },
   "/delivery": {
-    windowMs: 60 * 1000, // 1 minute
-    max: 50, // 50 requests per minute
+    windowMs: 60 * 1000,
+    max: 100,
     message: "Too many requests, please try again later",
   },
   "/driver": {
-    windowMs: 60 * 1000, // 1 minute
-    max: 50, // 50 requests per minute
+    windowMs: 60 * 1000,
+    max: 100,
     message: "Too many requests, please try again later",
   },
   default: {
-    windowMs: 60 * 1000, // 1 minute
-    max: 50, // 50 requests per minute
+    windowMs: 60 * 1000,
+    max: 50,
     message: "Too many requests, please try again later",
   },
 };
@@ -127,10 +127,10 @@ export const securityConfig = {
   cors: {
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["Content-Range", "X-Content-Range"],
-    maxAge: 600, // 10 minutes
+    maxAge: 600,
   },
   rateLimit: {
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000,
+    max: 100,
   },
 };

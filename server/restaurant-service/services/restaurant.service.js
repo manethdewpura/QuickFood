@@ -223,3 +223,20 @@ export const searchRestaurantsByName = async (searchQuery) => {
     throw new Error("Failed to search restaurants.");
   }
 };
+
+//Get restaurant admin id by restaurant id
+export const getRestaurantAdminId = async (restaurantId) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
+      throw new Error("Invalid restaurant ID format.");
+    }
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      throw new Error("Restaurant not found.");
+    }
+    return restaurant.restaurantAdminId;
+  } catch (error) {
+    console.error("Error fetching restaurant admin ID:", error.message);
+    throw new Error("Failed to fetch restaurant admin ID.");
+  }
+};

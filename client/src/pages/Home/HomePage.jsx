@@ -63,23 +63,9 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header isLoggedIn={token !== null} />
-      <div className="flex-1 p-6 relative">
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: "url('/bg1.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        />
-        <div className="relative z-10 mx-6">
-          <h1 className="text-4xl font-bold pl-1 text-white mb-6">
+      <div className="flex-1 p-6">
+        <div className="mx-6">
+          <h1 className="text-4xl font-bold pl-1 text-gray-800 mb-6">
             Nearby Restaurants
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

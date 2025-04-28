@@ -160,6 +160,12 @@ export const decreaseCartItemQuantity = async (
     if (cart.items[itemIndex].quantity <= 0) {
       cart.items.splice(itemIndex, 1);
     }
+
+    if (cart.items.length === 0) {
+      await Cart.findOneAndDelete({ customerId, restaurantId });
+      return null;
+    }
+
     await cart.save();
     return cart;
   } catch (error) {
@@ -178,6 +184,12 @@ export const removeFromCart = async (customerId, restaurantId, menuItemId) => {
     cart.items = cart.items.filter(
       (item) => item.menuItemId.toString() !== menuItemId
     );
+    
+    if (cart.items.length === 0) {
+      await Cart.findOneAndDelete({ customerId, restaurantId });
+      return null;
+    }
+    
     await cart.save();
     return cart;
   } catch (error) {
