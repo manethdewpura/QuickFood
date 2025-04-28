@@ -98,5 +98,5 @@ mongoose
 app.use("/auth", authRoutes);
 
 app.listen(5000, () => {
-  console.log("Auth Service running on port 50000");
+  console.log("Auth Service running on port 5000");
 });
