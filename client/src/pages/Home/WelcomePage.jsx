@@ -4,20 +4,14 @@ import Header from "../../components/Header";
 
 const WelcomePage = () => {
   const [currentTime, setCurrentTime] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-    if (isLoggedIn) {
       navigate("/home");
     }
-  }, [isLoggedIn, navigate]);
+  }, [navigate]);
 
   useEffect(() => {
     const updateTime = () => {
