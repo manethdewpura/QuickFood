@@ -184,6 +184,10 @@ const DriverDashboard = () => {
                 >
                   <div className="text-gray-700 space-y-1">
                     <p>
+                      <strong>Delivery ID:</strong>{" "}
+                      {delivery._id}
+                    </p>
+                    <p>
                       <strong>Restaurant:</strong>{" "}
                       {delivery.orderDetails.data.restaurant.name}
                     </p>
