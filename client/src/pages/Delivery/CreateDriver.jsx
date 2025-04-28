@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getCurrentLocation } from "../../utils/location.util";
+import { API_URL } from '../../config/api.config';
 
 const CreateDriver = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const CreateDriver = () => {
     const checkDriverExists = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:5000/driver/me`, {
+        const response = await axios.get(`${API_URL}driver/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data) {
@@ -72,7 +73,7 @@ const CreateDriver = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`http://localhost:5000/driver`, formData, {
+      await axios.post(`${API_URL}driver`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate("/driver/dashboard");

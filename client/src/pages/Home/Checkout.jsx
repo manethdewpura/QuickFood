@@ -5,6 +5,7 @@ import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useLocation as useLocationContext } from "../../context/LocationContext.jsx";
+import { API_URL } from "../../config/api.config";
 import {
   Elements,
   CardElement,
@@ -46,7 +47,7 @@ const CheckoutForm = () => {
 
     // Fetch restaurant and cart details
     axios
-      .get(`http://localhost:5000/cart/${restaurantId}`, {
+      .get(`${API_URL}cart/${restaurantId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -105,7 +106,7 @@ const CheckoutForm = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/payment/create-payment-intent",
+        `${API_URL}payment/create-payment-intent`,
         {
           amount: Math.round((calculateSubtotal() + shippingFee) * 100),
         },
@@ -137,7 +138,7 @@ const CheckoutForm = () => {
 
       // Create order and receipt after successful payment
       await axios.post(
-        "http://localhost:5000/payment/success-payment",
+        `${API_URL}payment/success-payment`,
         {
           amount: calculateSubtotal() + shippingFee,
           currency: "lkr",
@@ -170,7 +171,7 @@ const CheckoutForm = () => {
 
       // Fetch order details and navigate to customer orders page
       const orderResponse = await axios.get(
-        "http://localhost:5000/order/customer",
+        `${API_URL}order/customer`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -4,6 +4,7 @@ import Header from "../../components/Header";
 import axios from "axios";
 import { calculateDistance } from "../../utils/helpers";
 import Footer from "../../components/Footer";
+import { API_URL } from '../../config/api.config';
 
 const HomePage = () => {
   const [token] = React.useState(localStorage.getItem("token"));
@@ -21,7 +22,7 @@ const HomePage = () => {
         const { latitude, longitude } = position.coords;
         axios
           .get(
-            `http://localhost:5000/restaurantAll/nearest?latitude=${latitude}&longitude=${longitude}`,
+            `${API_URL}restaurantAll/nearest?latitude=${latitude}&longitude=${longitude}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,

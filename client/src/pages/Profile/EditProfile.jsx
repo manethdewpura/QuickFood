@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { API_URL } from '../../config/api.config';
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ const EditProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/auth/user", {
+        const response = await axios.get(`${API_URL}auth/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userData = response.data.user;
@@ -48,7 +49,7 @@ const EditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put("http://localhost:5000/auth/user", formData, {
+      await axios.put(`${API_URL}auth/user`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate("/profile");

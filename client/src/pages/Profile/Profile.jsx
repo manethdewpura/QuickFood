@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { API_URL } from '../../config/api.config';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -13,7 +14,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/auth/user", {
+        const response = await axios.get(`${API_URL}auth/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data.user);
@@ -38,7 +39,7 @@ const Profile = () => {
       )
     ) {
       try {
-        await axios.delete("http://localhost:5000/auth/user", {
+        await axios.delete(`${API_URL}auth/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         localStorage.removeItem("token");

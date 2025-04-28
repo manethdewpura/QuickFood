@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
+import { API_URL } from '../../config/api.config';
 
 const RestaurantOrders = ({ restaurantId }) => {
   const { id: restaurantIdFromParams } = useParams();
@@ -14,7 +15,7 @@ const RestaurantOrders = ({ restaurantId }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `http://localhost:5000/order/restaurant/${restaurantIdFromParams}`,
+        `${API_URL}order/restaurant/${restaurantIdFromParams}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -35,7 +36,7 @@ const RestaurantOrders = ({ restaurantId }) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/order/status/${orderId}`,
+        `${API_URL}order/status/${orderId}`,
         { orderStatus: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -49,7 +50,7 @@ const RestaurantOrders = ({ restaurantId }) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:5000/restaurant/verify/${orderId}/${verificationCode}`,
+        `${API_URL}restaurant/verify/${orderId}/${verificationCode}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -102,7 +103,7 @@ const RestaurantOrders = ({ restaurantId }) => {
                         try {
                           const token = localStorage.getItem("token");
                           await axios.put(
-                            `http://localhost:5000/order/update/accept/${order._id}`,
+                            `${API_URL}order/update/accept/${order._id}`,
                             {},
                             { headers: { Authorization: `Bearer ${token}` } }
                           );

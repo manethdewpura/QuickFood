@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import DeliveryMap from "../DeliveryComponents/DeliveryMap";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { API_URL } from '../../config/api.config';
 
 const TrackDelivery = () => {
   const [delivery, setDelivery] = useState(null);
@@ -17,7 +18,7 @@ const TrackDelivery = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:5000/delivery/${id}`,
+          `${API_URL}delivery/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setDelivery(response.data);
@@ -25,7 +26,7 @@ const TrackDelivery = () => {
         if (driverId) {
           console.log(driverId);
           const driverResponse = await axios.get(
-            `http://localhost:5000/driver/${driverId}`,
+            `${API_URL}driver/${driverId}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
           setDriver(driverResponse.data);

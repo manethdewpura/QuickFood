@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
+import { API_URL } from '../../config/api.config';
 
 const RestaurantMenu = ({ restaurantId }) => {
   const [menuItems, setMenuItems] = useState([]);
@@ -21,7 +22,7 @@ const RestaurantMenu = ({ restaurantId }) => {
   const fetchMenuItems = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/menu/restaurant/${restaurantIdFromParams}`,
+        `${API_URL}menu/restaurant/${restaurantIdFromParams}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -62,14 +63,14 @@ const RestaurantMenu = ({ restaurantId }) => {
     try {
       if (editingId) {
         await axios.put(
-          `http://localhost:5000/menuRes/${editingId}`,
+          `${API_URL}menuRes/${editingId}`,
           formData,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
       } else {
-        await axios.post(`http://localhost:5000/menuRes/`, formData, {
+        await axios.post(`${API_URL}menuRes/`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -108,7 +109,7 @@ const RestaurantMenu = ({ restaurantId }) => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5007/menuRes/${id}`, {
+      await axios.delete(`${API_URL}menuRes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchMenuItems();

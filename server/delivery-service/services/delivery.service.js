@@ -6,6 +6,8 @@ import {
 } from "../utils/helpers.js";
 import { emitLocationUpdate, emitStatusUpdate } from "../socket.js";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const createDelivery = async (orderData, userId) => {
   try {
@@ -105,7 +107,7 @@ export const updateDeliveryStatus = async (
 
       // Update the order status to "Delivered"
       await axios.put(
-        `http://localhost:5005/order/status/${delivery.orderId}`,
+        `${process.env.ORDER_SERVICE_URL}order/status/${delivery.orderId}`,
         { orderStatus: "Delivered" }
       );
 
@@ -288,7 +290,7 @@ export const getDeliveriesByDriver = async (driverId) => {
       deliveries.map(async (delivery) => {
         try {
           const response = await axios.get(
-            `http://localhost:5005/order/${delivery.orderId}`
+            `${process.env.ORDER_SERVICE_URL}order/${delivery.orderId}`
           );
 
           if (response.data) {
@@ -326,7 +328,7 @@ export const getDeliveriesByCustomer = async (customerId) => {
         if (delivery.restaurantId) {
           try {
             const response = await axios.get(
-              `http://localhost:5007/restaurantAll/${delivery.restaurantId}`
+              `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${delivery.restaurantId}`
             );
             if (response.data && response.data.data) {
               delivery = delivery.toObject();

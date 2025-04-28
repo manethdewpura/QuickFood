@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 export const services = [
   {
     route: "/delivery",
-    target: "http://localhost:5002/delivery",
+    target: process.env.DELIVERY_SERVICE_URL + "delivery",
     middleware: [
       "authenticate",
       { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] },
@@ -9,7 +12,7 @@ export const services = [
   },
   {
     route: "/driver",
-    target: "http://localhost:5002/driver",
+    target: process.env.DELIVERY_SERVICE_URL + "driver",
     middleware: [
       "authenticate",
       { authorizeRole: ["DeliveryPersonnel", "Customer", "RestaurantAdmin"] },
@@ -17,7 +20,7 @@ export const services = [
   },
   {
     route: "/menuRes",
-    target: "http://localhost:5003/menuRes",
+    target: process.env.MENU_SERVICE_URL + "menuRes",
     middleware: [
       "authenticate",
       { authorizeRole: ["SystemAdmin", "RestaurantAdmin"] },
@@ -25,42 +28,42 @@ export const services = [
   },
   {
     route: "/menu",
-    target: "http://localhost:5003/menu",
+    target: process.env.MENU_SERVICE_URL + "menu",
     middleware: ["authenticate"],
   },
   {
     route: "/notifications",
-    target: "http://localhost:5004/notifications",
+    target: process.env.NOTIFICATION_SERVICE_URL + "notifications",
     middleware: ["authenticate"],
   },
   {
     route: "/cart",
-    target: "http://localhost:5005/cart",
+    target: process.env.ORDER_SERVICE_URL + "cart",
     middleware: ["authenticate"],
   },
   {
     route: "/order",
-    target: "http://localhost:5005/order",
+    target: process.env.ORDER_SERVICE_URL + "order",
     middleware: ["authenticate"],
   },
   {
     route: "/payment",
-    target: "http://localhost:5006/payment",
+    target: process.env.PAYMENT_SERVICE_URL + "payment",
     middleware: ["authenticate"],
   },
   {
     route: "/restaurant",
-    target: "http://localhost:5007/restaurant",
+    target: process.env.RESTAURANT_SERVICE_URL + "restaurant",
     middleware: ["authenticate", { authorizeRole: ["RestaurantAdmin"] }],
   },
   {
     route: "/restaurantAll",
-    target: "http://localhost:5007/restaurantAll",
+    target: process.env.RESTAURANT_SERVICE_URL + 'restaurantAll',
     middleware: ["authenticate"],
   },
   {
     route: "/restaurantAdmin",
-    target: "http://localhost:5007/restaurantAdmin",
+    target: process.env.RESTAURANT_SERVICE_URL + "restaurantAdmin",
     middleware: ["authenticate", { authorizeRole: ["SystemAdmin"] }],
   },
 ];
@@ -68,57 +71,57 @@ export const services = [
 export const limiterConfigs = {
   "/auth": {
     windowMs: 15 * 60 * 1000,
-    max: 100,
+    max: 1000,
     message: "Too many authentication attempts, please try again later",
   },
   "/payment": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
     message: "Too many payment requests, please try again later",
   },
   "/order": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
     message: "Too many order requests, please try again later",
   },
   "/cart": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
     message: "Too many cart requests, please try again later",
   },
   "/menu": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
   },
   "/menuRes": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
   },
   "/restaurant": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
   },
   "/restaurantAll": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
   },
   "/restaurantAdmin": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
   },
   "/delivery": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
     message: "Too many requests, please try again later",
   },
   "/driver": {
     windowMs: 60 * 1000,
-    max: 100,
+    max: 1000,
     message: "Too many requests, please try again later",
   },
   default: {
     windowMs: 60 * 1000,
-    max: 50,
+    max: 1000,
     message: "Too many requests, please try again later",
   },
 };
