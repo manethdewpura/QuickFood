@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, Link } from "react-router-dom"; // Import useLocation and Link
+import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
-import Header from "../../components/Header"; // Import Header
-import Footer from "../../components/Footer"; // Import Footer
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const CustomerOrders = () => {
-  const location = useLocation(); // Access the passed state
-  const [orders, setOrders] = useState(location.state?.orders || []); // Initialize with passed orders
-  const [loading, setLoading] = useState(!location.state?.orders); // Skip loading if orders are passed
+  const location = useLocation();
+  const [orders, setOrders] = useState(location.state?.orders || []);
+  const [loading, setLoading] = useState(!location.state?.orders);
   const token = localStorage.getItem("token");
   console.log(token);
 
   useEffect(() => {
-    // Fetch orders only if not passed via state
     if (!location.state?.orders) {
       const fetchOrders = async () => {
         try {
@@ -49,7 +48,7 @@ const CustomerOrders = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Header isLoggedIn={token !== null} /> {/* Add Header */}
+      <Header isLoggedIn={token !== null} />
       <div className="flex-1 p-6">
         <h1 className="text-3xl font-bold text-center text-indigo-700 mb-6">
           Your Orders
@@ -117,7 +116,7 @@ const CustomerOrders = () => {
           ))}
         </div>
       </div>
-      <Footer /> {/* Add Footer */}
+      <Footer />
     </div>
   );
 };

@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/auth/user', {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await axios.get("http://localhost:5000/auth/user", {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data.user);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error("Error fetching profile:", error);
         setLoading(false);
       }
     };
@@ -28,20 +28,24 @@ const Profile = () => {
   }, [token]);
 
   const handleEdit = () => {
-    navigate('/profile/edit');
+    navigate("/profile/edit");
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    ) {
       try {
-        await axios.delete('http://localhost:5000/auth/user', {
-          headers: { Authorization: `Bearer ${token}` }
+        await axios.delete("http://localhost:5000/auth/user", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        localStorage.removeItem('token');
-        navigate('/');
+        localStorage.removeItem("token");
+        navigate("/");
       } catch (error) {
-        console.error('Error deleting account:', error);
-        alert('Failed to delete account');
+        console.error("Error deleting account:", error);
+        alert("Failed to delete account");
       }
     }
   };
@@ -57,13 +61,13 @@ const Profile = () => {
           {/* Profile Details */}
           <div className="flex-1 bg-white rounded-lg shadow-md p-8">
             <h1 className="text-3xl font-bold mb-6">Profile</h1>
-            
+
             <div className="space-y-4">
               <div className="border-b pb-4">
                 <p className="text-gray-600">Name</p>
                 <p className="text-xl">{user.name}</p>
               </div>
-              
+
               <div className="border-b pb-4">
                 <p className="text-gray-600">Email</p>
                 <p className="text-xl">{user.email}</p>
@@ -71,12 +75,12 @@ const Profile = () => {
 
               <div className="border-b pb-4">
                 <p className="text-gray-600">Phone Number</p>
-                <p className="text-xl">{user.contact || 'Not provided'}</p>
+                <p className="text-xl">{user.contact || "Not provided"}</p>
               </div>
 
               <div className="border-b pb-4">
                 <p className="text-gray-600">Address</p>
-                <p className="text-xl">{user.address || 'Not provided'}</p>
+                <p className="text-xl">{user.address || "Not provided"}</p>
               </div>
             </div>
 
@@ -95,15 +99,12 @@ const Profile = () => {
               </button>
             </div>
           </div>
-
-          {/* Side Image */}
           <div className="hidden lg:block w-1/2 relative rounded-lg overflow-hidden">
-            <img 
-              src="/bg2.jpg" 
-              alt="Profile Background" 
+            <img
+              src="/bg2.jpg"
+              alt="Profile Background"
               className="w-full h-full object-cover"
             />
-            {/* <div className="absolute inset-0 bg-black bg-opacity-30"></div> */}
           </div>
         </div>
       </div>

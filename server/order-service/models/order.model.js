@@ -12,8 +12,8 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     customerLatitude: {
-        type: Number,
-        required: true,
+      type: Number,
+      required: true,
     },
     restaurantId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -38,16 +38,25 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     recieptId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Reciept",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Reciept",
     },
     isOrderAccepted: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     orderStatus: {
       type: String,
-      enum: ["Pending", "In Progress", "Ready", "Accepted", "Picked Up", "In Transit", "Delivered", "Cancelled"],
+      enum: [
+        "Pending",
+        "In Progress",
+        "Ready",
+        "Accepted",
+        "Picked Up",
+        "In Transit",
+        "Delivered",
+        "Cancelled",
+      ],
       default: "Pending",
     },
     deliveryPersonnelId: {

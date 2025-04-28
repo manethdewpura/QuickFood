@@ -24,7 +24,6 @@ const Cart = () => {
       .then((response) => {
         const cartData = response.data.data;
         if (cartData.length > 0) {
-          // Group items by restaurantName
           const groupedItems = cartData.reduce((acc, cart) => {
             const restaurantId = cart.restaurantId;
             const restaurantName = cart.restaurant.data.restaurantName;
@@ -54,6 +53,63 @@ const Cart = () => {
     navigate("/checkout", { state: { restaurantId } });
   };
 
+  const handleRemoveItem = async (restaurantId, menuItemId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/cart/remove/${restaurantId}/${menuItemId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      // Refresh cart data
+      window.location.reload();
+    } catch (error) {
+      console.error("Error removing item:", error);
+    }
+  };
+
+  const handleClearCart = async (restaurantId) => {
+    try {
+      await axios.delete(`http://localhost:5000/cart/clear/${restaurantId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Refresh cart data
+      window.location.reload();
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+    }
+  };
+
+  const handleIncreaseQuantity = async (restaurantId, menuItemId) => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/cart/increase/${restaurantId}/${menuItemId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error("Error increasing quantity:", error);
+    }
+  };
+
+  const handleDecreaseQuantity = async (restaurantId, menuItemId) => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/cart/decrease/${restaurantId}/${menuItemId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      window.location.reload();
+    } catch (error) {
+      console.error("Error decreasing quantity:", error);
+    }
+  };
+
   if (loading) {
     return <p>Loading cart items...</p>;
   }
@@ -63,7 +119,9 @@ const Cart = () => {
       <div className="flex flex-col min-h-screen">
         <Header isLoggedIn={token !== null} onCartClick={() => {}} />
         <div className="flex-grow flex items-center justify-center">
-          <p className="text-xl text-gray-600 font-semibold">Your cart is empty.</p>
+          <p className="text-xl text-gray-600 font-semibold">
+            Your cart is empty.
+          </p>
         </div>
         <Footer />
       </div>
@@ -77,9 +135,17 @@ const Cart = () => {
       {Object.entries(cartItemsByRestaurant).map(
         ([restaurantName, { restaurantId, items }]) => (
           <div key={restaurantId} className="mb-8 mx-6">
-            <h2 className="text-xl font-semibold mb-4">
-              Restaurant: {restaurantName}
-            </h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">
+                Restaurant: {restaurantName}
+              </h2>
+              <button
+                onClick={() => handleClearCart(restaurantId)}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Clear Cart
+              </button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {items.map((item) => (
                 <div
@@ -109,6 +175,33 @@ const Cart = () => {
                     <span className="font-semibold">Total:</span> Rs.
                     {item.price * item.quantity}.00
                   </p>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-4">
+                      <button
+                        onClick={() =>
+                          handleDecreaseQuantity(restaurantId, item._id)
+                        }
+                        className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                      >
+                        -
+                      </button>
+                      <span className="text-lg font-medium">{item.quantity}</span>
+                      <button
+                        onClick={() =>
+                          handleIncreaseQuantity(restaurantId, item._id)
+                        }
+                        className="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveItem(restaurantId, item._id)}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
