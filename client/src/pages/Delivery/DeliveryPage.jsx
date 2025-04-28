@@ -146,7 +146,7 @@ const DeliveryPage = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 mt-10 rounded shadow-md w-full max-w-2xl">
           <h1 className="text-2xl font-bold mb-6 text-center text-indigo-700">
-            Delivery #{delivery._id.substring(0, 8)}
+            Delivery ID : {delivery._id}
           </h1>
 
           <div className="mb-6">

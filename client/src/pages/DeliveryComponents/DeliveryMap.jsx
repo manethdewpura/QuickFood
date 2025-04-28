@@ -110,7 +110,7 @@ const DeliveryMap = ({ deliveryId, pickupLocation, deliveryLocation, initialCurr
 
 
 
-  const driverIcon = createCustomIcon('https://cdn-icons-png.flaticon.com/512/3448/3448636.png', [32, 32], {
+  const driverIcon = createCustomIcon('https://cdn-icons-png.flaticon.com/512/1673/1673221.png', [40, 40], {
     zIndexOffset: 1000
   });
 

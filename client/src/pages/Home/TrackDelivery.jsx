@@ -91,10 +91,10 @@ const TrackDelivery = () => {
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-semibold text-blue-600">
-                Order #
+                Order ID :
                 {typeof delivery.orderId === "object"
-                  ? delivery.orderId._id.substring(0, 8)
-                  : (delivery.orderId || "").substring(0, 8)}
+                  ? delivery.orderId._id
+                  : (delivery.orderId || "")}
               </h2>
               <span
                 className={`px-3 py-1 rounded-full text-sm font-semibold ${
