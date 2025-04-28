@@ -4,6 +4,7 @@ import AdminHeader from "../../../components/Admin/AdminHeader";
 import SideNav from "../../../components/Admin/SideNav";
 import UserForm from "./UserForm";
 import axios from "axios";
+import { API_URL } from '../../../config/api.config';
 
 const UserList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,7 +16,7 @@ const UserList = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
-      .get(`http://localhost:5000/auth/all`, {
+      .get(`${API_URL}auth/all`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,7 +68,7 @@ const UserList = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:5000/auth/user`, {
+        await axios.delete(`${API_URL}auth/user`, {
           headers: {
             "x-user-id": id,
             Authorization: `Bearer ${token}`,
@@ -91,7 +92,7 @@ const UserList = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`http://localhost:5000/auth/user/`, userData, {
+      await axios.put(`${API_URL}auth/user/`, userData, {
         headers: {
           "x-user-id": selectedUser._id,
           Authorization: `Bearer ${token}`,

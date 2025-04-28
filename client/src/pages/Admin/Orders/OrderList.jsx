@@ -3,6 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import AdminHeader from "../../../components/Admin/AdminHeader";
 import SideNav from "../../../components/Admin/SideNav";
 import axios from "axios";
+import { API_URL } from '../../../config/api.config';
 
 const OrderList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -12,7 +13,7 @@ const OrderList = () => {
     const token = localStorage.getItem("token");
     console.log(token);
     axios
-      .get("http://localhost:5000/order/allorders", {
+      .get(`${API_URL}order/allorders`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {

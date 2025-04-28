@@ -2,6 +2,8 @@ import Order from "../models/order.model.js";
 import mongoose from "mongoose";
 import { getCartItems, clearCart } from "./cart.service.js";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Create a new order
 export const createNewOrder = async (orderData) => {
@@ -22,7 +24,7 @@ export const createNewOrder = async (orderData) => {
       cartItems.map(async (item) => {
         try {
           const response = await axios.get(
-            `http://localhost:5003/menu/${item.menuItemId}`
+            `${process.env.MENU_SERVICE_URL}menu/${item.menuItemId}`
           );
           const menuItem = response.data;
           return {
@@ -101,7 +103,7 @@ export const updateOrderStatus = async (orderId, orderStatus) => {
     
     // Send notification to the user
     try {
-      await axios.post('http://localhost:5004/notifications', {
+      await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}notifications`, {
         userId: order.customerId,
         name: 'Order Status Update',
         message: `Your order #${orderId} status has been updated to ${orderStatus}`,
@@ -135,7 +137,7 @@ export const getReadyOrders = async () => {
       orders.map(async (order) => {
         try {
           const response = await axios.get(
-            `http://localhost:5007/restaurantAll/${order.restaurantId}`
+            `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${order.restaurantId}`
           );
           const restaurantData = response.data.data;
           return {
@@ -171,7 +173,7 @@ export const getCustomerOrders = async (customerId) => {
       orders.map(async (order) => {
         try {
           const response = await axios.get(
-            `http://localhost:5007/restaurantAll/${order.restaurantId}`
+            `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${order.restaurantId}`
           );
           const restaurantData = response.data.data;
 
@@ -179,7 +181,7 @@ export const getCustomerOrders = async (customerId) => {
             order.items.map(async (item) => {
               try {
                 const menuResponse = await axios.get(
-                  `http://localhost:5003/menu/${item.menuItemId}`
+                  `${process.env.MENU_SERVICE_URL}menu/${item.menuItemId}`
                 );
                 const menuData = menuResponse.data;
                 return {
@@ -197,7 +199,7 @@ export const getCustomerOrders = async (customerId) => {
             })
           );
           const deliveryResponse = await axios
-            .get(`http://localhost:5002/delivery/order/${order._id}`)
+            .get(`${process.env.DELIVERY_SERVICE_URL}delivery/order/${order._id}`)
             .catch((error) => {
               return { data: {} };
             });
@@ -251,7 +253,7 @@ export const getRestaurantOrders = async (restaurantId) => {
       orders.map(async (order) => {
         try {
           const customerResponse = await axios.get(
-            `http://localhost:5000/auth/user/other`,
+            `${process.env.AUTH_SERVICE_URL}auth/user/other`,
             {
               headers: {
                 "x-user-id": order.customerId.toString(),
@@ -261,7 +263,7 @@ export const getRestaurantOrders = async (restaurantId) => {
           );
           const customerData = customerResponse.data;
           const restaurantResponse = await axios.get(
-            `http://localhost:5007/restaurantAll/${order.restaurantId}`
+            `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${order.restaurantId}`
           );
           const restaurantData = restaurantResponse.data;
 
@@ -269,7 +271,7 @@ export const getRestaurantOrders = async (restaurantId) => {
             order.items.map(async (item) => {
               try {
                 const menuResponse = await axios.get(
-                  `http://localhost:5003/menu/${item.menuItemId}`
+                  `${process.env.MENU_SERVICE_URL}menu/${item.menuItemId}`
                 );
                 const menuData = menuResponse.data;
                 return {
@@ -320,7 +322,7 @@ export const getOrderById = async (orderId) => {
       throw new Error("Order not found");
     }
     const response = await axios.get(
-      `http://localhost:5007/restaurantAll/${order.restaurantId}`
+      `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${order.restaurantId}`
     );
     const restaurantData = response.data.data;
     return {
@@ -345,12 +347,12 @@ export const getAllOrders = async () => {
       orders.map(async (order) => {
         try {
           const restaurantResponse = await axios.get(
-            `http://localhost:5007/restaurantAll/${order.restaurantId}`
+            `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${order.restaurantId}`
           );
           const restaurantData = restaurantResponse.data.data;
 
           const customerResponse = await axios.get(
-            `http://localhost:5000/auth/user/other`,
+            `${process.env.AUTH_SERVICE_URL}auth/user/other`,
             {
               headers: {
                 "x-user-id": order.customerId,

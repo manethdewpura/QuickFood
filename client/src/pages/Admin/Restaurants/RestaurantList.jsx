@@ -3,6 +3,7 @@ import { FaCheck, FaTimes, FaSearch } from "react-icons/fa";
 import AdminHeader from "../../../components/Admin/AdminHeader";
 import SideNav from "../../../components/Admin/SideNav";
 import axios from "axios";
+import { API_URL } from '../../../config/api.config';
 
 const RestaurantList = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,7 +16,7 @@ const RestaurantList = () => {
       return;
     }
     axios
-      .get("http://localhost:5000/restaurantAdmin/all", {
+      .get(`${API_URL}restaurantAdmin/all`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -34,7 +35,7 @@ const RestaurantList = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/restaurantAdmin/verify/${id}`,
+        `${API_URL}restaurantAdmin/verify/${id}`,
         { isVerified: "Approved" },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -50,7 +51,7 @@ const RestaurantList = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/restaurantAdmin/verify/${id}`,
+        `${API_URL}restaurantAdmin/verify/${id}`,
         { isVerified: "Rejected" },
         {
           headers: { Authorization: `Bearer ${token}` },

@@ -4,6 +4,7 @@ import HamburgerMenu from "./HamburgerMenu";
 import { useLocation } from "../context/LocationContext.jsx";
 import Notifications from "./Notifications";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from '../config/api.config';
 
 const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
   const { location, loading, error } = useLocation();
@@ -36,9 +37,7 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/restaurantAll/search?query=${encodeURIComponent(
-          query
-        )}`,
+        `${API_URL}restaurantAll/search?query=${encodeURIComponent(query)}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

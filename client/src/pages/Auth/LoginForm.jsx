@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from '../../config/api.config';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -20,7 +21,7 @@ const LoginForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/auth/login",
+        `${API_URL}auth/login`,
         formData
       );
       const { user, token } = response.data;

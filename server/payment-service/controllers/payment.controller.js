@@ -1,6 +1,8 @@
 import { createPaymentIntent } from "../services/stripe.service.js";
 import { createReceipt } from "../services/reciept.service.js";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const createStripeSessionController = async (req, res) => {
   try {
@@ -31,7 +33,7 @@ export const handlePaymentSuccessController = async (req, res) => {
     const userId = req.headers["x-user-id"];
 
     const orderResponse = await axios.post(
-      "http://localhost:5005/order",
+      `${process.env.ORDER_SERVICE_URL}order`,
       {
         ...orderData,
         userId,
@@ -55,7 +57,7 @@ export const handlePaymentSuccessController = async (req, res) => {
     );
     // Fetch restaurant admin ID
     await axios
-      .get(`http://localhost:5007/restaurantAll/admin/${order.data.restaurantId}`)
+      .get(`${process.env.RESTAURANT_SERVICE_URL}restaurantAll/admin/${order.data.restaurantId}`)
       .then((response) => {
         restaurantAdminId = response.data.data;
       })
@@ -64,7 +66,7 @@ export const handlePaymentSuccessController = async (req, res) => {
       });
 
     // Send notification
-    await axios.post("http://localhost:5004/notifications", {
+    await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}notifications`, {
       userId,
       name: customerDetails.firstName,
       message: `Your order #${order.data._id} has been confirmed`,
@@ -72,7 +74,7 @@ export const handlePaymentSuccessController = async (req, res) => {
     });
 
     // Send email
-    await axios.post("http://localhost:5004/notifications/order-confirmation", {
+    await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}notifications/order-confirmation`, {
       email: customerDetails.email,
       name: `${customerDetails.firstName} ${customerDetails.lastName}`,
       orderId: order.data._id,
@@ -85,14 +87,12 @@ export const handlePaymentSuccessController = async (req, res) => {
     });
 
     // Send notification to restaurant
-    await axios.post("http://localhost:5004/notifications", {
+    await axios.post(`${process.env.NOTIFICATION_SERVICE_URL}notifications`, {
       userId: restaurantAdminId,
       name: "Restaurant Staff",
       message: `New order #${order.data._id} received to ${orderData.restaurantName}`,
       type: "order",
     });
-
-    
 
     res.status(200).json({
       success: true,
