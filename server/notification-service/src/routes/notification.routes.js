@@ -1,38 +1,35 @@
 import { Router } from "express";
-import { 
-    createNotification, 
-    getNotifications, 
-    updateNotification, 
-    markAsRead,
-    sendOrderConfirmation,
-    sendDeliveryUpdate
+import {
+  createNotification,
+  getNotifications,
+  updateNotification,
+  markAsRead,
+  sendOrderConfirmation,
+  deleteNotification,
+  createDriverNotification,
 } from "../controllers/notification.controller.js";
 
-// Initialize Express Router
 const router = Router();
 
 // Create a new notification
-// POST / - Request body should contain userId, message, and type
-router.post('/', createNotification);
+router.post("/", createNotification);
 
 // Get all notifications for a specific user
-// GET /user/:userId - Returns array of notifications sorted by creation date
-router.get('/user/:userId', getNotifications);
+router.get("/user", getNotifications);
 
 // Update an existing notification
-// PUT /:id - Request body can contain message, type, or read status
-router.put('/:id', updateNotification);
+router.put("/:id", updateNotification);
 
 // Mark a notification as read
-// PATCH /:id/read - Updates only the read status to true
-router.patch('/:id/read', markAsRead);
+router.patch("/:id/read", markAsRead);
+
+// Delete a notification
+router.delete("/:id", deleteNotification);
 
 // Send order confirmation email
-// POST /order-confirmation - Sends an email with order confirmation details
-router.post('/order-confirmation', sendOrderConfirmation);
+router.post("/order-confirmation", sendOrderConfirmation);
 
-// Send delivery update email
-// POST /delivery-update - Sends an email with delivery update details
-router.post('/delivery-update', sendDeliveryUpdate);
+// Create notification for drivers with duplicate check
+router.post("/driver", createDriverNotification);
 
 export default router;

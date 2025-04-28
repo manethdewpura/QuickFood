@@ -1,36 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const EditProfile = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phoneNumber: '',
-    address: '',
+    name: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/auth/user', {
-          headers: { Authorization: `Bearer ${token}` }
+        const response = await axios.get("http://localhost:5000/auth/user", {
+          headers: { Authorization: `Bearer ${token}` },
         });
         const userData = response.data.user;
         setFormData({
-          name: userData.name || '',
-          email: userData.email || '',
-          contact: userData.contact || '',
-          address: userData.address || '',
+          name: userData.name || "",
+          email: userData.email || "",
+          contact: userData.contact || "",
+          address: userData.address || "",
         });
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error("Error fetching profile:", error);
         setLoading(false);
       }
     };
@@ -39,22 +39,22 @@ const EditProfile = () => {
   }, [token]);
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put('http://localhost:5000/auth/user', formData, {
-        headers: { Authorization: `Bearer ${token}` }
+      await axios.put("http://localhost:5000/auth/user", formData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      navigate('/profile');
+      navigate("/profile");
     } catch (error) {
-      console.error('Error updating profile:', error);
-      alert('Failed to update profile');
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile");
     }
   };
 
@@ -66,7 +66,7 @@ const EditProfile = () => {
       <div className="flex-grow container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
           <h1 className="text-3xl font-bold mb-6">Edit Profile</h1>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-gray-700 mb-2">Name</label>
@@ -123,7 +123,7 @@ const EditProfile = () => {
               </button>
               <button
                 type="button"
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate("/profile")}
                 className="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
               >
                 Cancel

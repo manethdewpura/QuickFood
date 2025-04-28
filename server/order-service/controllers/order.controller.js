@@ -2,15 +2,9 @@ import * as orderService from "../services/order.service.js";
 
 export const createNewOrder = async (req, res) => {
   try {
-    const { restaurantId, customerLatitude, customerLongitude } =
-      req.body;
+    const { restaurantId, customerLatitude, customerLongitude } = req.body;
     const customerId = req.headers["x-user-id"];
-    // Validate required fields
-    if (
-      !restaurantId ||
-      !customerLatitude ||
-      !customerLongitude
-    ) {
+    if (!restaurantId || !customerLatitude || !customerLongitude) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields",
@@ -179,9 +173,7 @@ export const updateOrderAccept = async (req, res) => {
         message: "Order ID and status are required",
       });
     }
-    const updatedOrder = await orderService.updateOrderAccept(
-      orderId
-    );
+    const updatedOrder = await orderService.updateOrderAccept(orderId);
     return res.status(200).json({
       success: true,
       message: "Order accepted successfully",

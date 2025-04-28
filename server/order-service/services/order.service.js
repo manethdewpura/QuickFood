@@ -10,13 +10,11 @@ export const createNewOrder = async (orderData) => {
   try {
     const { customerId, restaurantId, customerLatitude, customerLongitude } =
       orderData;
-    // Get cart items
     const cartData = await getCartItems(customerId, restaurantId);
-    console.log("Cart data fetched:", cartData); // Debugging log
 
-    const cartItems = cartData?.items; // Access the items array
+    const cartItems = cartData?.items;
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
-      console.error("Invalid cart items:", cartItems); // Log invalid cart items
+      console.error("Invalid cart items:", cartItems);
       throw new Error("Cart is empty or invalid");
     }
 
@@ -38,7 +36,6 @@ export const createNewOrder = async (orderData) => {
         }
       })
     );
-    // Calculate total amount
     let totalAmount = 0;
     for (const item of cartItemsWithDetails) {
       const menuItemData = item.menuItem?.data;
@@ -46,13 +43,11 @@ export const createNewOrder = async (orderData) => {
         console.error("Invalid menu item:", item);
         throw new Error(`Invalid menu item data for item ${item.menuItemId}`);
       }
-      totalAmount += menuItemData.price * item.quantity;
+      totalAmount += (menuItemData.price * item.quantity) + 500;
     }
-    // Validate total amount
     if (isNaN(totalAmount) || totalAmount <= 0) {
       throw new Error(`Invalid total amount calculated: ${totalAmount}`);
     }
-    // Create order items array
     const items = cartItemsWithDetails.map((item) => {
       const menuItemData = item.menuItem?.data;
       return {
@@ -61,7 +56,6 @@ export const createNewOrder = async (orderData) => {
         price: menuItemData.price,
       };
     });
-    // Create new order
     const newOrder = new Order({
       customerId,
       restaurantId,
@@ -91,7 +85,6 @@ export const updateOrderStatus = async (orderId, orderStatus) => {
     if (!order) {
       throw new Error("Order not found");
     }
-    // Validate the status
     const validStatuses = [
       "Pending",
       "In Progress",
@@ -105,6 +98,19 @@ export const updateOrderStatus = async (orderId, orderStatus) => {
     if (!validStatuses.includes(orderStatus)) {
       throw new Error("Invalid order status");
     }
+    
+    // Send notification to the user
+    try {
+      await axios.post('http://localhost:5004/notifications', {
+        userId: order.customerId,
+        name: 'Order Status Update',
+        message: `Your order #${orderId} status has been updated to ${orderStatus}`,
+        type: 'order',
+      });
+    } catch (notificationError) {
+      console.error('Failed to send notification:', notificationError);
+    }
+
     order.orderStatus = orderStatus;
     await order.save();
     return order;
@@ -125,8 +131,6 @@ export const getReadyOrders = async () => {
       console.log("No ready orders found.");
       return [];
     }
-    console.log("Orders before fetching restaurant details:", orders);
-    // Fetch restaurant details for each order
     const ordersWithRestaurantDetails = await Promise.all(
       orders.map(async (order) => {
         try {
@@ -148,13 +152,9 @@ export const getReadyOrders = async () => {
             `Error fetching restaurant ${order.restaurantId}:`,
             error
           );
-          return order.toObject(); // Return the order without restaurant details
+          return order.toObject();
         }
       })
-    );
-    console.log(
-      "Orders after fetching restaurant details:",
-      ordersWithRestaurantDetails
     );
     return ordersWithRestaurantDetails;
   } catch (error) {
@@ -167,7 +167,6 @@ export const getReadyOrders = async () => {
 export const getCustomerOrders = async (customerId) => {
   try {
     const orders = await Order.find({ customerId }).sort({ createdAt: -1 });
-    // Fetch restaurant details for each order
     const ordersWithDetails = await Promise.all(
       orders.map(async (order) => {
         try {
@@ -197,13 +196,11 @@ export const getCustomerOrders = async (customerId) => {
               }
             })
           );
-        console.log(order._id)
           const deliveryResponse = await axios
             .get(`http://localhost:5002/delivery/order/${order._id}`)
             .catch((error) => {
               return { data: {} };
             });
-            console.log(deliveryResponse.data, "deliveryResponse")
 
           return {
             orderId: order._id,
@@ -234,7 +231,7 @@ export const getCustomerOrders = async (customerId) => {
             items: order.items,
             totalAmount: order.totalAmount,
             orderStatus: order.orderStatus,
-            deliveryDetails: {}, // Return empty data for delivery
+            deliveryDetails: {},
           };
         }
       })
@@ -250,31 +247,24 @@ export const getCustomerOrders = async (customerId) => {
 export const getRestaurantOrders = async (restaurantId) => {
   try {
     const orders = await Order.find({ restaurantId }).sort({ createdAt: -1 });
-    // Fetch customer, restaurant, and menu details for each order
     const ordersWithDetails = await Promise.all(
       orders.map(async (order) => {
         try {
-          // Fetch customer details
           const customerResponse = await axios.get(
-            `http://localhost:5000/auth/user`,
+            `http://localhost:5000/auth/user/other`,
             {
               headers: {
-                "x-user-id": order.customerId.toString(), // Pass as string
+                "x-user-id": order.customerId.toString(),
                 Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDUwMzk1Y2RmMmI2ZjkwYWVjYTA3ZSIsInJvbGUiOiJTeXN0ZW1BZG1pbiIsImlhdCI6MTc0NTY0NjkzMywiZXhwIjoxNzQ2MjUxNzMzfQ.by4Jus4Zb4N7Ux-8vXWR_K96f-KxSzy7C37e6f1nPLE`,
               },
             }
           );
           const customerData = customerResponse.data;
-          console.log(customerData, "customerData");
-
-          // Fetch restaurant details
           const restaurantResponse = await axios.get(
             `http://localhost:5007/restaurantAll/${order.restaurantId}`
           );
           const restaurantData = restaurantResponse.data;
-          console.log(restaurantData, "restaurantData");
 
-          // Fetch menu details for each item in the order
           const itemsWithMenuDetails = await Promise.all(
             order.items.map(async (item) => {
               try {
@@ -291,7 +281,7 @@ export const getRestaurantOrders = async (restaurantId) => {
                   `Error fetching menu item ${item.menuItemId}:`,
                   error
                 );
-                return item; // Return the item without menu details
+                return item;
               }
             })
           );
@@ -329,7 +319,6 @@ export const getOrderById = async (orderId) => {
     if (!order) {
       throw new Error("Order not found");
     }
-    // Fetch restaurant details
     const response = await axios.get(
       `http://localhost:5007/restaurantAll/${order.restaurantId}`
     );
@@ -352,7 +341,6 @@ export const getOrderById = async (orderId) => {
 export const getAllOrders = async () => {
   try {
     const orders = await Order.find({}).sort({ createdAt: -1 });
-    // Fetch restaurant and customer details for each order
     const ordersWithDetails = await Promise.all(
       orders.map(async (order) => {
         try {
@@ -362,7 +350,7 @@ export const getAllOrders = async () => {
           const restaurantData = restaurantResponse.data.data;
 
           const customerResponse = await axios.get(
-            `http://localhost:5000/auth/user`,
+            `http://localhost:5000/auth/user/other`,
             {
               headers: {
                 "x-user-id": order.customerId,
