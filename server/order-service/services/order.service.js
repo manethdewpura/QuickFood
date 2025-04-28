@@ -98,6 +98,19 @@ export const updateOrderStatus = async (orderId, orderStatus) => {
     if (!validStatuses.includes(orderStatus)) {
       throw new Error("Invalid order status");
     }
+    
+    // Send notification to the user
+    try {
+      await axios.post('http://localhost:5004/notifications', {
+        userId: order.customerId,
+        name: 'Order Status Update',
+        message: `Your order #${orderId} status has been updated to ${orderStatus}`,
+        type: 'order',
+      });
+    } catch (notificationError) {
+      console.error('Failed to send notification:', notificationError);
+    }
+
     order.orderStatus = orderStatus;
     await order.save();
     return order;
