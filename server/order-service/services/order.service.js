@@ -43,7 +43,7 @@ export const createNewOrder = async (orderData) => {
         console.error("Invalid menu item:", item);
         throw new Error(`Invalid menu item data for item ${item.menuItemId}`);
       }
-      totalAmount += menuItemData.price * item.quantity;
+      totalAmount += (menuItemData.price * item.quantity) + 500;
     }
     if (isNaN(totalAmount) || totalAmount <= 0) {
       throw new Error(`Invalid total amount calculated: ${totalAmount}`);

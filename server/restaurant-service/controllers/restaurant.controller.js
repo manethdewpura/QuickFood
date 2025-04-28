@@ -215,3 +215,18 @@ export const searchRestaurants = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+//Get restaurant admin id by restaurant id
+export const getRestaurantAdminId = async (req, res) => {
+  try {
+    const restaurantId = req.params.id;
+    const adminId = await restaurantService.getRestaurantAdminId(restaurantId);
+    res.status(200).json({
+      success: true,
+      message: "Restaurant admin ID fetched successfully.",
+      data: adminId,
+    });
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};

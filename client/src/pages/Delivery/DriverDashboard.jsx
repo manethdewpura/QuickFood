@@ -13,45 +13,43 @@ const DriverDashboard = () => {
   const [nearestOrders, setNearestOrders] = useState([]);
   const [customerLocations, setCustomerLocations] = useState({});
 
-  useEffect(() => {
-    // fetch the nearest orders first for the driver
-    const fetchNearestOrders = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:5000/driver/nearest-ready-orders`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setNearestOrders(response.data);
-      } catch (err) {
-        console.error("Error fetching nearest orders:", err);
-      }
-    };
+  const fetchNearestOrders = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://localhost:5000/driver/nearest-ready-orders`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNearestOrders(response.data);
+    } catch (err) {
+      console.error("Error fetching nearest orders:", err);
+    }
+  };
 
+  const fetchDeliveries = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://localhost:5000/delivery/driver`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(response.data);
+      setDeliveries(response.data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching deliveries:", err);
+      setError("Failed to load deliveries");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchNearestOrders();
-    const interval = setInterval(fetchNearestOrders, 60000);
+    const interval = setInterval(fetchNearestOrders, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch deliveries for the driver
   useEffect(() => {
-    const fetchDeliveries = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `http://localhost:5000/delivery/driver`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        console.log(response.data);
-        setDeliveries(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching deliveries:", err);
-        setError("Failed to load deliveries");
-        setLoading(false);
-      }
-    };
-
     fetchDeliveries();
     const interval = setInterval(fetchDeliveries, 60000);
     return () => clearInterval(interval);
@@ -289,6 +287,8 @@ const DriverDashboard = () => {
                           { headers: { Authorization: `Bearer ${token}` } }
                         );
                         alert("Order accepted successfully!");
+                        // Refresh both nearest orders and deliveries
+                        await Promise.all([fetchNearestOrders(), fetchDeliveries()]);
                       } catch (err) {
                         console.error("Failed to accept order:", err);
                         alert("Failed to accept order. Please try again.");

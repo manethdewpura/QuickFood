@@ -71,7 +71,6 @@ export const getDriverByParamId = async (driverId) => {
 
 //get nearest ready orders for the driver
 export const getNearestReadyOrders = async (userId) => {
-  //Find the driver by userId
   const driver = await Driver.findOne({ userId });
   if (!driver) throw new Error("Driver not found");
   if (
@@ -82,11 +81,9 @@ export const getNearestReadyOrders = async (userId) => {
     throw new Error("Driver location not set");
   }
 
-  //Fetch all ready orders from the order service
   const { data } = await axios.get("http://localhost:5005/order/ready");
   const readyOrders = data.data || [];
 
-  //Sort orders by distance from the driver's current location
   const ordersWithDistance = readyOrders.map((order) => {
     const distance = calculateDistance(
       driver.currentLocation.lat,
@@ -94,11 +91,20 @@ export const getNearestReadyOrders = async (userId) => {
       order.restaurant.latitude,
       order.restaurant.longitude
     );
+
+    // Create notification for each order
+    axios
+      .post("http://localhost:5004/notifications/driver", {
+        userId,
+        name: order._id,
+        message: `New order #${order._id} available for delivery from ${order.restaurant.name}`,
+      })
+      .catch((error) => console.error("Failed to create notification:", error));
+
     return { ...order, distance };
   });
 
   ordersWithDistance.sort((a, b) => a.distance - b.distance);
-
   return ordersWithDistance;
 };
 
@@ -106,7 +112,6 @@ export const getNearestReadyOrders = async (userId) => {
 export const updateDriverLocation = async (driverId, location) => {
   try {
     const driver = await Driver.findOne({ userId: driverId });
-    console.log(driverId);
     if (!driver) {
       throw new Error("Driver not found");
     }
