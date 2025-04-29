@@ -1,6 +1,8 @@
 import Restaurant from "../models/restaurant.model.js";
 import mongoose from "mongoose";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 //Create a new restaurant
 export const createRestaurant = async (restaurantData) => {
@@ -48,6 +50,7 @@ export const updateVerification = async (id, isVerified) => {
   }
 };
 
+//Get all restaurants (for admin)
 export const getAllRestaurants = async () => {
   try {
     return await Restaurant.find().sort({ createdAt: -1 });
@@ -194,14 +197,14 @@ export const getRestaurantsByUserId = async (userId) => {
 export const verifyOrderforPickup = async (orderId, verificationCode) => {
   try {
     const verification = await axios.get(
-      `http://localhost:5002/delivery/verification/${orderId}/${verificationCode}`
+      `${process.env.DELIVERY_SERVICE_URL}delivery/verification/${orderId}/${verificationCode}`
     );
     console.log(verification);
     if (verification.data == false) {
       return "Verification code is incorrect.";
     }
 
-    await axios.put(`http://localhost:5005/order/status/${orderId}`, {
+    await axios.put(`${process.env.ORDER_SERVICE_URL}order/status/${orderId}`, {
       orderStatus: "Picked Up",
     });
     return "Verified";

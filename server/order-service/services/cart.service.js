@@ -1,8 +1,10 @@
 import Cart from "../models/cart.model.js";
 import mongoose from "mongoose";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
-// Add an item to cart
+// Service to add items to customer's cart
 export const addToCart = async (customerId, restaurantId, items) => {
   try {
     let cart = await Cart.findOne({ customerId, restaurantId });
@@ -30,20 +32,20 @@ export const addToCart = async (customerId, restaurantId, items) => {
   }
 };
 
-// Get cart items by customer ID and restaurant ID
+// Service to retrieve cart items with menu details
 export const getCartItems = async (customerId, restaurantId) => {
   try {
     const cart = await Cart.findOne({ customerId, restaurantId });
     if (!cart) return [];
     const restaurantResponse = await axios.get(
-      `http://localhost:5007/restaurantAll/${restaurantId}`
+      `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${restaurantId}`
     );
     const restaurantDetails = restaurantResponse.data;
     const cartItemsWithDetails = await Promise.all(
       cart.items.map(async (item) => {
         try {
           const response = await axios.get(
-            `http://localhost:5003/menu/${item.menuItemId}`
+            `${process.env.MENU_SERVICE_URL}menu/${item.menuItemId}`
           );
           const menuItem = response.data;
           return {
@@ -67,7 +69,7 @@ export const getCartItems = async (customerId, restaurantId) => {
   }
 };
 
-// Get cart by customer ID
+// Service to get all cart items for a customer across restaurants
 export const getCartByCustomerId = async (customerId) => {
   try {
     const carts = await Cart.find({ customerId });
@@ -75,14 +77,14 @@ export const getCartByCustomerId = async (customerId) => {
     const cartsWithDetails = await Promise.all(
       carts.map(async (cart) => {
         const restaurantResponse = await axios.get(
-          `http://localhost:5007/restaurantAll/${cart.restaurantId}`
+          `${process.env.RESTAURANT_SERVICE_URL}restaurantAll/${cart.restaurantId}`
         );
         const restaurantDetails = restaurantResponse.data;
         const itemsWithDetails = await Promise.all(
           cart.items.map(async (item) => {
             try {
               const response = await axios.get(
-                `http://localhost:5003/menu/${item.menuItemId}`
+                `${process.env.MENU_SERVICE_URL}menu/${item.menuItemId}`
               );
               const menuItem = response.data;
               return {
@@ -113,7 +115,7 @@ export const getCartByCustomerId = async (customerId) => {
   }
 };
 
-// Increase the quantity of an item in the cart
+// Service to increment item quantity in cart
 export const increaseCartItemQuantity = async (
   customerId,
   restaurantId,
@@ -139,7 +141,7 @@ export const increaseCartItemQuantity = async (
   }
 };
 
-// Decrease the quantity of an item in the cart
+// Service to decrement item quantity in cart
 export const decreaseCartItemQuantity = async (
   customerId,
   restaurantId,
@@ -174,7 +176,7 @@ export const decreaseCartItemQuantity = async (
   }
 };
 
-// Remove an item from the cart
+// Service to remove specific item from cart
 export const removeFromCart = async (customerId, restaurantId, menuItemId) => {
   try {
     const cart = await Cart.findOne({ customerId, restaurantId });
@@ -198,7 +200,7 @@ export const removeFromCart = async (customerId, restaurantId, menuItemId) => {
   }
 };
 
-// Clear the cart
+// Service to clear entire cart for a customer at a restaurant
 export const clearCart = async (customerId, restaurantId) => {
   try {
     const cart = await Cart.findOneAndDelete({ customerId, restaurantId });

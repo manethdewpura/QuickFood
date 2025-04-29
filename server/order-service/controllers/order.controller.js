@@ -1,5 +1,6 @@
 import * as orderService from "../services/order.service.js";
 
+// Controller to create a new order
 export const createNewOrder = async (req, res) => {
   try {
     const { restaurantId, customerLatitude, customerLongitude } = req.body;
@@ -30,6 +31,7 @@ export const createNewOrder = async (req, res) => {
   }
 };
 
+// Controller to update order status
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -58,6 +60,7 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
+// Controller to fetch all ready-to-deliver orders
 export const getReadyOrders = async (req, res) => {
   try {
     const orders = await orderService.getReadyOrders();
@@ -75,6 +78,7 @@ export const getReadyOrders = async (req, res) => {
   }
 };
 
+// Controller to fetch all orders for a specific customer
 export const getCustomerOrders = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
@@ -99,6 +103,7 @@ export const getCustomerOrders = async (req, res) => {
   }
 };
 
+// Controller to fetch all orders for a specific restaurant
 export const getRestaurantOrders = async (req, res) => {
   try {
     const { restaurantId } = req.params;
@@ -123,6 +128,7 @@ export const getRestaurantOrders = async (req, res) => {
   }
 };
 
+// Controller to fetch a specific order by ID
 export const getOrderById = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -147,6 +153,7 @@ export const getOrderById = async (req, res) => {
   }
 };
 
+// Controller to fetch all orders in the system
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await orderService.getAllOrders();
@@ -164,6 +171,7 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
+// Controller to handle order acceptance by restaurant
 export const updateOrderAccept = async (req, res) => {
   try {
     const { orderId } = req.params;

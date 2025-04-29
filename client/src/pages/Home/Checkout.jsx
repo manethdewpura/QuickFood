@@ -5,6 +5,7 @@ import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { useLocation as useLocationContext } from "../../context/LocationContext.jsx";
+import { API_URL } from "../../config/api.config";
 import {
   Elements,
   CardElement,
@@ -16,8 +17,9 @@ const stripePromise = loadStripe(
   "pk_test_51RD89zPuIXCAe5na6392eGLANkFWsolQLENDttXwT6YczwaesCUl3y0QRp07aNPrpgh2jxrwtydKhNJpcRBWg1qP00EZmjzc1L"
 );
 
-// Separate CheckoutForm component that uses Stripe hooks
+// Form component for handling checkout process
 const CheckoutForm = () => {
+  // State and context management
   const location = useLocation();
   const navigate = useNavigate();
   const elements = useElements();
@@ -46,7 +48,7 @@ const CheckoutForm = () => {
 
     // Fetch restaurant and cart details
     axios
-      .get(`http://localhost:5000/cart/${restaurantId}`, {
+      .get(`${API_URL}cart/${restaurantId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -100,12 +102,13 @@ const CheckoutForm = () => {
     }));
   };
 
+  // Payment processing
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/payment/create-payment-intent",
+        `${API_URL}payment/create-payment-intent`,
         {
           amount: Math.round((calculateSubtotal() + shippingFee) * 100),
         },
@@ -137,7 +140,7 @@ const CheckoutForm = () => {
 
       // Create order and receipt after successful payment
       await axios.post(
-        "http://localhost:5000/payment/success-payment",
+        `${API_URL}payment/success-payment`,
         {
           amount: calculateSubtotal() + shippingFee,
           currency: "lkr",
@@ -170,7 +173,7 @@ const CheckoutForm = () => {
 
       // Fetch order details and navigate to customer orders page
       const orderResponse = await axios.get(
-        "http://localhost:5000/order/customer",
+        `${API_URL}order/customer`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -188,6 +191,7 @@ const CheckoutForm = () => {
     }
   };
 
+  // Form rendering
   if (loading) {
     return <p>Loading checkout details...</p>;
   }
@@ -339,6 +343,7 @@ const CheckoutForm = () => {
   );
 };
 
+// Wrapper component with Stripe Elements
 const Checkout = () => {
   return (
     <Elements stripe={stripePromise}>

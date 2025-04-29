@@ -6,6 +6,7 @@ import Notifications from "../Notifications";
 const DriverHeader = () => {
   const navigate = useNavigate();
 
+  // Check authentication on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -13,6 +14,7 @@ const DriverHeader = () => {
     }
   }, [navigate]);
 
+  // Handle driver logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");

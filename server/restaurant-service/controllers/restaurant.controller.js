@@ -51,6 +51,7 @@ export const updateVerification = async (req, res) => {
   }
 };
 
+//Get all restaurants (for admin)
 export const getAllRestaurants = async (req, res) => {
   try {
     const restaurants = await restaurantService.getAllRestaurants();

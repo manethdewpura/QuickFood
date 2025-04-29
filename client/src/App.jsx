@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PaymentForm from "./pages/Payment/PaymentForm.jsx";
 import WelcomePage from "./pages/Home/WelcomePage.jsx";
 import HomePage from "./pages/Home/HomePage.jsx";
 import { LocationProvider } from "./context/LocationContext";
@@ -31,7 +30,6 @@ const App = () => {
       <Routes>
         <Route path="/" element={<WelcomePage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/payment" element={<PaymentForm />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/signup" element={<SignUpForm />} />
         <Route path="/restaurantHome" element={<RestaurantHome />} />

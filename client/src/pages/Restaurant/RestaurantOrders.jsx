@@ -3,18 +3,22 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
+import { API_URL } from '../../config/api.config';
 
+// Component to manage restaurant orders and their statuses
 const RestaurantOrders = ({ restaurantId }) => {
+  // Initialize state and params
   const { id: restaurantIdFromParams } = useParams();
   restaurantId = restaurantId || restaurantIdFromParams;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch orders for the restaurant
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        `http://localhost:5000/order/restaurant/${restaurantIdFromParams}`,
+        `${API_URL}order/restaurant/${restaurantIdFromParams}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -27,15 +31,17 @@ const RestaurantOrders = ({ restaurantId }) => {
     }
   };
 
+  // Load orders on component mount
   useEffect(() => {
     fetchOrders();
   }, [restaurantId]);
 
+  // Order status management
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/order/status/${orderId}`,
+        `${API_URL}order/status/${orderId}`,
         { orderStatus: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -45,11 +51,12 @@ const RestaurantOrders = ({ restaurantId }) => {
     }
   };
 
+  // Handle order verification code
   const verifyOrderCode = async (orderId, verificationCode) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        `http://localhost:5000/restaurant/verify/${orderId}/${verificationCode}`,
+        `${API_URL}restaurant/verify/${orderId}/${verificationCode}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -59,6 +66,7 @@ const RestaurantOrders = ({ restaurantId }) => {
     }
   };
 
+  // Render loading state or orders list
   if (loading)
     return <div className="text-center mt-10">Loading Orders...</div>;
 
@@ -102,7 +110,7 @@ const RestaurantOrders = ({ restaurantId }) => {
                         try {
                           const token = localStorage.getItem("token");
                           await axios.put(
-                            `http://localhost:5000/order/update/accept/${order._id}`,
+                            `${API_URL}order/update/accept/${order._id}`,
                             {},
                             { headers: { Authorization: `Bearer ${token}` } }
                           );

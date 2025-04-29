@@ -1,9 +1,11 @@
+// Retry mechanism configuration
 export const retryConfig = {
   maxRetries: 3,
   initialRetryDelay: 1000,
   maxRetryDelay: 5000,
 };
 
+// Retry request handler with exponential backoff
 export async function retryRequest(proxyReq, options, attempt = 1) {
   try {
     return await proxyReq();

@@ -3,8 +3,11 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { API_URL } from '../../config/api.config';
 
+// Component for displaying restaurant menu to customers
 const CustomerRestaurantMenu = () => {
+  // State management
   const location = useLocation();
   const { restaurant } = location.state || {};
   const [menuItems, setMenuItems] = useState([]);
@@ -52,31 +55,33 @@ const CustomerRestaurantMenu = () => {
   useEffect(() => {
     if (restaurant?._id) {
       fetchMenuItems(
-        `http://localhost:5000/menu/restaurant/${restaurant._id}/available`
+        `${API_URL}menu/restaurant/${restaurant._id}/available`
       );
     }
   }, [restaurant?._id]);
 
+  // Menu filtering and display functions
   const handleShowAvailableMenus = () => {
     setActivePanel("available");
     fetchMenuItems(
-      `http://localhost:5000/menu/restaurant/${restaurant._id}/available`
+      `${API_URL}menu/restaurant/${restaurant._id}/available`
     );
   };
 
   const handleShowAllMenus = () => {
     setActivePanel("all");
-    fetchMenuItems(`http://localhost:5000/menu/restaurant/${restaurant._id}`);
+    fetchMenuItems(`${API_URL}menu/restaurant/${restaurant._id}`);
   };
 
   const handleShowMenusByCuisine = () => {
     setActivePanel("cuisine");
     fetchMenuItems(
-      `http://localhost:5000/menu/restaurant/${restaurant._id}`,
+      `${API_URL}menu/restaurant/${restaurant._id}`,
       true
     );
   };
 
+  // Cart operations
   const handleIncreaseQuantity = (menuItemId) => {
     setCart((prevCart) => {
       const newCart = { ...prevCart };
@@ -110,7 +115,7 @@ const CustomerRestaurantMenu = () => {
     };
 
     axios
-      .post("http://localhost:5000/cart/add", payload, {
+      .post(`${API_URL}cart/add`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {

@@ -1,5 +1,6 @@
 import Receipt from "../models/reciept.model.js";
 
+// Service to create a new receipt record
 export const createReceipt = async (
   orderId,
   amount,
@@ -23,6 +24,7 @@ export const createReceipt = async (
   }
 };
 
+// Service to retrieve receipt details by ID
 export const getReceiptById = async (receiptId) => {
   try {
     const receipt = await Receipt.findById(receiptId);

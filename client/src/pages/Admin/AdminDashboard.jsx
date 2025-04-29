@@ -7,6 +7,7 @@ import SideNav from "../../components/Admin/SideNav";
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
+  // Navigation configuration
   const dashboardItems = [
     {
       title: "User Management",
@@ -27,15 +28,19 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Sidebar navigation */}
       <div className="fixed inset-y-0 left-0 z-50">
         <SideNav />
       </div>
       <div className="ml-64">
+        {/* Admin header */}
         <AdminHeader />
         <div className="max-w-7xl mx-auto p-4 mt-8">
+          {/* Dashboard title */}
           <h1 className="text-3xl font-bold text-gray-800 mb-8">
             Admin Dashboard
           </h1>
+          {/* Dashboard navigation cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {dashboardItems.map((item, index) => (
               <div

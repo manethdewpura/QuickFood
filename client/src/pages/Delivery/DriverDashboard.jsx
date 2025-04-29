@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { getLocationName } from "../../utils/location.util";
+import { API_URL } from "../../config/api.config";
 import DriverHeader from "../../components/Driver/DriverHeader";
 import Footer from "../../components/Footer";
 
@@ -17,7 +18,7 @@ const DriverDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:5000/driver/nearest-ready-orders`,
+        `${API_URL}driver/nearest-ready-orders`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setNearestOrders(response.data);
@@ -30,7 +31,7 @@ const DriverDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `http://localhost:5000/delivery/driver`,
+        `${API_URL}delivery/driver`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       console.log(response.data);
@@ -63,7 +64,7 @@ const DriverDashboard = () => {
           try {
             const token = localStorage.getItem("token");
             await axios.patch(
-              `http://localhost:5000/driver/location`,
+              `${API_URL}driver/location`,
               {
                 location: {
                   lat: position.coords.latitude,
@@ -118,7 +119,7 @@ const DriverDashboard = () => {
       const token = localStorage.getItem("token");
       const newStatus = isAvailable ? "busy" : "available";
       await axios.patch(
-        `http://localhost:5000/driver/availability`,
+        `${API_URL}driver/availability`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -268,7 +269,7 @@ const DriverDashboard = () => {
                       try {
                         const token = localStorage.getItem("token");
                         await axios.post(
-                          `http://localhost:5000/delivery`,
+                          `${API_URL}delivery`,
                           {
                             _id: order._id,
                             customerId: order.customerId,
@@ -286,7 +287,7 @@ const DriverDashboard = () => {
                           { headers: { Authorization: `Bearer ${token}` } }
                         );
                         await axios.put(
-                          `http://localhost:5000/order/status/${order._id}`,
+                          `${API_URL}order/status/${order._id}`,
                           { orderStatus: "Accepted" },
                           { headers: { Authorization: `Bearer ${token}` } }
                         );

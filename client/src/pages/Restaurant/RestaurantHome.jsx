@@ -3,17 +3,21 @@ import { useNavigate } from "react-router-dom";
 import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
 
+// Main dashboard component for restaurant administrators
 const RestaurantHome = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Header section for the restaurant dashboard */}
       <RestaurantAdminHeader />
       <div className="flex flex-col items-center justify-center p-6">
+        {/* Title section */}
         <h1 className="text-3xl font-bold mb-10 text-center text-gray-800">
           Restaurant Dashboard
         </h1>
         <div className="w-full max-w-6xl">
+          {/* Card for restaurant management */}
           <div
             onClick={() => navigate("/restaurant/management")}
             className="cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl transition-transform hover:-translate-y-1 overflow-hidden"
@@ -34,6 +38,7 @@ const RestaurantHome = () => {
           </div>
         </div>
       </div>
+      {/* Footer section */}
       <div className="mt-55">
         <Footer />
       </div>

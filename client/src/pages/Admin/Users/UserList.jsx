@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaUserPlus, FaSearch } from "react-icons/fa";
+import { FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 import AdminHeader from "../../../components/Admin/AdminHeader";
 import SideNav from "../../../components/Admin/SideNav";
 import UserForm from "./UserForm";
 import axios from "axios";
+import { API_URL } from '../../../config/api.config';
 
 const UserList = () => {
+  // State management
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
+  // Fetch users from API
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
-      .get(`http://localhost:5000/auth/all`, {
+      .get(`${API_URL}auth/all`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -33,6 +36,7 @@ const UserList = () => {
       });
   }, []);
 
+  // Filter users based on search query
   const filteredUsers = Array.isArray(users)
     ? users.filter(
         (user) =>
@@ -42,6 +46,7 @@ const UserList = () => {
       )
     : [];
 
+  // Helper function for role styling
   const getRoleColor = (role) => {
     switch (role) {
       case "SystemAdmin":
@@ -57,6 +62,7 @@ const UserList = () => {
     }
   };
 
+  // User CRUD operations
   const handleEdit = (id) => {
     const userToEdit = users.find((user) => user._id === id);
     setSelectedUser(userToEdit);
@@ -67,7 +73,7 @@ const UserList = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:5000/auth/user`, {
+        await axios.delete(`${API_URL}auth/user/admin`, {
           headers: {
             "x-user-id": id,
             Authorization: `Bearer ${token}`,
@@ -80,6 +86,7 @@ const UserList = () => {
     }
   };
 
+  // Form handling
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -91,7 +98,7 @@ const UserList = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`http://localhost:5000/auth/user/`, userData, {
+      await axios.put(`${API_URL}auth/user/admin`, userData, {
         headers: {
           "x-user-id": selectedUser._id,
           Authorization: `Bearer ${token}`,
@@ -128,10 +135,6 @@ const UserList = () => {
             <h1 className="text-2xl font-bold text-gray-800">
               User Management
             </h1>
-            <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-              <FaUserPlus />
-              Add User
-            </button>
           </div>
 
           <div className="mb-4 relative">

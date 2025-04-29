@@ -4,8 +4,10 @@ import Header from "../../components/Header";
 import axios from "axios";
 import { calculateDistance } from "../../utils/helpers";
 import Footer from "../../components/Footer";
+import { API_URL } from '../../config/api.config';
 
 const HomePage = () => {
+  // State and location management
   const [token] = React.useState(localStorage.getItem("token"));
   const [restaurants, setRestaurants] = useState([]);
   const navigate = useNavigate();
@@ -16,12 +18,13 @@ const HomePage = () => {
       return;
     }
 
+    // Fetch user's location and nearby restaurants
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         axios
           .get(
-            `http://localhost:5000/restaurantAll/nearest?latitude=${latitude}&longitude=${longitude}`,
+            `${API_URL}restaurantAll/nearest?latitude=${latitude}&longitude=${longitude}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -52,6 +55,7 @@ const HomePage = () => {
     );
   }, [token]);
 
+  // Navigation handler
   const handleViewMenu = (restaurant) => {
     navigate("/customer-restaurant/menu", {
       state: {

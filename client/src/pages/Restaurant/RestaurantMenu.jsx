@@ -3,8 +3,11 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
+import { API_URL } from '../../config/api.config';
 
+// Menu management component for restaurants
 const RestaurantMenu = ({ restaurantId }) => {
+  // State management for menu items
   const [menuItems, setMenuItems] = useState([]);
   const { id: restaurantIdFromParams } = useParams();
   restaurantId = restaurantId || restaurantIdFromParams;
@@ -18,10 +21,11 @@ const RestaurantMenu = ({ restaurantId }) => {
   });
   const [editingId, setEditingId] = useState(null);
 
+  // Fetch menu items from API
   const fetchMenuItems = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/menu/restaurant/${restaurantIdFromParams}`,
+        `${API_URL}menu/restaurant/${restaurantIdFromParams}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -36,6 +40,7 @@ const RestaurantMenu = ({ restaurantId }) => {
     if (restaurantId) fetchMenuItems();
   }, [restaurantId]);
 
+  // Form handlers for menu items
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     if (type === "file") {
@@ -62,14 +67,14 @@ const RestaurantMenu = ({ restaurantId }) => {
     try {
       if (editingId) {
         await axios.put(
-          `http://localhost:5000/menuRes/${editingId}`,
+          `${API_URL}menuRes/${editingId}`,
           formData,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
       } else {
-        await axios.post(`http://localhost:5000/menuRes/`, formData, {
+        await axios.post(`${API_URL}menuRes/`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -88,6 +93,7 @@ const RestaurantMenu = ({ restaurantId }) => {
     }
   };
 
+  // CRUD operations for menu items
   const handleEdit = (menu) => {
     setForm({
       menuItemName: menu.menuItemName || "",
@@ -108,7 +114,7 @@ const RestaurantMenu = ({ restaurantId }) => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5007/menuRes/${id}`, {
+      await axios.delete(`${API_URL}menuRes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchMenuItems();

@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { API_URL } from '../../config/api.config';
 
+// Component for editing user profile information
 const EditProfile = () => {
+  // State management for form data and loading status
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,10 +18,11 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  // Fetch user profile data on component mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/auth/user", {
+        const response = await axios.get(`${API_URL}auth/user`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userData = response.data.user;
@@ -38,6 +42,7 @@ const EditProfile = () => {
     fetchProfile();
   }, [token]);
 
+  // Form event handlers
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -48,7 +53,7 @@ const EditProfile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put("http://localhost:5000/auth/user", formData, {
+      await axios.put(`${API_URL}auth/user`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate("/profile");

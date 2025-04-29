@@ -3,8 +3,11 @@ import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { API_URL } from "../../config/api.config";
 
+// Component for displaying customer's order history
 const CustomerOrders = () => {
+  // State management and data fetching
   const location = useLocation();
   const [orders, setOrders] = useState(location.state?.orders || []);
   const [loading, setLoading] = useState(!location.state?.orders);
@@ -15,14 +18,11 @@ const CustomerOrders = () => {
     if (!location.state?.orders) {
       const fetchOrders = async () => {
         try {
-          const response = await axios.get(
-            "http://localhost:5000/order/customer",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+          const response = await axios.get(`${API_URL}order/customer`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           setOrders(
             Array.isArray(response.data.data) ? response.data.data : []
           );
@@ -38,6 +38,7 @@ const CustomerOrders = () => {
     }
   }, [location.state?.orders, token]);
 
+  // Render orders list
   if (loading) {
     return <p>Loading your orders...</p>;
   }
@@ -50,9 +51,7 @@ const CustomerOrders = () => {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header isLoggedIn={token !== null} />
       <div className="flex-1 p-6">
-        <h1 className="text-3xl font-bold text-black mb-6">
-          Your Orders
-        </h1>
+        <h1 className="text-3xl font-bold text-black mb-6">Your Orders</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {orders.map((order) => (
             <div
