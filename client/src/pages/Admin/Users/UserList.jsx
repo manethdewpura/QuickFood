@@ -73,7 +73,7 @@ const UserList = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`${API_URL}auth/user`, {
+        await axios.delete(`${API_URL}auth/user/admin`, {
           headers: {
             "x-user-id": id,
             Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const UserList = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`${API_URL}auth/user/`, userData, {
+      await axios.put(`${API_URL}auth/user/admin`, userData, {
         headers: {
           "x-user-id": selectedUser._id,
           Authorization: `Bearer ${token}`,
