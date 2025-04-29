@@ -4,9 +4,9 @@ import HamburgerMenu from "./HamburgerMenu";
 import { useLocation } from "../context/LocationContext.jsx";
 import Notifications from "./Notifications";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from '../config/api.config';
+import { API_URL } from "../config/api.config";
 
-const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
+const Header = ({ isLoggedIn }) => {
   const { location, loading, error } = useLocation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -98,7 +98,7 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
                     onClick={() => {
                       navigate("/customer-restaurant/menu", {
                         state: {
-                          restaurant
+                          restaurant,
                         },
                       });
                       setShowResults(false);
@@ -133,13 +133,13 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
         ) : (
           <>
             <button
-              onClick={onLogin}
+              onClick={() => navigate("/login")}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
             >
               Login
             </button>
             <button
-              onClick={onSignUp}
+              onClick={() => navigate("/signup")}
               className="px-4 py-2 text-sm font-medium text-blue-500 border border-blue-500 rounded-md hover:bg-gray-100"
             >
               Sign Up
