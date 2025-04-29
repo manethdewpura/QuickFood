@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaUserPlus, FaSearch } from "react-icons/fa";
+import { FaEdit, FaTrash, FaSearch } from "react-icons/fa";
 import AdminHeader from "../../../components/Admin/AdminHeader";
 import SideNav from "../../../components/Admin/SideNav";
 import UserForm from "./UserForm";
@@ -7,12 +7,14 @@ import axios from "axios";
 import { API_URL } from '../../../config/api.config';
 
 const UserList = () => {
+  // State management
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
+  // Fetch users from API
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
@@ -34,6 +36,7 @@ const UserList = () => {
       });
   }, []);
 
+  // Filter users based on search query
   const filteredUsers = Array.isArray(users)
     ? users.filter(
         (user) =>
@@ -43,6 +46,7 @@ const UserList = () => {
       )
     : [];
 
+  // Helper function for role styling
   const getRoleColor = (role) => {
     switch (role) {
       case "SystemAdmin":
@@ -58,6 +62,7 @@ const UserList = () => {
     }
   };
 
+  // User CRUD operations
   const handleEdit = (id) => {
     const userToEdit = users.find((user) => user._id === id);
     setSelectedUser(userToEdit);
@@ -81,6 +86,7 @@ const UserList = () => {
     }
   };
 
+  // Form handling
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -129,10 +135,6 @@ const UserList = () => {
             <h1 className="text-2xl font-bold text-gray-800">
               User Management
             </h1>
-            <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-              <FaUserPlus />
-              Add User
-            </button>
           </div>
 
           <div className="mb-4 relative">

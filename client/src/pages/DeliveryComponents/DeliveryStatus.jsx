@@ -1,6 +1,7 @@
 import React from "react";
 
 const DeliveryStatus = ({ currentStatus, onUpdateStatus }) => {
+  // Define available delivery statuses
   const statuses = [
     { value: "assigned", label: "Assigned" },
     { value: "picked_up", label: "Picked Up" },
@@ -8,10 +9,12 @@ const DeliveryStatus = ({ currentStatus, onUpdateStatus }) => {
     { value: "delivered", label: "Delivered" },
   ];
 
+  // Helper function to get the index of the current status
   const getCurrentStatusIndex = () => {
     return statuses.findIndex((status) => status.value === currentStatus);
   };
 
+  // Helper function to get the next status in the sequence
   const getNextStatus = () => {
     const currentIndex = getCurrentStatusIndex();
     if (currentIndex < statuses.length - 1) {
@@ -20,6 +23,7 @@ const DeliveryStatus = ({ currentStatus, onUpdateStatus }) => {
     return null;
   };
 
+  // Handle status update by calling the provided callback with the next status
   const handleUpdateStatus = () => {
     const nextStatus = getNextStatus();
     if (nextStatus) {
@@ -27,6 +31,7 @@ const DeliveryStatus = ({ currentStatus, onUpdateStatus }) => {
     }
   };
 
+  // Render the delivery status component
   return (
     <div className="delivery-status my-6">
       <h2 className="text-xl font-semibold text-indigo-600 mb-2">

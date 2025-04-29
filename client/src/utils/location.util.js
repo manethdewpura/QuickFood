@@ -1,3 +1,4 @@
+// Get user's current location coordinates
 export const getCurrentLocation = () => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -18,6 +19,7 @@ export const getCurrentLocation = () => {
   });
 };
 
+// Convert coordinates to city name using OpenCage API
 export const getLocationName = async (latitude, longitude) => {
   const response = await fetch(
     `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=1c3787f9fd174abe89c7143da2146b3f`

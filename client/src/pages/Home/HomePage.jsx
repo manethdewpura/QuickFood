@@ -7,6 +7,7 @@ import Footer from "../../components/Footer";
 import { API_URL } from '../../config/api.config';
 
 const HomePage = () => {
+  // State and location management
   const [token] = React.useState(localStorage.getItem("token"));
   const [restaurants, setRestaurants] = useState([]);
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const HomePage = () => {
       return;
     }
 
+    // Fetch user's location and nearby restaurants
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -53,6 +55,7 @@ const HomePage = () => {
     );
   }, [token]);
 
+  // Navigation handler
   const handleViewMenu = (restaurant) => {
     navigate("/customer-restaurant/menu", {
       state: {

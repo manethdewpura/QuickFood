@@ -5,12 +5,15 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { API_URL } from '../../config/api.config';
 
+// Component for displaying user profile information
 const Profile = () => {
+  // State management for user data
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  // Fetch user profile data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -28,6 +31,7 @@ const Profile = () => {
     fetchProfile();
   }, [token]);
 
+  // Profile action handlers
   const handleEdit = () => {
     navigate("/profile/edit");
   };

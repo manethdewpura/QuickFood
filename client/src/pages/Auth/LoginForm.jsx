@@ -4,16 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { API_URL } from '../../config/api.config';
 
 const LoginForm = () => {
+  // State management for form
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Form event handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle form submission and authentication
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);

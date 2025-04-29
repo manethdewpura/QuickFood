@@ -1,5 +1,6 @@
 import React from "react";
 
+// Modal form component for user creation and editing
 const UserForm = ({ user, onSubmit, onCancel }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">

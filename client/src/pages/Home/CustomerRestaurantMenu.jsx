@@ -5,7 +5,9 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { API_URL } from '../../config/api.config';
 
+// Component for displaying restaurant menu to customers
 const CustomerRestaurantMenu = () => {
+  // State management
   const location = useLocation();
   const { restaurant } = location.state || {};
   const [menuItems, setMenuItems] = useState([]);
@@ -58,6 +60,7 @@ const CustomerRestaurantMenu = () => {
     }
   }, [restaurant?._id]);
 
+  // Menu filtering and display functions
   const handleShowAvailableMenus = () => {
     setActivePanel("available");
     fetchMenuItems(
@@ -78,6 +81,7 @@ const CustomerRestaurantMenu = () => {
     );
   };
 
+  // Cart operations
   const handleIncreaseQuantity = (menuItemId) => {
     setCart((prevCart) => {
       const newCart = { ...prevCart };

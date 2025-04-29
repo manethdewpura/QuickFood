@@ -7,12 +7,14 @@ import Footer from "../../components/Footer";
 import { API_URL } from '../../config/api.config';
 
 const TrackDelivery = () => {
+  // State management
   const [delivery, setDelivery] = useState(null);
   const [driver, setDriver] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
 
+  // Fetch delivery and driver details
   useEffect(() => {
     const fetchDeliveryDetails = async () => {
       try {
@@ -46,6 +48,7 @@ const TrackDelivery = () => {
     return () => clearInterval(interval);
   }, [id]);
 
+  // Helper functions for time and status display
   const getEstimatedArrivalTime = () => {
     if (!delivery) return "Calculating...";
 
@@ -77,6 +80,7 @@ const TrackDelivery = () => {
     }
   };
 
+  // Loading and error states
   if (loading) return <div>Loading delivery details...</div>;
   if (error) return <div>{error}</div>;
   if (!delivery) return <div>Delivery not found</div>;

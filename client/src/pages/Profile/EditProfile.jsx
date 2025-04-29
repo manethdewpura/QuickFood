@@ -5,7 +5,9 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { API_URL } from '../../config/api.config';
 
+// Component for editing user profile information
 const EditProfile = () => {
+  // State management for form data and loading status
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,6 +18,7 @@ const EditProfile = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
+  // Fetch user profile data on component mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -39,6 +42,7 @@ const EditProfile = () => {
     fetchProfile();
   }, [token]);
 
+  // Form event handlers
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
