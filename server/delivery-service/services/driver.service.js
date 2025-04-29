@@ -12,7 +12,7 @@ export const createDriver = async (driverData, userId) => {
       throw new Error("Driver already exists for this user");
     }
     //Fetch user info from Auth-Service
-    const userRes = await axios.get(`${process.env.AUTH_SERVICE_URL}auth/user`, {
+    const userRes = await axios.get(`${process.env.AUTH_SERVICE_URL}auth/user/other`, {
       headers: { "x-user-id": userId },
     });
     const user = userRes.data.user;
