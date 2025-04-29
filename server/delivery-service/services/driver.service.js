@@ -1,6 +1,8 @@
 import Driver from "../models/driver.model.js";
 import axios from "axios";
 import { calculateDistance } from "../utils/helpers.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const createDriver = async (driverData, userId) => {
   try {
@@ -10,7 +12,7 @@ export const createDriver = async (driverData, userId) => {
       throw new Error("Driver already exists for this user");
     }
     //Fetch user info from Auth-Service
-    const userRes = await axios.get(`http://localhost:5000/auth/user`, {
+    const userRes = await axios.get(`${process.env.AUTH_SERVICE_URL}auth/user/other`, {
       headers: { "x-user-id": userId },
     });
     const user = userRes.data.user;
@@ -81,7 +83,7 @@ export const getNearestReadyOrders = async (userId) => {
     throw new Error("Driver location not set");
   }
 
-  const { data } = await axios.get("http://localhost:5005/order/ready");
+  const { data } = await axios.get(`${process.env.ORDER_SERVICE_URL}order/ready`);
   const readyOrders = data.data || [];
 
   const ordersWithDistance = readyOrders.map((order) => {
@@ -94,7 +96,7 @@ export const getNearestReadyOrders = async (userId) => {
 
     // Create notification for each order
     axios
-      .post("http://localhost:5004/notifications/driver", {
+      .post(`${process.env.NOTIFICATION_SERVICE_URL}notifications/driver`, {
         userId,
         name: order._id,
         message: `New order #${order._id} available for delivery from ${order.restaurant.name}`,

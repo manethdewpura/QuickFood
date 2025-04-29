@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { FaSignOutAlt } from "react-icons/fa";
 import Notifications from "../../components/Notifications";
 
+// Restaurant admin header component with navigation and notifications
 const RestaurantAdminHeader = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Check for token in localStorage and redirect to login if not found
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
@@ -14,6 +16,7 @@ const RestaurantAdminHeader = () => {
   }, [navigate]);
 
   const handleLogout = () => {
+    // Remove token from localStorage and reload the page
     localStorage.removeItem("token");
     navigate("/");
     window.location.reload();

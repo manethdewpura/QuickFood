@@ -3,11 +3,14 @@ import { FaCheck, FaTimes, FaSearch } from "react-icons/fa";
 import AdminHeader from "../../../components/Admin/AdminHeader";
 import SideNav from "../../../components/Admin/SideNav";
 import axios from "axios";
+import { API_URL } from '../../../config/api.config';
 
 const RestaurantList = () => {
+  // State management
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([]);
 
+  // Check if user is logged in and fetch restaurant data
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -15,7 +18,7 @@ const RestaurantList = () => {
       return;
     }
     axios
-      .get("http://localhost:5000/restaurantAdmin/all", {
+      .get(`${API_URL}restaurantAdmin/all`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -30,11 +33,12 @@ const RestaurantList = () => {
     restaurant.restaurantName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Restaurant verification handlers
   const handleVerify = async (id) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/restaurantAdmin/verify/${id}`,
+        `${API_URL}restaurantAdmin/verify/${id}`,
         { isVerified: "Approved" },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -46,11 +50,12 @@ const RestaurantList = () => {
     }
   };
 
+  // Reject restaurant handler
   const handleReject = async (id) => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/restaurantAdmin/verify/${id}`,
+        `${API_URL}restaurantAdmin/verify/${id}`,
         { isVerified: "Rejected" },
         {
           headers: { Authorization: `Bearer ${token}` },

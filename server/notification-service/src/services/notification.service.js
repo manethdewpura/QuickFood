@@ -1,12 +1,12 @@
 import Notification from "../models/notification.model.js";
 
-// Create new notification
+// Create and store a new notification
 export const createNotification = async (data) => {
   const notification = new Notification(data);
   return await notification.save();
 };
 
-// Create driver notification with duplicate check
+// Create or retrieve existing driver notification
 export const createDriverNotification = async (userId, name, message) => {
   const existingNotification = await Notification.findOne({ userId, name });
   
@@ -25,17 +25,17 @@ export const createDriverNotification = async (userId, name, message) => {
   return await notification.save();
 };
 
-// Get user notifications sorted by date
+// Fetch all notifications for a user
 export const getNotifications = async (userId) => {
   return await Notification.find({ userId }).sort({ createdAt: -1 });
 };
 
-// Update notification by id
+// Update notification content
 export const updateNotification = async (id, data) => {
   return await Notification.findByIdAndUpdate(id, data, { new: true });
 };
 
-// Mark notification as read
+// Update notification read status
 export const markAsRead = async (id) => {
   return await Notification.findByIdAndUpdate(
     id,
@@ -44,7 +44,7 @@ export const markAsRead = async (id) => {
   );
 };
 
-// Delete notification by id
+// Remove notification from database
 export const deleteNotification = async (id) => {
   return await Notification.findByIdAndDelete(id);
 };

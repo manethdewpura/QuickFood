@@ -1,3 +1,4 @@
+// Proxy configuration factory for service routing
 export const createProxyConfig = (route, target, circuitBreaker) => ({
   target,
   changeOrigin: true,

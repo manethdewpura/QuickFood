@@ -5,6 +5,7 @@ import { FaUsers, FaUtensils, FaClipboardList } from 'react-icons/fa';
 const SideNav = () => {
   const location = useLocation();
 
+  // Define navigation items with their routes and icons
   const navItems = [
     { path: '/admin/users', title: 'Users', icon: <FaUsers /> },
     { path: '/admin/restaurants', title: 'Restaurants', icon: <FaUtensils /> },
@@ -12,6 +13,7 @@ const SideNav = () => {
   ];
 
   return (
+    // Fixed sidebar with navigation links
     <div className="h-screen bg-white shadow-lg fixed left-0 top-0 w-64">
       <div className="p-4 mb-8">
         <Link to="/admin" className="text-blue-600 font-bold text-2xl">

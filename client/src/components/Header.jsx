@@ -4,10 +4,13 @@ import HamburgerMenu from "./HamburgerMenu";
 import { useLocation } from "../context/LocationContext.jsx";
 import Notifications from "./Notifications";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config/api.config";
 
-const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
+const Header = ({ isLoggedIn }) => {
   const { location, loading, error } = useLocation();
   const navigate = useNavigate();
+
+  // State for search functionality
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -25,6 +28,7 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Handle search functionality
   const handleSearch = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -36,9 +40,7 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/restaurantAll/search?query=${encodeURIComponent(
-          query
-        )}`,
+        `${API_URL}restaurantAll/search?query=${encodeURIComponent(query)}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -54,6 +56,7 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
     }
   };
 
+  // Format location display text
   const locationText = loading
     ? "Getting location..."
     : error
@@ -61,6 +64,7 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
     : location?.cityName || "Select location";
 
   return (
+    // Header layout with three sections: left, middle (search), and right
     <header className="flex items-center justify-between p-4 bg-white shadow-md">
       {/* Left Section */}
       <div className="flex items-center space-x-4">
@@ -99,7 +103,7 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
                     onClick={() => {
                       navigate("/customer-restaurant/menu", {
                         state: {
-                          restaurant
+                          restaurant,
                         },
                       });
                       setShowResults(false);
@@ -134,13 +138,13 @@ const Header = ({ isLoggedIn, onLogin, onSignUp }) => {
         ) : (
           <>
             <button
-              onClick={onLogin}
+              onClick={() => navigate("/login")}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
             >
               Login
             </button>
             <button
-              onClick={onSignUp}
+              onClick={() => navigate("/signup")}
               className="px-4 py-2 text-sm font-medium text-blue-500 border border-blue-500 rounded-md hover:bg-gray-100"
             >
               Sign Up

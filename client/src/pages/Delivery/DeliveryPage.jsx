@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import DeliveryMap from "../DeliveryComponents/DeliveryMap";
 import DeliveryStatus from "../DeliveryComponents/DeliveryStatus";
 import DriverHeader from "../../components/Driver/DriverHeader";
+import { API_URL } from '../../config/api.config';
 
 const DeliveryPage = () => {
   const [delivery, setDelivery] = useState(null);
@@ -17,7 +18,7 @@ const DeliveryPage = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:5000/delivery/${id}`,
+          `${API_URL}delivery/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log(response.data);
@@ -47,7 +48,7 @@ const DeliveryPage = () => {
           longitude: position.coords.longitude,
         };
         await axios.patch(
-          `http://localhost:5000/delivery/${id}/location`,
+          `${API_URL}delivery/${id}/location`,
           { currentLocation },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -105,7 +106,7 @@ const DeliveryPage = () => {
           };
 
           const response = await axios.patch(
-            `http://localhost:5000/delivery/${id}/status`,
+            `${API_URL}delivery/${id}/status`,
             { status, currentLocation },
             { headers: { Authorization: `Bearer ${token}` } }
           );

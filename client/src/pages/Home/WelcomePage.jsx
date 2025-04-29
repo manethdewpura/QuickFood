@@ -3,22 +3,28 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 
 const WelcomePage = () => {
+  // State and time management
   const [currentTime, setCurrentTime] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
 
+  // Add navigation handlers
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const handleSignUp = () => {
+    navigate('/signup');
+  };
+
+  // Authentication check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-    if (isLoggedIn) {
       navigate("/home");
     }
-  }, [isLoggedIn, navigate]);
+  }, [navigate]);
 
+  // Clock update
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -51,10 +57,16 @@ const WelcomePage = () => {
               {currentTime}
             </h1>
             <div className="flex flex-row gap-4">
-              <button className="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg md:text-xl hover:bg-blue-600">
+              <button 
+                onClick={handleLogin}
+                className="bg-blue-500 text-white px-6 py-3 rounded-lg text-lg md:text-xl hover:bg-blue-600"
+              >
                 Log In
               </button>
-              <button className="bg-white text-blue-500 px-6 py-3 rounded-lg text-lg md:text-xl hover:bg-gray-100 border-2 border-blue-500">
+              <button 
+                onClick={handleSignUp}
+                className="bg-white text-blue-500 px-6 py-3 rounded-lg text-lg md:text-xl hover:bg-gray-100 border-2 border-blue-500"
+              >
                 Sign Up
               </button>
             </div>

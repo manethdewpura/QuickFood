@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from '../../config/api.config';
 
 const SignUpForm = () => {
+  // State management for registration form
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,11 +19,13 @@ const SignUpForm = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Form event handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle form submission and user creation
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -40,7 +44,7 @@ const SignUpForm = () => {
           ? { name, email, password, role, contact, address }
           : { name, email, password, role };
 
-      await axios.post("http://localhost:5000/auth/register", userData);
+      await axios.post(`${API_URL}auth/register`, userData);
       navigate("/login");
     } catch (err) {
       setError(
