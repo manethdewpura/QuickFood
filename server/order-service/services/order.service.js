@@ -5,7 +5,7 @@ import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Create a new order
+// Create a new order using cart data
 export const createNewOrder = async (orderData) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -80,7 +80,7 @@ export const createNewOrder = async (orderData) => {
   }
 };
 
-// Update order status
+// Update status of an existing order
 export const updateOrderStatus = async (orderId, orderStatus) => {
   try {
     const order = await Order.findById(orderId);
@@ -122,7 +122,7 @@ export const updateOrderStatus = async (orderId, orderStatus) => {
   }
 };
 
-// Get all ready orders
+// Retrieve all orders that are ready for delivery
 export const getReadyOrders = async () => {
   try {
     const orders = await Order.find({
@@ -165,7 +165,7 @@ export const getReadyOrders = async () => {
   }
 };
 
-// Get all orders for a customer
+// Fetch order history for a specific customer
 export const getCustomerOrders = async (customerId) => {
   try {
     const orders = await Order.find({ customerId }).sort({ createdAt: -1 });
@@ -245,7 +245,7 @@ export const getCustomerOrders = async (customerId) => {
   }
 };
 
-// Get all orders for a restaurant
+// Fetch all orders for a specific restaurant
 export const getRestaurantOrders = async (restaurantId) => {
   try {
     const orders = await Order.find({ restaurantId }).sort({ createdAt: -1 });
@@ -314,7 +314,7 @@ export const getRestaurantOrders = async (restaurantId) => {
   }
 };
 
-// Get a specific order by ID
+// Retrieve detailed information for a specific order
 export const getOrderById = async (orderId) => {
   try {
     const order = await Order.findById(orderId);
@@ -339,7 +339,7 @@ export const getOrderById = async (orderId) => {
   }
 };
 
-// Get all orders
+// Fetch all orders in the system with customer and restaurant details
 export const getAllOrders = async () => {
   try {
     const orders = await Order.find({}).sort({ createdAt: -1 });
@@ -389,6 +389,7 @@ export const getAllOrders = async () => {
   }
 };
 
+// Update order status to accepted by restaurant
 export const updateOrderAccept = async (orderId) => {
   try {
     const order = await Order.findById(orderId);

@@ -1,6 +1,6 @@
 import * as menuService from "../services/menu.service.js";
 
-// Create a new menu item
+// Handle new menu item creation
 export const createMenuItem = async (req, res) => {
   try {
     const menuItem = await menuService.createMenuItem(req.body);
@@ -14,7 +14,7 @@ export const createMenuItem = async (req, res) => {
   }
 };
 
-// Get all menu items
+// Retrieve all menu items
 export const getAllMenuItems = async (req, res) => {
   try {
     const menuItems = await menuService.getAllMenuItems();
@@ -28,7 +28,7 @@ export const getAllMenuItems = async (req, res) => {
   }
 };
 
-// Get a menu item by ID
+// Get single menu item details
 export const getMenuItemById = async (req, res) => {
   try {
     const menuItem = await menuService.getMenuItemById(req.params.id);
@@ -42,7 +42,7 @@ export const getMenuItemById = async (req, res) => {
   }
 };
 
-// Get menu items by restaurant ID
+// Get restaurant's menu items
 export const getMenuItemByRestaurantId = async (req, res) => {
   try {
     const menuItems = await menuService.getMenuItemByRestaurantId(
@@ -58,7 +58,7 @@ export const getMenuItemByRestaurantId = async (req, res) => {
   }
 };
 
-// Get menu items by cuisine type
+// Get items by cuisine category
 export const getMenuItemByCuisineType = async (req, res) => {
   try {
     const menuItems = await menuService.getMenuItemByCuisineType(
@@ -74,7 +74,7 @@ export const getMenuItemByCuisineType = async (req, res) => {
   }
 };
 
-// Get menu items by availability status
+// Filter items by availability
 export const getMenuItemByAvailability = async (req, res) => {
   try {
     const menuItems = await menuService.getMenuItemByAvailability(
@@ -90,7 +90,7 @@ export const getMenuItemByAvailability = async (req, res) => {
   }
 };
 
-// Update a menu item by ID
+// Update menu item details
 export const updateMenuItem = async (req, res) => {
   try {
     const updatedMenuItem = await menuService.updateMenuItem(
@@ -107,7 +107,7 @@ export const updateMenuItem = async (req, res) => {
   }
 };
 
-// Update menu item availability by ID
+// Toggle item availability
 export const updateMenuItemAvailability = async (req, res) => {
   try {
     const { isAvailable } = req.body;
@@ -125,7 +125,7 @@ export const updateMenuItemAvailability = async (req, res) => {
   }
 };
 
-// Delete a menu item by ID
+// Remove menu item
 export const deleteMenuItem = async (req, res) => {
   try {
     const deletedMenuItem = await menuService.deleteMenuItem(req.params.id);
@@ -139,7 +139,7 @@ export const deleteMenuItem = async (req, res) => {
   }
 };
 
-// Get available menu items by restaurant ID
+// Get restaurant's available items
 export const getAvailableMenuItemsByRestaurantId = async (req, res) => {
   try {
     const menuItems = await menuService.getAvailableMenuItemsByRestaurantId(
@@ -159,7 +159,7 @@ export const getAvailableMenuItemsByRestaurantId = async (req, res) => {
   }
 };
 
-// Get menu items by cuisine type for a specific restaurant
+// Get restaurant items by cuisine
 export const getMenuItemsByCuisineTypeForRestaurant = async (req, res) => {
   const { restaurantId, cuisineType } = req.params;
 
