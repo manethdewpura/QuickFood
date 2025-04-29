@@ -76,12 +76,18 @@ const HamburgerMenu = ({ isLoggedIn }) => {
           ) : (
             <>
               <li>
-                <button className="w-full px-4 py-2 text-base font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600">
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="w-full px-4 py-2 text-base font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                >
                   Login
                 </button>
               </li>
               <li>
-                <button className="w-full px-4 py-2 text-base font-medium text-blue-500 border border-blue-500 rounded-md hover:bg-gray-100">
+                <button 
+                  onClick={() => navigate('/signup')}
+                  className="w-full px-4 py-2 text-base font-medium text-blue-500 border border-blue-500 rounded-md hover:bg-gray-100"
+                >
                   Sign Up
                 </button>
               </li>
