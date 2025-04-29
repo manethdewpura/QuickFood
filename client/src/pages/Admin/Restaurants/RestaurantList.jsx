@@ -6,9 +6,11 @@ import axios from "axios";
 import { API_URL } from '../../../config/api.config';
 
 const RestaurantList = () => {
+  // State management
   const [searchQuery, setSearchQuery] = useState("");
   const [restaurants, setRestaurants] = useState([]);
 
+  // Check if user is logged in and fetch restaurant data
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -31,6 +33,7 @@ const RestaurantList = () => {
     restaurant.restaurantName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Restaurant verification handlers
   const handleVerify = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -47,6 +50,7 @@ const RestaurantList = () => {
     }
   };
 
+  // Reject restaurant handler
   const handleReject = async (id) => {
     try {
       const token = localStorage.getItem("token");

@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 
 const WelcomePage = () => {
+  // State and time management
   const [currentTime, setCurrentTime] = useState("");
   const navigate = useNavigate();
 
+  // Authentication check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -13,6 +15,7 @@ const WelcomePage = () => {
     }
   }, [navigate]);
 
+  // Clock update
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();

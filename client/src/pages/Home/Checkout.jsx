@@ -17,8 +17,9 @@ const stripePromise = loadStripe(
   "pk_test_51RD89zPuIXCAe5na6392eGLANkFWsolQLENDttXwT6YczwaesCUl3y0QRp07aNPrpgh2jxrwtydKhNJpcRBWg1qP00EZmjzc1L"
 );
 
-// Separate CheckoutForm component that uses Stripe hooks
+// Form component for handling checkout process
 const CheckoutForm = () => {
+  // State and context management
   const location = useLocation();
   const navigate = useNavigate();
   const elements = useElements();
@@ -101,6 +102,7 @@ const CheckoutForm = () => {
     }));
   };
 
+  // Payment processing
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -189,6 +191,7 @@ const CheckoutForm = () => {
     }
   };
 
+  // Form rendering
   if (loading) {
     return <p>Loading checkout details...</p>;
   }
@@ -340,6 +343,7 @@ const CheckoutForm = () => {
   );
 };
 
+// Wrapper component with Stripe Elements
 const Checkout = () => {
   return (
     <Elements stripe={stripePromise}>

@@ -1,3 +1,4 @@
+// Imports
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getCurrentLocation } from "../../utils/location.util";
@@ -5,7 +6,9 @@ import { API_URL } from '../../config/api.config';
 import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
 
+// Restaurant management component for adding and editing restaurant details
 const RestaurantManagement = () => {
+  // State management for restaurant data
   const [restaurants, setRestaurants] = useState([]);
   const [form, setForm] = useState({
     restaurantName: "",
@@ -21,6 +24,7 @@ const RestaurantManagement = () => {
   const [editingId, setEditingId] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Fetch restaurants from API
   const fetchRestaurants = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -37,6 +41,7 @@ const RestaurantManagement = () => {
     fetchRestaurants();
   }, []);
 
+  // Form handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -80,6 +85,7 @@ const RestaurantManagement = () => {
     }
   };
 
+  // CRUD operation handlers
   const handleEdit = (restaurant) => {
     setForm({
       restaurantName: restaurant.restaurantName || "",

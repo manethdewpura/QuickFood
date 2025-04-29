@@ -5,12 +5,15 @@ import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
 import { API_URL } from '../../config/api.config';
 
+// Component to manage restaurant orders and their statuses
 const RestaurantOrders = ({ restaurantId }) => {
+  // Initialize state and params
   const { id: restaurantIdFromParams } = useParams();
   restaurantId = restaurantId || restaurantIdFromParams;
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Fetch orders for the restaurant
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -28,10 +31,12 @@ const RestaurantOrders = ({ restaurantId }) => {
     }
   };
 
+  // Load orders on component mount
   useEffect(() => {
     fetchOrders();
   }, [restaurantId]);
 
+  // Order status management
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
@@ -46,6 +51,7 @@ const RestaurantOrders = ({ restaurantId }) => {
     }
   };
 
+  // Handle order verification code
   const verifyOrderCode = async (orderId, verificationCode) => {
     try {
       const token = localStorage.getItem("token");
@@ -60,6 +66,7 @@ const RestaurantOrders = ({ restaurantId }) => {
     }
   };
 
+  // Render loading state or orders list
   if (loading)
     return <div className="text-center mt-10">Loading Orders...</div>;
 

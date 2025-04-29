@@ -5,7 +5,9 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { API_URL } from "../../config/api.config";
 
+// Component for displaying customer's order history
 const CustomerOrders = () => {
+  // State management and data fetching
   const location = useLocation();
   const [orders, setOrders] = useState(location.state?.orders || []);
   const [loading, setLoading] = useState(!location.state?.orders);
@@ -36,6 +38,7 @@ const CustomerOrders = () => {
     }
   }, [location.state?.orders, token]);
 
+  // Render orders list
   if (loading) {
     return <p>Loading your orders...</p>;
   }

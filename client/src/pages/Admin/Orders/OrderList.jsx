@@ -6,6 +6,7 @@ import axios from "axios";
 import { API_URL } from '../../../config/api.config';
 
 const OrderList = () => {
+  // State management
   const [searchQuery, setSearchQuery] = useState("");
   const [orders, setOrders] = useState([]);
 
@@ -21,6 +22,7 @@ const OrderList = () => {
       });
   }, []);
 
+  // Helper functions for date and status display
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -46,6 +48,7 @@ const OrderList = () => {
     }
   };
 
+  // Filter orders based on search query
   const filteredOrders = orders.filter(
     (order) =>
       order._id.toLowerCase().includes(searchQuery.toLowerCase()) ||

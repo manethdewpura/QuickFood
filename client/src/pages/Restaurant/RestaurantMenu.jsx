@@ -5,7 +5,9 @@ import RestaurantAdminHeader from "./RestaurantHeader.jsx";
 import Footer from "../../components/Footer.jsx";
 import { API_URL } from '../../config/api.config';
 
+// Menu management component for restaurants
 const RestaurantMenu = ({ restaurantId }) => {
+  // State management for menu items
   const [menuItems, setMenuItems] = useState([]);
   const { id: restaurantIdFromParams } = useParams();
   restaurantId = restaurantId || restaurantIdFromParams;
@@ -19,6 +21,7 @@ const RestaurantMenu = ({ restaurantId }) => {
   });
   const [editingId, setEditingId] = useState(null);
 
+  // Fetch menu items from API
   const fetchMenuItems = async () => {
     try {
       const res = await axios.get(
@@ -37,6 +40,7 @@ const RestaurantMenu = ({ restaurantId }) => {
     if (restaurantId) fetchMenuItems();
   }, [restaurantId]);
 
+  // Form handlers for menu items
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     if (type === "file") {
@@ -89,6 +93,7 @@ const RestaurantMenu = ({ restaurantId }) => {
     }
   };
 
+  // CRUD operations for menu items
   const handleEdit = (menu) => {
     setForm({
       menuItemName: menu.menuItemName || "",
