@@ -9,6 +9,8 @@ import { API_URL } from "../config/api.config";
 const Header = ({ isLoggedIn }) => {
   const { location, loading, error } = useLocation();
   const navigate = useNavigate();
+
+  // State for search functionality
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -26,6 +28,7 @@ const Header = ({ isLoggedIn }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Handle search functionality
   const handleSearch = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -53,6 +56,7 @@ const Header = ({ isLoggedIn }) => {
     }
   };
 
+  // Format location display text
   const locationText = loading
     ? "Getting location..."
     : error
@@ -60,6 +64,7 @@ const Header = ({ isLoggedIn }) => {
     : location?.cityName || "Select location";
 
   return (
+    // Header layout with three sections: left, middle (search), and right
     <header className="flex items-center justify-between p-4 bg-white shadow-md">
       {/* Left Section */}
       <div className="flex items-center space-x-4">
