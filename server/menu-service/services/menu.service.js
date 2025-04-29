@@ -1,7 +1,7 @@
 import Menu from "../models/menu.model.js";
 import mongoose from "mongoose";
 
-// Create a new menu item
+// Add or create new menu item
 export const createMenuItem = async (menuData) => {
   try {
     const newMenuItem = new Menu(menuData);
@@ -13,7 +13,7 @@ export const createMenuItem = async (menuData) => {
   }
 };
 
-// Get all menu items
+// Retrieve all menu items from database
 export const getAllMenuItems = async () => {
   try {
     return await Menu.find().sort({ createdAt: -1 });
@@ -23,7 +23,7 @@ export const getAllMenuItems = async () => {
   }
 };
 
-// Get a menu item by ID
+// Fetch specific menu item by ID
 export const getMenuItemById = async (id) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -40,7 +40,7 @@ export const getMenuItemById = async (id) => {
   }
 };
 
-// Get menu items by restaurant ID
+// Get all menu items for a restaurant
 export const getMenuItemByRestaurantId = async (restaurantId) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
@@ -53,7 +53,7 @@ export const getMenuItemByRestaurantId = async (restaurantId) => {
   }
 };
 
-// Get menu items by cuisine type
+// Filter menu items by cuisine type
 export const getMenuItemByCuisineType = async (cuisineType) => {
   try {
     return await Menu.find({ cuisineType }).sort({ createdAt: -1 });
@@ -63,7 +63,7 @@ export const getMenuItemByCuisineType = async (cuisineType) => {
   }
 };
 
-// Get menu items by availability status
+// Get menu items based on availability
 export const getMenuItemByAvailability = async (isAvailable) => {
   try {
     return await Menu.find({ isAvailable }).sort({ createdAt: -1 });
@@ -76,7 +76,7 @@ export const getMenuItemByAvailability = async (isAvailable) => {
   }
 };
 
-// Update a menu item by ID
+// Modify existing menu item
 export const updateMenuItem = async (id, menuData) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -96,7 +96,7 @@ export const updateMenuItem = async (id, menuData) => {
   }
 };
 
-// Update a menu item by ID
+// Toggle menu item availability status
 export const updateMenuItemAvailability = async (id, isAvailable) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -117,7 +117,7 @@ export const updateMenuItemAvailability = async (id, isAvailable) => {
   }
 };
 
-// Delete a menu item by ID
+// Remove menu item from database
 export const deleteMenuItem = async (id) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -134,7 +134,7 @@ export const deleteMenuItem = async (id) => {
   }
 };
 
-// Get available menu items by restaurant ID
+// Get only available items for a restaurant
 export const getAvailableMenuItemsByRestaurantId = async (restaurantId) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(restaurantId)) {
@@ -152,7 +152,7 @@ export const getAvailableMenuItemsByRestaurantId = async (restaurantId) => {
   }
 };
 
-// Get menu items by cuisine type for a specific restaurant
+// Filter restaurant items by cuisine
 export const getMenuItemsByCuisineTypeForRestaurant = async (
   restaurantId,
   cuisineType

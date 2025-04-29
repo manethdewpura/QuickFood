@@ -10,7 +10,7 @@ import {
   sendOrderConfirmationEmail,
 } from "../services/email.service.js";
 
-// Create new notification
+// Handle creation of new notifications
 export const createNotification = async (req, res) => {
   try {
     const notification = await createNotificationService(req.body);
@@ -20,7 +20,7 @@ export const createNotification = async (req, res) => {
   }
 };
 
-// Get all notifications for a user
+// Retrieve all notifications for a specific user
 export const getNotifications = async (req, res) => {
   try {
     const userId = req.headers["x-user-id"];
@@ -31,7 +31,7 @@ export const getNotifications = async (req, res) => {
   }
 };
 
-// Update notification by ID
+// Update an existing notification
 export const updateNotification = async (req, res) => {
   try {
     const notification = await updateNotificationService(
@@ -47,7 +47,7 @@ export const updateNotification = async (req, res) => {
   }
 };
 
-// Mark notification as read
+// Mark a notification as read
 export const markAsRead = async (req, res) => {
   try {
     const notification = await markAsReadService(req.params.id);
@@ -62,7 +62,7 @@ export const markAsRead = async (req, res) => {
   }
 };
 
-// Delete notification
+// Remove a notification from the system
 export const deleteNotification = async (req, res) => {
   try {
     const notification = await deleteNotificationService(req.params.id);
@@ -75,7 +75,7 @@ export const deleteNotification = async (req, res) => {
   }
 };
 
-// Send order confirmation email
+// Process and send order confirmation emails
 export const sendOrderConfirmation = async (req, res) => {
   try {
     const { name, email, orderId, orderDetails } = req.body;
@@ -86,6 +86,7 @@ export const sendOrderConfirmation = async (req, res) => {
   }
 };
 
+// Create notification for delivery drivers
 export const createDriverNotification = async (req, res) => {
   try {
     const { userId, name, message } = req.body;

@@ -50,6 +50,7 @@ export const updateVerification = async (id, isVerified) => {
   }
 };
 
+//Get all restaurants (for admin)
 export const getAllRestaurants = async () => {
   try {
     return await Restaurant.find().sort({ createdAt: -1 });

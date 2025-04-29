@@ -1,3 +1,4 @@
+// Circuit breaker implementation for service health monitoring
 export class CircuitBreaker {
   constructor(services) {
     this.states = {};

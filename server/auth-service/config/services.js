@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+// Service route definitions with middleware
 export const services = [
   {
     route: "/delivery",
@@ -68,6 +69,7 @@ export const services = [
   },
 ];
 
+// Rate limiting configurations for different routes
 export const limiterConfigs = {
   "/auth": {
     windowMs: 15 * 60 * 1000,
@@ -126,6 +128,7 @@ export const limiterConfigs = {
   },
 };
 
+// Security configurations
 export const securityConfig = {
   cors: {
     allowedHeaders: ["Content-Type", "Authorization"],

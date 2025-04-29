@@ -1,6 +1,6 @@
 import * as cartService from "../services/cart.service.js";
 
-// Add an item to the cart
+// Controller to handle adding items to cart
 export const addToCart = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
@@ -16,7 +16,7 @@ export const addToCart = async (req, res) => {
   }
 };
 
-// Get cart items by customer ID and restaurant ID
+// Controller to fetch cart items
 export const getCartItems = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
@@ -32,7 +32,7 @@ export const getCartItems = async (req, res) => {
   }
 };
 
-// Get cart by customer ID
+// Controller to fetch all carts for a customer
 export const getCartByCustomerId = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
@@ -47,7 +47,7 @@ export const getCartByCustomerId = async (req, res) => {
   }
 };
 
-// Increase the quantity of an item in the cart
+// Controller to increase item quantity
 export const increaseCartItemQuantity = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
@@ -67,7 +67,7 @@ export const increaseCartItemQuantity = async (req, res) => {
   }
 };
 
-// Decrease the quantity of an item in the cart
+// Controller to decrease item quantity
 export const decreaseCartItemQuantity = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
@@ -87,7 +87,7 @@ export const decreaseCartItemQuantity = async (req, res) => {
   }
 };
 
-// Remove an item from the cart
+// Controller to remove item from cart
 export const removeFromCart = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
@@ -107,7 +107,7 @@ export const removeFromCart = async (req, res) => {
   }
 };
 
-// Clear the cart
+// Controller to clear cart
 export const clearCart = async (req, res) => {
   try {
     const customerId = req.headers["x-user-id"];
