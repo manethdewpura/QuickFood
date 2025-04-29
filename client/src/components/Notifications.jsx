@@ -7,11 +7,13 @@ import {
 } from "../services/notificationService";
 
 const Notifications = () => {
+  // State management for notifications
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Fetch notifications from the server
   const fetchNotifications = async () => {
     try {
       setLoading(true);
@@ -26,12 +28,14 @@ const Notifications = () => {
     }
   };
 
+  // Fetch notifications periodically
   useEffect(() => {
     fetchNotifications();
     const intervalId = setInterval(fetchNotifications, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
+  // Notification action handlers
   const handleMarkAsRead = async (id) => {
     try {
       await markAsRead(id);
@@ -54,6 +58,7 @@ const Notifications = () => {
 
   return (
     <div className="relative">
+      {/* Notification bell button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
@@ -68,11 +73,13 @@ const Notifications = () => {
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl z-50 transform transition-all duration-200 ease-out border border-gray-100">
+          {/* Notification header */}
           <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-white">
             <h3 className="text-lg font-semibold text-gray-800">
               Notifications
             </h3>
           </div>
+          {/* Notification list */}
           <div className="max-h-[32rem] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {loading ? (
               <div className="p-8 text-center text-gray-500 animate-pulse">
@@ -98,6 +105,7 @@ const Notifications = () => {
                       : "bg-white hover:bg-gray-50"
                   }`}
                 >
+                  {/* Notification content */}
                   <div className="flex items-start space-x-3 flex-grow">
                     {!notification.read && (
                       <FaCircle className="text-blue-500 text-xs mt-2 animate-pulse" />
@@ -121,6 +129,7 @@ const Notifications = () => {
                       )}
                     </div>
                   </div>
+                  {/* Delete notification button */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

@@ -6,9 +6,11 @@ import { TbLogout } from "react-icons/tb";
 import { IoPersonCircleOutline } from "react-icons/io5";
 
 const HamburgerMenu = ({ isLoggedIn }) => {
+  // Menu state and navigation
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Menu action handlers
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
